@@ -1,0 +1,8 @@
+/* Light brand touches for the admin. Payload's own theme handles the rest. */
+:root {
+  --theme-success-500: #0ed5c2;
+}
+
+.nav-group__label {
+  letter-spacing: 0.04em;
+}
