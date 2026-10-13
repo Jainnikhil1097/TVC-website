@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { PerspectiveCard } from "./types";
 import { Card } from "./Card";
@@ -16,17 +16,36 @@ const ROTATE = 22; // deg per step
 const DEPTH = 70; // px towards viewer per step (concave curve)
 const VISIBLE = 2; // cards shown either side of the active one
 
+/** Open on a middle card so neighbours sit on both sides and both directions scroll. */
+function openingIndex(count: number) {
+  if (count < 2) return 0;
+  return Math.floor((count - 1) / 2);
+}
+
 /**
  * Desktop: a concave, curved row of cards (CSS 3D — no WebGL). Arrow keys,
  * buttons, drag/swipe and clicking a side card all move the selection.
  * Below 1024px: a flat scroll-snap row, which is lighter and more natural on touch.
  */
 export function CurvedCarousel({ label, items }: CurvedCarouselProps) {
-  const [active, setActive] = useState(0);
-  const drag = useRef<{ x: number; moved: boolean } | null>(null);
   const count = items.length;
+  const [active, setActive] = useState(() => openingIndex(count));
+  const drag = useRef<{ x: number; moved: boolean } | null>(null);
+  const scroller = useRef<HTMLUListElement>(null);
 
   const go = (i: number) => setActive(Math.max(0, Math.min(count - 1, i)));
+
+  // Mobile row: park the same middle card in view so a swipe works both ways.
+  useLayoutEffect(() => {
+    const list = scroller.current;
+    const start = openingIndex(count);
+    if (!list || start === 0) return;
+    const card = list.children[start] as HTMLElement | undefined;
+    if (!card) return;
+    const listRect = list.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    list.scrollLeft += cardRect.left - listRect.left - (list.clientWidth - cardRect.width) / 2;
+  }, [count]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
@@ -137,9 +156,12 @@ export function CurvedCarousel({ label, items }: CurvedCarouselProps) {
       </div>
 
       {/* Mobile / tablet: flat scroll-snap row */}
-      <ul className="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 md:-mx-8 md:scroll-px-8 md:px-8 lg:hidden">
+      <ul
+        ref={scroller}
+        className="no-scrollbar -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:-mx-8 md:px-8 lg:hidden"
+      >
         {items.map((item) => (
-          <li key={item.id} className="grid min-h-[19rem] w-[82%] shrink-0 snap-start sm:w-[46%]">
+          <li key={item.id} className="grid min-h-[19rem] w-[82%] shrink-0 snap-center sm:w-[46%]">
             <Card item={item} />
           </li>
         ))}

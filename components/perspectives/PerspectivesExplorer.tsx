@@ -66,7 +66,7 @@ export function PerspectivesExplorer({ tabs }: { tabs: PerspectiveTab[] }) {
         aria-labelledby={`tab-${tab.id}`}
         className="mt-12 sm:mt-14"
       >
-        {/* Keyed so each tab starts at its first card. */}
+        {/* Keyed so each tab opens on its own middle card. */}
         <CurvedCarousel key={tab.id} label={tab.label} items={tab.items} />
       </div>
     </div>
