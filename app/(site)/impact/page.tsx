@@ -2,10 +2,10 @@ import Link from "next/link";
 import { getImpact, getPortfolio, isActive } from "@/lib/cms";
 import { pageMetadata } from "@/lib/seo";
 import { Reveal } from "@/components/motion/Reveal";
-import { AccentRule, SectionHeading } from "@/components/ui/SectionHeading";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { StatTile } from "@/components/ui/StatTile";
 import { ButtonLink } from "@/components/ui/Button";
-import { HeroCard } from "@/components/light/HeroCard";
+import { PageHero } from "@/components/layout/PageHero";
 import { LineArt, type LineArtVariant } from "@/components/light/LineArt";
 import { cn } from "@/lib/utils";
 
@@ -21,9 +21,9 @@ export function generateMetadata() {
 
 // Placeholder art per theme — replace with photography when available.
 const themeArt: { variant: LineArtVariant; className: string }[] = [
-  { variant: "arcs", className: "bg-[linear-gradient(135deg,#dfe6e4,#c3d1ce)] text-stone/35" },
+  { variant: "arcs", className: "bg-[linear-gradient(135deg,#e6ebef,#cfd8df)] text-ink/35" },
   { variant: "flow", className: "bg-[linear-gradient(135deg,#1f2b31,#4d6a72)] text-white/40" },
-  { variant: "network", className: "bg-[linear-gradient(135deg,#e7e4dc,#d3cec2)] text-stone/40" },
+  { variant: "network", className: "bg-[linear-gradient(135deg,#eef2f5,#d8e0e6)] text-ink/40" },
   { variant: "dots", className: "bg-[linear-gradient(135deg,#2a3a3d,#6f8a88)] text-white/45" },
 ];
 
@@ -33,28 +33,16 @@ export default async function ImpactPage() {
 
   return (
     <div data-theme="light" className="pb-24">
-      <HeroCard className="bg-[#4d6a72]">
-        <LineArt variant="shell" className="absolute inset-0 -z-10 text-white/35 lg:left-[35%] lg:w-[65%]" />
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,#4d6a72_0%,rgb(77_106_114/0.85)_45%,rgb(77_106_114/0.1)_100%)]"
-        />
-        <div className="container-site flex flex-1 flex-col justify-end pt-28 pb-12 sm:pb-16">
-          <p className="eyebrow text-teal-soft">{impact.eyebrow}</p>
-          <h1 className="display mt-5 max-w-3xl text-[2.6rem] sm:text-6xl lg:text-7xl">{impact.headline}</h1>
-          <AccentRule className="mt-8" />
-          <p className="mt-8 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">{impact.intro}</p>
-        </div>
-      </HeroCard>
+      <PageHero art="shell" eyebrow={impact.eyebrow} title={impact.headline} intro={impact.intro} />
 
       {/* Portfolio wordmarks */}
-      <section className="container-site border-b border-stone/10 py-14" aria-labelledby="impact-backing">
-        <p id="impact-backing" className="eyebrow text-center text-stone/50">
+      <section className="container-site border-b border-ink/10 py-14" aria-labelledby="impact-backing">
+        <p id="impact-backing" className="eyebrow text-center text-ink/50">
           Backing India&rsquo;s energy builders
         </p>
         <ul className="mx-auto mt-8 flex max-w-5xl flex-wrap justify-center gap-x-8 gap-y-4">
           {active.map((c) => (
-            <li key={c.slug} className="font-serif text-sm tracking-[0.1em] text-stone/55 uppercase">
+            <li key={c.slug} className="font-serif text-sm tracking-[0.1em] text-ink/55 uppercase">
               {c.name}
             </li>
           ))}
@@ -99,15 +87,14 @@ export default async function ImpactPage() {
                   <LineArt variant={art.variant} />
                 </div>
                 <div>
-                  <p className="hud text-teal-deep">0{i + 1}</p>
                   <h3 className="display mt-3 text-3xl sm:text-4xl">{theme.title}</h3>
-                  <p className="mt-5 max-w-lg leading-relaxed text-stone/70">{theme.body}</p>
+                  <p className="mt-5 max-w-lg leading-relaxed text-ink/70">{theme.body}</p>
                   <ul className="mt-6 flex flex-wrap gap-2" aria-label="Portfolio companies">
                     {theme.companies.map((c) => (
                       <li key={c.slug}>
                         <Link
                           href={`/portfolio?company=${c.slug}`}
-                          className="inline-flex min-h-11 items-center rounded-full border border-stone/15 px-4 text-sm text-stone/80 transition-colors hover:border-teal-deep hover:text-teal-deep"
+                          className="inline-flex min-h-11 items-center rounded-full border border-ink/15 px-4 text-sm text-ink/80 transition-colors hover:border-teal-ink hover:text-teal-ink"
                         >
                           {c.name}
                         </Link>
@@ -123,15 +110,17 @@ export default async function ImpactPage() {
 
       {/* CTA */}
       <section className="container-site mt-24">
-        <Reveal className="grid gap-8 rounded-3xl bg-stone p-8 text-white sm:p-12 md:grid-cols-[1.5fr_auto] md:items-end">
+        <div data-theme="dark" className="rounded-3xl">
+        <Reveal className="grid gap-8 rounded-3xl bg-ink p-8 text-white sm:p-12 md:grid-cols-[1.5fr_auto] md:items-end">
           <div>
             <h2 className="display text-3xl sm:text-4xl">Building technology that moves the needle?</h2>
             <p className="mt-5 max-w-xl text-white/70">
               We back engineering-led founders from Pre-Seed to Series A. Share your deck — we read every one.
             </p>
           </div>
-          <ButtonLink href="/contact?type=startup">Pitch to us</ButtonLink>
+          <ButtonLink href="/contact?type=startup" variant="solid">Pitch to us</ButtonLink>
         </Reveal>
+        </div>
       </section>
     </div>
   );

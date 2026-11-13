@@ -79,6 +79,15 @@ export const PortfolioCompanies: CollectionConfig = {
               relationTo: "media",
               admin: { description: "SVG or transparent PNG works best. The company name is shown until a logo is added." },
             },
+            {
+              name: "coverImage",
+              label: "Cover image",
+              type: "upload",
+              relationTo: "media",
+              admin: {
+                description: "A product or team photo, shown when the company is featured on the home page (landscape, at least 1600 px wide).",
+              },
+            },
           ],
         },
         {
@@ -156,7 +165,7 @@ export const PortfolioCompanies: CollectionConfig = {
       label: "Feature on home page",
       type: "checkbox",
       defaultValue: false,
-      admin: { position: "sidebar", description: "Featured companies appear first in the home page strip." },
+      admin: { position: "sidebar", description: "Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too." },
     },
     showOnSiteField,
     orderField,

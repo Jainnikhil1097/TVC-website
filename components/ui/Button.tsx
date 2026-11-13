@@ -2,20 +2,22 @@ import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type Variant = "solid" | "outline" | "ghost" | "dark";
+type Variant = "primary" | "secondary" | "solid" | "outline" | "ghost" | "dark";
 
 const variants: Record<Variant, string> = {
-  // Light pill on dark backgrounds — the primary CTA (as in the home reference).
-  solid:
-    "bg-white text-ink-950 hover:bg-teal-soft shadow-[0_0_24px_rgb(14_213_194/0.18)]",
-  outline: "border border-white/25 text-white hover:border-teal hover:text-teal",
+  // On light pages (the default).
+  primary: "bg-ink text-white hover:bg-teal-ink",
+  secondary: "border border-ink/20 text-ink hover:border-teal-ink hover:text-teal-ink",
+  // On dark bands (globe hero, featured portfolio, footer).
+  solid: "bg-white text-ink hover:bg-teal-soft",
+  outline: "border border-white/30 text-white hover:border-teal hover:text-teal",
   ghost: "text-white/80 hover:text-teal",
-  // Dark pill on light pages.
-  dark: "bg-stone text-white hover:bg-ink-700",
+  /** @deprecated use "primary" */
+  dark: "bg-ink text-white hover:bg-teal-ink",
 };
 
 const base =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 text-[0.8rem] font-semibold tracking-[0.08em] uppercase transition-colors duration-300 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 text-[0.9rem] font-semibold transition-colors duration-300 disabled:opacity-50 disabled:pointer-events-none";
 
 type ButtonLinkProps = {
   href: string;
@@ -25,7 +27,7 @@ type ButtonLinkProps = {
   external?: boolean;
 };
 
-export function ButtonLink({ href, variant = "solid", className, children, external }: ButtonLinkProps) {
+export function ButtonLink({ href, variant = "primary", className, children, external }: ButtonLinkProps) {
   const cls = cn(base, variants[variant], className);
   if (external || /^https?:/.test(href)) {
     return (
@@ -43,6 +45,6 @@ export function ButtonLink({ href, variant = "solid", className, children, exter
 
 type ButtonProps = ComponentProps<"button"> & { variant?: Variant };
 
-export function Button({ variant = "solid", className, type = "button", ...props }: ButtonProps) {
+export function Button({ variant = "primary", className, type = "button", ...props }: ButtonProps) {
   return <button type={type} className={cn(base, variants[variant], className)} {...props} />;
 }

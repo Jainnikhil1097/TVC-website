@@ -3,6 +3,7 @@ import { adminOnly, anyone, loggedIn } from "../access";
 import { urlField } from "../fields";
 import { revalidateGlobal } from "../hooks/revalidate";
 import { pageKeys, portfolioSectors } from "@/lib/taxonomy";
+import { pillarIcons } from "@/lib/pillar-icons";
 
 const editable = { read: anyone, update: loggedIn };
 const hooks = { afterChange: [revalidateGlobal] };
@@ -171,6 +172,13 @@ export const FundMetrics: GlobalConfig = {
           ],
         },
         { name: "note", label: "Footnote (optional)", type: "text" },
+        {
+          name: "showOnHome",
+          label: "Show on home page",
+          type: "checkbox",
+          defaultValue: false,
+          admin: { description: "Pick 3–4 headline figures for the home page. All figures appear on Funds." },
+        },
       ],
     },
     { name: "asOf", label: "Figures as of", type: "date", admin: { date: { pickerAppearance: "dayOnly" } } },
@@ -295,6 +303,80 @@ export const GiftCityPage: GlobalConfig = {
       fields: [
         { name: "ctaLabel", label: "Button text", type: "text", defaultValue: "Investor enquiries" },
         { name: "ctaHref", label: "Button link", type: "text", defaultValue: "/contact?type=investor" },
+      ],
+    },
+  ],
+};
+
+export const HomePage: GlobalConfig = {
+  slug: "home-page",
+  label: "Home page",
+  admin: { group: "Pages", description: "The positioning line, \"Why founders choose us\" and the founder FAQ.", preview: () => "/" },
+  access: editable,
+  hooks,
+  versions: { max: 25 },
+  fields: [
+    {
+      type: "tabs",
+      tabs: [
+        {
+          label: "Positioning",
+          fields: [
+            {
+              name: "positioning",
+              label: "Positioning line",
+              type: "text",
+              required: true,
+              admin: { description: "Shown above the headline figures, e.g. \"India's first energy-transition venture fund\"." },
+            },
+          ],
+        },
+        {
+          label: "Why founders choose us",
+          fields: [
+            {
+              name: "pillars",
+              label: "Pillars",
+              type: "array",
+              labels: { singular: "Pillar", plural: "Pillars" },
+              maxRows: 6,
+              admin: { description: "4–5 works best. Keep each to one short sentence." },
+              fields: [
+                {
+                  type: "row",
+                  fields: [
+                    { name: "title", label: "Title", type: "text", required: true, maxLength: 40 },
+                    {
+                      name: "icon",
+                      label: "Icon",
+                      type: "select",
+                      required: true,
+                      defaultValue: "engineering",
+                      options: pillarIcons.map((i) => ({ ...i })),
+                    },
+                  ],
+                },
+                { name: "text", label: "Sentence", type: "textarea", required: true, maxLength: 200 },
+              ],
+            },
+          ],
+        },
+        {
+          label: "Founder FAQ",
+          fields: [
+            {
+              name: "faq",
+              label: "Questions",
+              type: "array",
+              labels: { singular: "Question", plural: "Questions" },
+              admin: { description: "Answers founders look for: cheque size, stages, sectors, how long decisions take, how to pitch." },
+              fields: [
+                { name: "question", label: "Question", type: "text", required: true },
+                { name: "answer", label: "Answer", type: "textarea", required: true, maxLength: 1000 },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],

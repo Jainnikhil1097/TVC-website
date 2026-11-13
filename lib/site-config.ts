@@ -11,11 +11,17 @@ export const siteIdentity = {
 } as const;
 
 export const nav: Link[] = [
-  { label: "About", href: "/about" },
   { label: "Portfolio", href: "/portfolio" },
+  { label: "About", href: "/about" },
   { label: "Perspectives", href: "/perspectives" },
   { label: "Impact", href: "/impact" },
-  { label: "GIFT City", href: "/gift-city" },
-  { label: "Careers", href: "/careers" },
   { label: "Contact", href: "/contact" },
 ];
+
+/** Secondary pages linked from the footer (and from the home page / About). */
+export const footerLinks: Link[] = [
+  { label: "Funds", href: "/funds" },
+  { label: "GIFT City", href: "/gift-city" },
+];
+
+export const pitchHref = "/contact?type=startup";

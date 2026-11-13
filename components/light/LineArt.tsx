@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-// Abstract line-art compositions for the light pages (Impact, GIFT City).
-// They stand in for photography: swap for <Image> once real photos are supplied.
-// Strokes use currentColor, so set the colour with a text-* class.
+// Abstract line-art compositions used in page heroes (one motif per page) and on
+// the Impact / GIFT City pages. They stand in for photography: swap for <Image>
+// once real photos are supplied. Strokes use currentColor, so set the colour with
+// a text-* class.
 
-export type LineArtVariant = "shell" | "arcs" | "flow" | "network" | "dots" | "skyline";
+export type LineArtVariant = "shell" | "arcs" | "flow" | "network" | "dots" | "skyline" | "blueprint";
 
 const r = (n: number) => Math.round(n * 10) / 10;
 
@@ -129,7 +130,58 @@ function skyline() {
   );
 }
 
-const variants: Record<LineArtVariant, () => ReactNode> = { shell, arcs, flow, network, dots, skyline };
+/** Isometric survey grid with line-drawn towers — echoes the portfolio map. */
+function blueprint() {
+  const cos = Math.cos(Math.PI / 6);
+  const sin = Math.sin(Math.PI / 6);
+  const S = 15; // grid cell size
+  const iso = (x: number, y: number, z = 0) => [r(210 + (x - y) * cos * S), r(172 + (x + y) * sin * S - z * S)];
+  const grid: ReactNode[] = [];
+  for (let i = -8; i <= 8; i++) {
+    const [a1, a2] = [iso(i, -8), iso(i, 8)];
+    const [b1, b2] = [iso(-8, i), iso(8, i)];
+    grid.push(<line key={`gx${i}`} x1={a1[0]} y1={a1[1]} x2={a2[0]} y2={a2[1]} strokeWidth="0.35" strokeOpacity="0.55" />);
+    grid.push(<line key={`gy${i}`} x1={b1[0]} y1={b1[1]} x2={b2[0]} y2={b2[1]} strokeWidth="0.35" strokeOpacity="0.55" />);
+  }
+  // [x, y, width, depth, height] in grid units — fixed so server output is stable.
+  const towers: [number, number, number, number, number][] = [
+    [-5, -3, 2, 2, 4],
+    [-2, -5, 2, 2, 7],
+    [1, -2, 3, 2, 5],
+    [-4, 2, 2, 3, 3],
+    [2, 2, 2, 2, 7],
+    [5, -1, 2, 2, 3],
+  ];
+  const pts = (list: number[][]) => list.map(([x, y]) => `${x},${y}`).join(" ");
+  // Back-to-front, filled with the band colour, so nearer towers hide what's behind.
+  const ordered = [...towers].sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
+  const solid = "#0b1626";
+  return (
+    <>
+      {grid}
+      {ordered.map(([x, y, w, d, h], i) => {
+        const top = [iso(x, y, h), iso(x + w, y, h), iso(x + w, y + d, h), iso(x, y + d, h)];
+        const left = [iso(x, y + d, 0), iso(x + w, y + d, 0), iso(x + w, y + d, h), iso(x, y + d, h)];
+        const right = [iso(x + w, y, 0), iso(x + w, y + d, 0), iso(x + w, y + d, h), iso(x + w, y, h)];
+        const floors: ReactNode[] = [];
+        for (let z = 1; z < h; z++) {
+          const [p1, p2, p3] = [iso(x, y + d, z), iso(x + w, y + d, z), iso(x + w, y, z)];
+          floors.push(<polyline key={z} points={pts([p1, p2, p3])} strokeWidth="0.35" strokeOpacity="0.6" />);
+        }
+        return (
+          <g key={i}>
+            <polygon points={pts(left)} fill={solid} strokeWidth="0.8" />
+            <polygon points={pts(right)} fill={solid} strokeWidth="0.8" />
+            <polygon points={pts(top)} fill={solid} strokeWidth="0.9" />
+            {floors}
+          </g>
+        );
+      })}
+    </>
+  );
+}
+
+const variants: Record<LineArtVariant, () => ReactNode> = { shell, arcs, flow, network, dots, skyline, blueprint };
 
 export function LineArt({ variant, className }: { variant: LineArtVariant; className?: string }) {
   return (

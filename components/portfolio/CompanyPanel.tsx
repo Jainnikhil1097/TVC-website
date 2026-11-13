@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ArrowUpRight, X } from "lucide-react";
@@ -116,24 +117,24 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
   // become the containing block for this fixed overlay.
   return createPortal(
     <div ref={root} className="fixed inset-0 z-[70]" data-lenis-prevent>
-      <div ref={backdrop} className="absolute inset-0 bg-ink-950/70 backdrop-blur-sm" onClick={close} aria-hidden />
+      <div ref={backdrop} className="absolute inset-0 bg-ink/40 backdrop-blur-sm" onClick={close} aria-hidden />
 
       <div
         ref={sheet}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col rounded-t-3xl border-t border-white/10 bg-ink-900 shadow-[0_-24px_80px_rgb(0_0_0/0.5)] lg:inset-y-0 lg:left-auto lg:max-h-none lg:w-[34rem] lg:rounded-none lg:rounded-l-3xl lg:border-t-0 lg:border-l"
+        className="absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col rounded-t-3xl border-t border-line bg-white text-ink shadow-[0_-24px_80px_rgb(11_22_38/0.18)] lg:inset-y-0 lg:left-auto lg:max-h-none lg:w-[34rem] lg:rounded-none lg:rounded-l-3xl lg:border-t-0 lg:border-l lg:border-line"
       >
         {/* Grab handle (mobile) + header */}
         <div className="flex items-center justify-between gap-4 px-6 pt-4 pb-2 sm:px-8 lg:pt-6">
-          <span aria-hidden className="absolute top-2 left-1/2 h-1 w-10 -translate-x-1/2 rounded-full bg-white/20 lg:hidden" />
-          <p className="hud pt-2 text-teal">Company profile · {number}</p>
+          <span aria-hidden className="absolute top-2 left-1/2 h-1 w-10 -translate-x-1/2 rounded-full bg-ink/15 lg:hidden" />
+          <p className="hud pt-2 text-muted">Company profile <span className="text-teal-ink">· {number}</span></p>
           <button
             ref={closeBtn}
             type="button"
             onClick={close}
-            className="grid size-11 place-items-center rounded-full border border-white/12 text-white transition-colors hover:border-teal hover:text-teal"
+            className="grid size-11 place-items-center rounded-full border border-line text-ink transition-colors hover:border-teal-ink hover:text-teal-ink"
             aria-label="Close company profile"
           >
             <X className="size-4" />
@@ -142,55 +143,55 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
 
         <div className="overflow-y-auto overscroll-contain px-6 pb-10 sm:px-8" data-lenis-prevent>
           <CompanyLogo company={company} size="lg" className="mt-4" />
-          <h2 id={titleId} className="display mt-4 text-4xl sm:text-5xl">
+          <h2 id={titleId} className="display mt-4 text-4xl text-ink sm:text-5xl">
             {company.name}
           </h2>
           {status && (
             <p className="mt-4 flex flex-wrap items-center gap-3">
               <StatusBadge label={status} />
-              {company.exitNote && <span className="text-sm text-ink-300">{company.exitNote}</span>}
+              {company.exitNote && <span className="text-sm text-muted">{company.exitNote}</span>}
             </p>
           )}
           <AccentRule className="mt-6" />
 
-          <dl className="mt-8 grid grid-cols-3 gap-4 border-y border-white/8 py-6">
+          <dl className="mt-8 grid grid-cols-3 gap-4 border-y border-line py-6">
             {facts.map((f) => (
               <div key={f.label}>
-                <dt className="hud text-ink-400">{f.label}</dt>
-                <dd className="mt-2 text-sm font-medium text-white">{f.value}</dd>
+                <dt className="hud text-muted">{f.label}</dt>
+                <dd className="mt-2 text-sm font-medium text-ink">{f.value}</dd>
               </div>
             ))}
           </dl>
 
           <section className="mt-8">
-            <h3 className="eyebrow text-ink-400">About</h3>
-            <p className="mt-3 leading-relaxed text-ink-200">{company.summary}</p>
+            <h3 className="eyebrow text-muted">About</h3>
+            <p className="mt-3 leading-relaxed text-ink/80">{company.summary}</p>
           </section>
 
           {company.whyWeInvested && (
             <section className="mt-8">
-              <h3 className="eyebrow text-ink-400">Why we invested</h3>
-              <p className="mt-3 leading-relaxed text-ink-200">{company.whyWeInvested}</p>
+              <h3 className="eyebrow text-muted">Why we invested</h3>
+              <p className="mt-3 leading-relaxed text-ink/80">{company.whyWeInvested}</p>
             </section>
           )}
 
           {company.founders && company.founders.length > 0 && (
             <section className="mt-8">
-              <h3 className="eyebrow text-ink-400">Founders</h3>
+              <h3 className="eyebrow text-muted">Founders</h3>
               <ul className="mt-4 space-y-3">
                 {company.founders.map((f) => (
                   <li key={f.name} className="flex items-center gap-4">
                     <Avatar name={f.name} photo={f.photo} sizes="48px" className="size-12 shrink-0 rounded-full" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-white">{f.name}</p>
-                      {f.title && <p className="text-xs text-ink-400">{f.title}</p>}
+                      <p className="text-sm font-medium text-ink">{f.name}</p>
+                      {f.title && <p className="text-xs text-muted">{f.title}</p>}
                     </div>
                     {f.linkedin && (
                       <a
                         href={f.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center gap-1 text-xs text-ink-300 transition-colors hover:text-teal"
+                        className="inline-flex min-h-11 items-center gap-1 text-xs text-muted transition-colors hover:text-teal-ink"
                         aria-label={`${f.name} on LinkedIn`}
                       >
                         LinkedIn <ArrowUpRight className="size-3.5" aria-hidden />
@@ -204,20 +205,20 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
 
           {essay && (
             <section className="mt-8">
-              <h3 className="eyebrow text-ink-400">{company.whyWeInvested ? "Read more" : "Why we invested"}</h3>
+              <h3 className="eyebrow text-muted">{company.whyWeInvested ? "Read more" : "Why we invested"}</h3>
               <a
                 href={essay.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group mt-3 block rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-teal/50"
+                className="group mt-3 block rounded-2xl border border-line bg-surface p-5 transition-colors hover:border-teal-ink/50"
               >
-                <span className="hud text-teal">From our Substack</span>
-                <span className="mt-2 block font-serif text-lg font-light text-white">
+                <span className="hud text-teal-ink">From our Substack</span>
+                <span className="mt-2 block font-serif text-lg font-light text-ink">
                   {essay.title ?? "Read our investment note"}
                 </span>
-                {essay.teaser && <span className="mt-2 block text-sm text-ink-300">{essay.teaser}</span>}
-                <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold tracking-[0.08em] text-white uppercase group-hover:text-teal">
-                  Read the essay <ArrowUpRight className="size-3.5" aria-hidden />
+                {essay.teaser && <span className="mt-2 block text-sm text-muted">{essay.teaser}</span>}
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-ink group-hover:text-teal-ink">
+                  Read our investment note <ArrowUpRight className="size-3.5" aria-hidden />
                 </span>
               </a>
             </section>
@@ -228,13 +229,16 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
               Visit {hostname(company.website)} <ArrowUpRight className="size-4" aria-hidden />
             </ButtonLink>
             {company.videoUrl && (
-              <ButtonLink href={company.videoUrl} variant="outline">
+              <ButtonLink href={company.videoUrl} variant="secondary">
                 Watch video <ArrowUpRight className="size-4" aria-hidden />
               </ButtonLink>
             )}
-            <ButtonLink href="/contact?type=startup" variant="ghost">
-              Building something similar?
-            </ButtonLink>
+            <Link
+              href="/contact?type=startup"
+              className="inline-flex min-h-11 items-center px-2 text-[0.9rem] font-medium text-muted transition-colors hover:text-teal-ink"
+            >
+              Building something similar? Pitch to us
+            </Link>
           </div>
         </div>
       </div>

@@ -62,6 +62,8 @@ function ExplorerView({
     // Deep links to an exited company switch exits on so it's visible behind the panel.
     if (companies.find((c) => c.slug === companyParam)?.status !== "active" && companyParam) setShowExits(true);
   }
+  // Map view only: the company whose info card is open beside it.
+  const [popover, setPopover] = useState<string | null>(null);
   const [localSector, setLocalSector] = useState(sector);
   const [lastSector, setLastSector] = useState(sector);
   if (sector !== lastSector) {
@@ -72,8 +74,12 @@ function ExplorerView({
   const changeSector = (s: PortfolioSectorId | null) => {
     setLocalSector(s);
     onSectorChange?.(s);
+    // Close the map card if its company is filtered out.
+    const open = popover ? companies.find((c) => c.slug === popover) : undefined;
+    if (open && s && open.sector !== s) setPopover(null);
   };
   const openPanel = (slug: string) => {
+    setPopover(null);
     setSelected(slug);
     onCompanyChange?.(slug);
   };
@@ -102,16 +108,20 @@ function ExplorerView({
             <button
               type="button"
               aria-pressed={showExits}
-              onClick={() => setShowExits((v) => !v)}
+              onClick={() => {
+                // Hiding exits closes an open map card for an exited company.
+                if (showExits) setPopover((p) => (p && companies.find((c) => c.slug === p)?.status !== "active" ? null : p));
+                setShowExits((v) => !v);
+              }}
               className={cn(
-                "inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[0.78rem] font-medium tracking-wide transition-colors",
-                showExits ? "border-white bg-white text-ink-950" : "border-white/15 text-ink-200 hover:border-teal/60 hover:text-white"
+                "inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[0.85rem] font-medium transition-colors",
+                showExits ? "border-ink bg-ink text-white" : "border-line bg-white text-ink hover:border-teal-ink/50 hover:text-teal-ink"
               )}
             >
-              Show exits <span className={cn("hud", showExits ? "text-ink-600" : "text-ink-400")}>{exitCount}</span>
+              Show exits <span className={cn("hud", showExits ? "text-white/70" : "text-muted")}>{exitCount}</span>
             </button>
           )}
-          <div role="group" aria-label="View" className="hidden rounded-full border border-white/12 p-1 lg:flex">
+          <div role="group" aria-label="View" className="hidden rounded-full border border-line bg-surface p-1 lg:flex">
             {(
               [
                 { id: "map", label: "Map", Icon: MapIcon },
@@ -124,8 +134,8 @@ function ExplorerView({
                 aria-pressed={view === id}
                 onClick={() => setView(id)}
                 className={cn(
-                  "inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-[0.78rem] font-medium tracking-wide transition-colors",
-                  view === id ? "bg-white/10 text-white" : "text-ink-300 hover:text-white"
+                  "inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-[0.85rem] font-medium transition-colors",
+                  view === id ? "bg-white text-ink shadow-sm" : "text-muted hover:text-ink"
                 )}
               >
                 <Icon className="size-4" aria-hidden /> {label}
@@ -135,13 +145,21 @@ function ExplorerView({
         </div>
       </div>
 
-      <p className="hud mt-6 text-ink-400" aria-live="polite">
+      <p className="hud mt-6 text-muted" aria-live="polite">
         Showing {visible.length} of {pool.length} {showExits ? "companies" : "active companies"}
         {localSector ? ` · ${portfolioSectorName(localSector)}` : ""}
       </p>
 
       <div className={cn("mt-6 hidden", view === "map" && "lg:block")}>
-        <PortfolioMap layout={layout} activeSector={localSector} selected={selected} onSelect={openPanel} />
+        <PortfolioMap
+          layout={layout}
+          activeSector={localSector}
+          selected={selected}
+          popover={popover}
+          onPopoverChange={setPopover}
+          onOpenProfile={openPanel}
+          essays={essays}
+        />
       </div>
 
       <ul

@@ -2,9 +2,9 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Site } from "@/lib/cms";
 import { getFunds } from "@/lib/cms";
-import { nav } from "@/lib/site-config";
+import { footerLinks, nav, pitchHref } from "@/lib/site-config";
+import { NewsletterForm } from "./NewsletterForm";
 import { Logo } from "@/components/ui/Logo";
-import { ButtonLink } from "@/components/ui/Button";
 import { AccentRule } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
 
@@ -13,19 +13,22 @@ export async function Footer({ site }: { site: Site }) {
   const funds = await getFunds();
 
   return (
-    <footer className="relative border-t border-white/8 bg-ink-950 text-white">
-      {/* Newsletter CTA */}
-      <Reveal className="container-site grid gap-8 py-16 md:grid-cols-[1.4fr_1fr] md:items-end md:py-20">
+    <footer data-theme="dark" className="relative bg-ink text-white">
+      {/* Newsletter signup — on every page */}
+      <Reveal className="container-site grid gap-8 py-16 md:grid-cols-[1.2fr_1fr] md:items-end md:py-20">
         <div>
           <h2 className="display text-3xl sm:text-4xl">{site.footerHeadline}</h2>
-          <AccentRule className="mt-6" />
+          <AccentRule tone="dark" className="mt-6" />
           <p className="mt-6 max-w-md text-ink-300">{site.newsletterBlurb}</p>
         </div>
-        <div className="flex flex-wrap gap-3 md:justify-end">
-          <ButtonLink href={site.substackUrl}>Subscribe on Substack</ButtonLink>
-          <ButtonLink href="/contact" variant="outline">
-            Get in touch
-          </ButtonLink>
+        <div className="md:justify-self-end">
+          <NewsletterForm substackUrl={site.substackUrl} />
+          <p className="mt-3 text-xs text-ink-400">
+            Opens Substack to confirm. Building in energy?{" "}
+            <Link href={pitchHref} className="text-white underline decoration-white/30 underline-offset-4 hover:decoration-teal">
+              Pitch to us
+            </Link>
+          </p>
         </div>
       </Reveal>
 
@@ -40,7 +43,7 @@ export async function Footer({ site }: { site: Site }) {
         <div>
           <h3 className="eyebrow text-ink-400">Explore</h3>
           <ul className="mt-4 space-y-2.5 text-sm">
-            {nav.map((item) => (
+            {[...nav, ...footerLinks].map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="text-ink-200 transition-colors hover:text-teal">
                   {item.label}

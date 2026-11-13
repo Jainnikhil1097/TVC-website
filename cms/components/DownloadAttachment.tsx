@@ -2,7 +2,7 @@
 
 import { useDocumentInfo, useFormFields } from "@payloadcms/ui";
 
-/** Admin-only download link for an enquiry's attachment (pitch deck / CV). */
+/** Admin-only download link for an enquiry's attachment (pitch deck). */
 export function DownloadAttachment() {
   const { id } = useDocumentInfo();
   const fileName = useFormFields(([fields]) => fields.fileName?.value as string | undefined);

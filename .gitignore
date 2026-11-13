@@ -6,6 +6,9 @@ node_modules/
 out/
 next-env.d.ts
 
+# preview build: CMS routes set aside while it runs
+.pages-stash/
+
 # testing / verification output
 coverage/
 test-results/
@@ -28,8 +31,9 @@ dev.db-*
 /media/
 /.data/
 
-# large map source; the extracted data/india-official.geojson is committed
-design-references/*.geojson
+# design inspiration (third-party screenshots, video, map sources) — local only;
+# the extracted data/india-official.geojson is what the site uses
+design-references/
 
 # editor swap/backup files
 *.swp

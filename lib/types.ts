@@ -9,6 +9,8 @@ export type Metric = {
   value: string;
   label: string;
   note?: string;
+  /** Picked as a headline figure for the home page. */
+  showOnHome?: boolean;
 };
 
 export type Person = {
@@ -49,6 +51,8 @@ export type Company = {
   founders?: Person[];
   /** Falls back to a serif wordmark. */
   logo?: Image;
+  /** Product/team photo for the home page's featured tabs. */
+  coverImage?: Image;
   whyWeInvested?: string;
   /** Substack post about this company; links the company and the essay. */
   essayUrl?: string;
@@ -109,13 +113,3 @@ export type Report = {
   companies: string[];
 };
 
-export type Role = {
-  title: string;
-  /** Portfolio company name; undefined for Transition VC roles. */
-  company?: string;
-  companySlug?: string;
-  function: string;
-  experience: string;
-  location: string;
-  applyUrl?: string;
-};

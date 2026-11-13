@@ -5,7 +5,7 @@ const config = [
   ...nextCoreWebVitals,
   ...nextTypescript,
   {
-    ignores: [".next/**", "out/**", "node_modules/**", "design-references/**", "next-env.d.ts", "migrations/**", "payload-types.ts", "app/(payload)/admin/importMap.js"],
+    ignores: [".next/**", "out/**", "node_modules/**", "design-references/**", ".pages-stash/**", "next-env.d.ts", "migrations/**", "payload-types.ts", "app/(payload)/admin/importMap.js"],
   },
 ];
 

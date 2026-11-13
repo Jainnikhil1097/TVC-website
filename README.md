@@ -25,7 +25,7 @@ The first account created at `/admin` automatically becomes an **Admin**.
 | `npm run build` / `npm start` | Production build / serve it |
 | `npm run check` | Lint + type-check + build — run before every commit |
 | `npm test` | Feed-parser, upload-authorisation and enquiry-intake tests (uses the local database) |
-| `npm run seed` | One-time import of the original content (`scripts/seed-data/`) into the CMS. Skips anything already filled; `-- --reset` wipes content (never users) first |
+| `npm run seed` | Imports the original content (`scripts/seed-data/`) into the CMS. Safe to re-run: skips collections and page settings that already have content; `-- --reset` wipes content (never users) first |
 | `npm run generate:types` | Regenerates `payload-types.ts` after changing collections/globals |
 | `npm run generate:importmap` | Regenerates the admin import map after adding admin components |
 | `npm run migrate:create <name>` | Creates a Postgres migration after changing collections/globals (commit it) |
@@ -43,8 +43,8 @@ sandboxes and CI.
 | Where | What |
 |---|---|
 | `payload.config.ts` | CMS setup: database (Postgres in production, SQLite locally), Vercel Blob storage, SMTP email |
-| `cms/collections/` | Portfolio, Team, News, Events, Reports, Jobs, Funds, Enquiries, Media, Users |
-| `cms/globals/` | Site settings, Announcement bar, SEO, Home sectors, Impact page, GIFT City page, Fund metrics |
+| `cms/collections/` | Portfolio, Team, News, Events, Reports, Funds, Enquiries, Media, Users |
+| `cms/globals/` | Site settings, Announcement bar, SEO, Home page (positioning, pillars, FAQ), Home sectors, Impact page, GIFT City page, Fund metrics |
 | `cms/access.ts` | Roles: Editors edit content; Admins also edit fund figures/SEBI details, read enquiries, manage users |
 | `lib/cms.ts` | Typed getters used by pages; maps CMS documents to the site's own types (`lib/types.ts`) |
 | `lib/feeds.ts` | Substack + YouTube RSS, refreshed hourly; falls back gracefully if a feed is unreachable |
@@ -54,7 +54,7 @@ sandboxes and CI.
 Any CMS change revalidates the whole site (`cms/hooks/revalidate.ts`) — it's a small site, so this
 is cheap and guarantees counts, footers and teasers never go stale.
 
-Pitch decks and CVs are uploaded straight from the browser to **private** Vercel Blob storage
+Pitch decks are uploaded straight from the browser to **private** Vercel Blob storage
 (bypassing Vercel's 4.5 MB request limit, up to 10 MB), and can only be downloaded by Admins.
 
 ## Deploying to Vercel (one-time setup)
@@ -72,11 +72,29 @@ Pitch decks and CVs are uploaded straight from the browser to **private** Vercel
 6. Visit `/admin`, create the first (Admin) account, then invite editors.
 7. In **Site settings → Links**, add the YouTube channel ID so new videos appear automatically.
 
+## Static preview on GitHub Pages
+
+A look-only copy of the site for sharing before launch: every page, the globe, the portfolio
+map and the animations, but **no /admin, and forms are switched off** (they show a "preview"
+note). It's hidden from search engines.
+
+- **Publishing:** `.github/workflows/pages.yml` rebuilds it on every push to `main`. One-time
+  setup: in the repo, **Settings → Pages → Source: GitHub Actions**. It's then at
+  `https://<github-user>.github.io/<repo>/`. On a free GitHub account the repo must be public
+  for Pages to work.
+- **Content:** the preview is built from the starting content in `scripts/seed-data/`, not from
+  the CMS. To change what it shows, edit those files and push.
+- **Locally:** `BASE_PATH=/<repo> npm run build:pages` writes the files to `out/`. It uses your
+  local CMS database. While it runs, the CMS routes are set aside, so /admin on a running
+  dev server is unavailable for about a minute.
+
 ## Before launch — outstanding content (all editable in the CMS now)
 
 - [ ] Official logo SVG → replace `components/ui/Logo.tsx` and `cms/components/Branding.tsx`
 - [ ] Team headshots, portfolio logos, policy PDFs (upload in the CMS)
-- [ ] Investor Login URL, YouTube channel ID, job application links (Site settings / Jobs)
+- [ ] Investor Login URL and YouTube channel ID (Site settings)
+- [ ] Review the draft "Why founders choose us" pillars and founder FAQ (Pages → Home page)
+- [ ] Cover images for featured companies (Portfolio → Basics)
 - [ ] Each company's related Substack essay link (Portfolio → Profile)
 - [ ] Impact figures and GIFT City copy (Pages)
 - [ ] Confirm the 19th active portfolio company (the original site listed 18)

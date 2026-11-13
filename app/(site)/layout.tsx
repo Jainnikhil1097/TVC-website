@@ -5,6 +5,7 @@ import "@fontsource/merriweather/latin-400.css";
 import "@fontsource-variable/manrope/index.css";
 import "./globals.css";
 import { siteIdentity as site } from "@/lib/site-config";
+import { isStaticPreview } from "@/lib/base-path";
 import { getAnnouncement, getSite } from "@/lib/cms";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Nav } from "@/components/layout/Nav";
@@ -24,6 +25,8 @@ export const metadata: Metadata = {
     locale: "en_IN",
   },
   twitter: { card: "summary_large_image", title: site.title, description: site.description },
+  // Keep the GitHub Pages preview out of search results.
+  ...(isStaticPreview && { robots: { index: false, follow: false } }),
 };
 
 export const viewport: Viewport = {

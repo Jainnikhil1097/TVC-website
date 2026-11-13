@@ -14,7 +14,6 @@ const { site, metrics, funds, investmentCriteria } = await import("./seed-data/s
 const { portfolio } = await import("./seed-data/portfolio");
 const { teamGroups } = await import("./seed-data/team");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
-const { roles } = await import("./seed-data/careers");
 const { investmentSectors } = await import("./seed-data/sectors");
 const { impact } = await import("./seed-data/impact");
 const { giftCity } = await import("./seed-data/gift-city");
@@ -24,7 +23,7 @@ const payload = await getPayload({ config });
 const context = { disableRevalidate: true };
 const log = (msg: string) => console.log(`[seed] ${msg}`);
 
-type Slug = "companies" | "team" | "news" | "jobs" | "funds";
+type Slug = "companies" | "team" | "news" | "funds";
 
 async function isEmpty(collection: Slug) {
   if (reset) {
@@ -37,6 +36,10 @@ async function isEmpty(collection: Slug) {
 }
 
 // ─── Portfolio ───────────────────────────────────────────────────────────────
+// Recent investments with published investment notes, shown in the home page's
+// Featured portfolio tabs (editors can change this in the CMS).
+const FEATURED = ["suind", "albatross-energetics", "prithu", "workongrid"];
+
 const companyIds = new Map<string, number>();
 if (await isEmpty("companies")) {
   for (const [i, c] of portfolio.entries()) {
@@ -52,6 +55,7 @@ if (await isEmpty("companies")) {
         yearInvested: c.yearInvested,
         website: c.website,
         status: "active",
+        featured: FEATURED.includes(c.slug),
         founders: c.founders?.map((f) => ({ name: f.name, title: f.title })),
         order: (i + 1) * 10,
         _status: "published",
@@ -88,21 +92,10 @@ if (await isEmpty("team")) {
   log(`team: ${n} added`);
 }
 
-// ─── News, jobs, funds ───────────────────────────────────────────────────────
+// ─── News, funds ─────────────────────────────────────────────────────────────
 if (await isEmpty("news")) {
   for (const item of news) await payload.create({ collection: "news", context, data: item });
   log(`news: ${news.length} added`);
-}
-
-if (await isEmpty("jobs")) {
-  for (const [i, r] of roles.entries()) {
-    await payload.create({
-      collection: "jobs",
-      context,
-      data: { ...r, open: true, order: (i + 1) * 10 },
-    });
-  }
-  log(`jobs: ${roles.length} added`);
 }
 
 if (await isEmpty("funds")) {
@@ -139,78 +132,137 @@ if (await isEmpty("funds")) {
   log(`funds: ${funds.length} added`);
 }
 
-// ─── Globals (always written; they're single documents) ─────────────────────
-await payload.updateGlobal({
-  slug: "site",
-  context,
-  data: {
-    tagline: site.tagline,
-    hero: site.hero,
-    about: site.about,
-    approach: site.approach,
-    thesis: site.thesis,
-    stage: investmentCriteria.stage,
-    cheque: investmentCriteria.cheque,
-    footerHeadline: site.footerHeadline,
-    newsletterBlurb: site.newsletterBlurb,
-    email: site.contact.email,
-    address: site.contact.address.join("\n"),
-    mapUrl: site.contact.mapUrl,
-    investorLoginUrl: site.investorLoginUrl || undefined,
-    socials: site.socials.filter((s) => s.label !== "Substack").map((s) => ({ label: s.label, url: s.href })),
-    substackUrl,
-    youtubeUrl,
-  },
+// ─── Globals ─────────────────────────────────────────────────────────────────
+// Single documents. Only written when still empty, so re-running the seed (for
+// example against production) never overwrites what editors have changed.
+type GlobalSlug =
+  | "site"
+  | "fund-metrics"
+  | "home-sectors"
+  | "home-page"
+  | "impact-page"
+  | "gift-city-page"
+  | "announcement";
+
+async function fillGlobal(slug: GlobalSlug, isEmpty: (doc: Record<string, unknown>) => boolean, data: Record<string, unknown>) {
+  const doc = (await payload.findGlobal({ slug })) as unknown as Record<string, unknown>;
+  if (!reset && !isEmpty(doc)) {
+    log(`${slug}: already filled — skipped`);
+    return;
+  }
+  await payload.updateGlobal({ slug, context, data: data as never });
+  log(`${slug}: written`);
+}
+
+const emptyArray = (key: string) => (doc: Record<string, unknown>) => !(doc[key] as unknown[] | undefined)?.length;
+const emptyText = (key: string) => (doc: Record<string, unknown>) => !doc[key];
+
+await fillGlobal("site", emptyText("tagline"), {
+  tagline: site.tagline,
+  hero: site.hero,
+  about: site.about,
+  approach: site.approach,
+  thesis: site.thesis,
+  stage: investmentCriteria.stage,
+  cheque: investmentCriteria.cheque,
+  footerHeadline: site.footerHeadline,
+  newsletterBlurb: site.newsletterBlurb,
+  email: site.contact.email,
+  address: site.contact.address.join("\n"),
+  mapUrl: site.contact.mapUrl,
+  investorLoginUrl: site.investorLoginUrl || undefined,
+  socials: site.socials.filter((s) => s.label !== "Substack").map((s) => ({ label: s.label, url: s.href })),
+  substackUrl,
+  youtubeUrl,
 });
 
-await payload.updateGlobal({
-  slug: "fund-metrics",
-  context,
-  data: {
-    items: metrics.map((m) => ({ value: m.value, label: m.label, note: m.note })),
-    asOf: "2026-03-31",
-  },
+// Headline figures for the home page: fund size, portfolio, write-offs, IRR.
+const HEADLINE = ["Fund I raised", "Active portfolio companies", "Write-offs", "Gross IRR"];
+await fillGlobal("fund-metrics", emptyArray("items"), {
+  items: metrics.map((m) => ({ value: m.value, label: m.label, note: m.note, showOnHome: HEADLINE.includes(m.label) })),
+  asOf: "2026-03-31",
 });
 
-await payload.updateGlobal({
-  slug: "home-sectors",
-  context,
-  data: {
-    sectors: investmentSectors.map((s) => ({ name: s.name, line: s.line, portfolioSector: s.portfolioSector })),
-  },
+await fillGlobal("home-sectors", emptyArray("sectors"), {
+  sectors: investmentSectors.map((s) => ({ name: s.name, line: s.line, portfolioSector: s.portfolioSector })),
 });
 
-await payload.updateGlobal({
-  slug: "impact-page",
-  context,
-  data: {
-    eyebrow: impact.eyebrow,
-    headline: impact.headline,
-    intro: impact.intro,
-    stats: impact.stats,
-    themes: impact.themes.map((t) => ({
-      title: t.title,
-      body: t.body,
-      companies: t.companies.map((slug) => companyIds.get(slug)).filter((id): id is number => id !== undefined),
-    })),
-  },
+// Draft copy drawn from the fund's published thesis — for Transition VC to review in the CMS.
+await fillGlobal("home-page", emptyText("positioning"), {
+  positioning: "India's first energy-transition venture fund",
+  pillars: [
+    {
+      title: "Engineering-first",
+      icon: "engineering",
+      text: "We underwrite the technology itself, and back teams solving hard physical bottlenecks.",
+    },
+    {
+      title: "Early, catalytic capital",
+      icon: "capital",
+      text: `${investmentCriteria.stage} cheques of ${investmentCriteria.cheque}, when conviction matters most.`,
+    },
+    {
+      title: "Built for India",
+      icon: "india",
+      text: "We back products and cost structures designed for India's energy transition.",
+    },
+    {
+      title: "Energy is all we do",
+      icon: "energy",
+      text: "Mobility, industry, storage, alternate fuels and more — one focus, deep context.",
+    },
+    {
+      title: "Beyond subsidies",
+      icon: "growth",
+      text: "We look for economics that work without relying on subsidies or regulatory timing.",
+    },
+  ],
+  faq: [
+    { question: "What stage do you invest at?", answer: `${investmentCriteria.stage}.` },
+    { question: "How much do you invest?", answer: `Typically ${investmentCriteria.cheque} per company.` },
+    {
+      question: "Which sectors do you invest in?",
+      answer:
+        "Mobility, Industrial, Buildings, Renewable Tech, Alternative Fuels, Power Electronics, Energy Storage and Sustainability.",
+    },
+    {
+      question: "What do you look for?",
+      answer:
+        "Engineering-led teams solving hard physical bottlenecks — companies that own a specific layer of the stack, with India-first cost structures and economics that don't depend on subsidies or regulatory timing.",
+    },
+    {
+      question: "Do you lead rounds?",
+      answer:
+        "Yes. We have led rounds such as SUIND's seed and Albatross Energetics' Pre-Series A, and we also invest alongside other funds.",
+    },
+    {
+      question: "How do I pitch to you?",
+      answer:
+        "Send your deck through the Startups & Founders form on our Contact page (PDF or PowerPoint, up to 10 MB). We read every deck.",
+    },
+  ],
 });
 
-await payload.updateGlobal({
-  slug: "gift-city-page",
-  context,
-  data: {
-    eyebrow: giftCity.eyebrow,
-    headline: giftCity.headline,
-    intro: giftCity.intro,
-    highlights: giftCity.highlights,
-    ctaLabel: giftCity.cta.label,
-    ctaHref: giftCity.cta.href,
-  },
+await fillGlobal("impact-page", emptyText("headline"), {
+  eyebrow: impact.eyebrow,
+  headline: impact.headline,
+  intro: impact.intro,
+  stats: impact.stats,
+  themes: impact.themes.map((t) => ({
+    title: t.title,
+    body: t.body,
+    companies: t.companies.map((slug) => companyIds.get(slug)).filter((id): id is number => id !== undefined),
+  })),
 });
 
-await payload.updateGlobal({ slug: "announcement", context, data: { enabled: false } });
+await fillGlobal("gift-city-page", emptyText("headline"), {
+  eyebrow: giftCity.eyebrow,
+  headline: giftCity.headline,
+  intro: giftCity.intro,
+  highlights: giftCity.highlights,
+  ctaLabel: giftCity.cta.label,
+  ctaHref: giftCity.cta.href,
+});
 
-log("globals: site, fund-metrics, home-sectors, impact-page, gift-city-page, announcement written");
 log("done");
 process.exit(0);

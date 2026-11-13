@@ -28,7 +28,7 @@ const bento: { span: boolean; art?: { variant: LineArtVariant; className: string
   { span: true, art: { variant: "skyline", className: "bg-[linear-gradient(180deg,#1f2b33,#6f8790)] text-white/40" } },
   { span: false },
   { span: false },
-  { span: true, art: { variant: "network", className: "bg-[linear-gradient(135deg,#e2e5e1,#c9d2cf)] text-stone/40" } },
+  { span: true, art: { variant: "network", className: "bg-[linear-gradient(135deg,#e6ebef,#cfd8df)] text-ink/40" } },
 ];
 
 export default async function GiftCityPage() {
@@ -44,28 +44,28 @@ export default async function GiftCityPage() {
 
   return (
     <div data-theme="light" className="pb-24">
-      <HeroCard className="bg-[linear-gradient(180deg,#0a0e14_0%,#1f2b33_45%,#6f8790_100%)]">
+      <HeroCard className="bg-[linear-gradient(180deg,#0b1626_0%,#10213a_100%)]">
         <LineArt variant="skyline" className="absolute inset-x-0 bottom-0 -z-10 h-[72%] text-white/25" />
         <div className="container-site flex flex-1 flex-col justify-end pt-28 pb-10 lg:pb-16">
-          <p className="eyebrow text-teal-soft">{giftCity.eyebrow}</p>
+          <p className="eyebrow text-teal">{giftCity.eyebrow}</p>
           <h1 className="display mt-5 max-w-4xl text-[2.3rem] leading-[0.98] tracking-[0.04em] uppercase sm:text-6xl lg:max-w-[58%] lg:text-7xl">
             {giftCity.headline}
           </h1>
           <p className="mt-8 max-w-xl leading-relaxed text-white/80 lg:hidden">{giftCity.intro}</p>
         </div>
         {/* Notched intro panel (desktop), echoing the Nilsson reference. */}
-        <div className="absolute right-0 bottom-0 hidden rounded-tl-[1.75rem] bg-paper p-8 pl-10 text-stone/75 lg:block lg:max-w-[22rem] xl:max-w-sm">
+        <div className="absolute right-0 bottom-0 hidden rounded-tl-[1.75rem] bg-paper p-8 pl-10 text-ink/75 lg:block lg:max-w-[22rem] xl:max-w-sm">
           <p className="text-sm leading-relaxed">{giftCity.intro}</p>
         </div>
       </HeroCard>
 
       {/* Key facts */}
-      <section className="container-site border-b border-stone/10 py-12" aria-label="Transition VC at a glance">
+      <section className="container-site border-b border-ink/10 py-12" aria-label="Transition VC at a glance">
         <ul className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
           {facts.map((f) => (
             <li key={f.label}>
               <p className="display text-2xl text-stone sm:text-3xl">{f.value}</p>
-              <p className="eyebrow mt-2 text-stone/55">{f.label}</p>
+              <p className="eyebrow mt-2 text-ink/55">{f.label}</p>
             </li>
           ))}
         </ul>
@@ -80,11 +80,11 @@ export default async function GiftCityPage() {
           </h2>
           <AccentRule className="mt-6" />
         </Reveal>
-        <Reveal delay={0.1} className="space-y-5 leading-relaxed text-stone/75">
+        <Reveal delay={0.1} className="space-y-5 leading-relaxed text-ink/75">
           <p>{giftCity.intro}</p>
           <p>{site.thesis}</p>
           <div className="pt-3">
-            <ButtonLink href={giftCity.cta.href} variant="dark">
+            <ButtonLink href={giftCity.cta.href} variant="primary">
               {giftCity.cta.label}
             </ButtonLink>
           </div>
@@ -112,9 +112,8 @@ export default async function GiftCityPage() {
                   </div>
                 )}
                 <div className="flex flex-col p-7 sm:p-9">
-                  <p className="hud text-teal-deep">0{i + 1}</p>
                   <h3 className="display mt-3 text-2xl sm:text-3xl">{h.title}</h3>
-                  <p className="mt-4 leading-relaxed text-stone/70">{h.body}</p>
+                  <p className="mt-4 leading-relaxed text-ink/70">{h.body}</p>
                 </div>
               </article>
             );
@@ -124,7 +123,8 @@ export default async function GiftCityPage() {
 
       {/* Contact route */}
       <section className="container-site mt-16 sm:mt-24">
-        <Reveal className="grid gap-8 rounded-3xl bg-stone p-8 text-white sm:p-12 md:grid-cols-[1.5fr_auto] md:items-end">
+        <div data-theme="dark" className="rounded-3xl">
+        <Reveal className="grid gap-8 rounded-3xl bg-ink p-8 text-white sm:p-12 md:grid-cols-[1.5fr_auto] md:items-end">
           <div>
             <p className="eyebrow text-teal">Investor relations</p>
             <h2 className="display mt-4 text-3xl sm:text-4xl">Speak to our GIFT City team</h2>
@@ -133,8 +133,9 @@ export default async function GiftCityPage() {
               eligibility and documentation.
             </p>
           </div>
-          <ButtonLink href={giftCity.cta.href}>Investor enquiries</ButtonLink>
+          <ButtonLink href={giftCity.cta.href} variant="solid">Investor enquiries</ButtonLink>
         </Reveal>
+        </div>
       </section>
     </div>
   );

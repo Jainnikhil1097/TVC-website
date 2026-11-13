@@ -2,8 +2,21 @@ import Image from "next/image";
 import type { Company } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-/** Company logo in a fixed-height box, falling back to a serif wordmark. */
-export function CompanyLogo({ company, className, size = "md" }: { company: Company; className?: string; size?: "md" | "lg" }) {
+/**
+ * Company logo in a fixed-height box (renders nothing without a logo — callers show
+ * the name instead). `tone="dark"` shows it in white, for dark backgrounds.
+ */
+export function CompanyLogo({
+  company,
+  className,
+  size = "md",
+  tone = "light",
+}: {
+  company: Company;
+  className?: string;
+  size?: "md" | "lg";
+  tone?: "light" | "dark";
+}) {
   const box = size === "lg" ? "h-14 w-56" : "h-10 w-40";
   if (!company.logo) return null;
   return (
@@ -13,7 +26,7 @@ export function CompanyLogo({ company, className, size = "md" }: { company: Comp
         alt={company.logo.alt || company.name}
         fill
         sizes={size === "lg" ? "224px" : "160px"}
-        className="object-contain object-left"
+        className={cn("object-contain object-left", tone === "dark" && "brightness-0 invert")}
       />
     </span>
   );
@@ -23,7 +36,7 @@ export function StatusBadge({ label, className }: { label: string; className?: s
   return (
     <span
       className={cn(
-        "hud inline-flex items-center rounded-full border border-white/25 bg-white/[0.06] px-2.5 py-1 text-white/85",
+        "hud inline-flex items-center rounded-full border border-line bg-surface px-2.5 py-1 text-ink",
         className
       )}
     >

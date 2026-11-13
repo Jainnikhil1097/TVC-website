@@ -37,14 +37,14 @@ export function SectorFilter({ companies, value, onChange }: SectorFilterProps) 
               aria-pressed={active}
               onClick={() => onChange(o.id)}
               className={cn(
-                "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-[0.8rem] font-medium tracking-wide transition-colors duration-300",
+                "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-[0.85rem] font-medium transition-colors duration-300",
                 active
-                  ? "border-white bg-white text-ink-950"
-                  : "border-white/15 text-ink-200 hover:border-teal/60 hover:text-white"
+                  ? "border-ink bg-ink text-white"
+                  : "border-line bg-white text-ink hover:border-teal-ink/50 hover:text-teal-ink"
               )}
             >
               {o.name}
-              <span className={cn("hud", active ? "text-ink-600" : "text-ink-400")}>{o.count}</span>
+              <span className={cn("hud", active ? "text-white/70" : "text-muted")}>{o.count}</span>
             </button>
           );
         })}

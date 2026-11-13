@@ -16,7 +16,7 @@ const ORIGIN = "http://tvc.test";
 const args = Object.fromEntries(
   process.argv.slice(2).reduce((acc, a, i, all) => (a.startsWith("--") ? [...acc, [a.slice(2), all[i + 1]]] : acc), [])
 );
-const routes = (args.routes ?? "/,/about,/portfolio,/perspectives,/impact,/gift-city,/careers,/contact").split(",");
+const routes = (args.routes ?? "/,/about,/portfolio,/perspectives,/impact,/gift-city,/funds,/contact").split(",");
 const widths = (args.widths ?? "360,390,768,1024,1440").split(",").map(Number);
 const scrollShots = args.scroll ? Number(args.scroll) : 0; // extra viewport shots while scrolling
 

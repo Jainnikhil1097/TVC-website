@@ -12,7 +12,8 @@ import {
 import { pageMetadata } from "@/lib/seo";
 import type { EventItem } from "@/lib/types";
 import { ButtonLink } from "@/components/ui/Button";
-import { AccentRule, SectionHeading } from "@/components/ui/SectionHeading";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { PageHero } from "@/components/layout/PageHero";
 import { Reveal } from "@/components/motion/Reveal";
 import { PerspectivesExplorer } from "@/components/perspectives/PerspectivesExplorer";
 import type { PerspectiveCard, PerspectiveTab } from "@/components/perspectives/types";
@@ -85,7 +86,7 @@ export default async function PerspectivesPage() {
               id: "substack-home",
               eyebrow: "Substack · Newsletter",
               title: "Essays and investment notes on India's energy transition",
-              teaser: "Read our latest thinking on drones, cooling, carbon markets, the grid and more.",
+              teaser: "Our latest essays on drones, cooling, carbon markets, the grid and more.",
               href: site.substackUrl,
               action: "Read on Substack",
             },
@@ -116,8 +117,10 @@ export default async function PerspectivesPage() {
             {
               id: "events-soon",
               eyebrow: "Events",
-              title: "No upcoming events right now",
-              teaser: "Follow us on LinkedIn to hear about our next founder meet-ups, talks and roundtables.",
+              title: "No upcoming events",
+              teaser: linkedIn
+                ? "Follow us on LinkedIn for announcements of founder meet-ups, talks and roundtables."
+                : "Subscribe to our newsletter for announcements of founder meet-ups, talks and roundtables.",
               href: linkedIn ?? site.substackUrl,
               action: linkedIn ? "Follow on LinkedIn" : "Subscribe for updates",
             },
@@ -145,9 +148,9 @@ export default async function PerspectivesPage() {
           items: [
             {
               id: "reports-soon",
-              eyebrow: "Reports · Coming soon",
-              title: "Research and sector reports are on their way",
-              teaser: "Until then, our deepest work lives in the Substack essays.",
+              eyebrow: "Reports",
+              title: "No reports published yet",
+              teaser: "Our in-depth sector research is in our Substack essays.",
               href: site.substackUrl,
               action: "Read on Substack",
             },
@@ -174,8 +177,8 @@ export default async function PerspectivesPage() {
             {
               id: "youtube-channel",
               eyebrow: "YouTube · Channel",
-              title: "Conversations with the founders and experts building India's energy future",
-              teaser: "Fireside chats, founder stories and sector deep-dives on our YouTube channel.",
+              title: "Founder conversations and sector deep-dives",
+              teaser: "Fireside chats and founder stories on our YouTube channel.",
               href: site.youtubeUrl || site.substackUrl,
               action: "Visit channel",
             },
@@ -185,89 +188,77 @@ export default async function PerspectivesPage() {
 
   return (
     <>
-      {/* Hero + carousel on a restrained dusk sky */}
-      <section className="relative overflow-x-clip bg-[linear-gradient(180deg,#0a0e14_0%,#0c151c_38%,#12201f_68%,#1f2320_88%,#26241d_100%)] pt-32 pb-20 sm:pt-40 sm:pb-24">
-        <div
-          aria-hidden
-          className="starfield pointer-events-none absolute inset-x-0 top-0 h-2/3 [mask-image:linear-gradient(to_bottom,black,transparent)]"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(70%_60%_at_50%_100%,rgb(214_170_110/0.10),transparent_70%)]"
-        />
-        <div className="container-site relative">
-          <div className="text-center">
-            <p className="eyebrow text-teal">Perspectives</p>
-            <h1 className="display mx-auto mt-5 max-w-4xl text-[2.6rem] sm:text-6xl lg:text-7xl">
-              Ideas behind the investments
-            </h1>
-            <AccentRule center className="mt-8" />
-            <p className="mx-auto mt-8 max-w-xl text-base leading-relaxed text-ink-200 sm:text-lg">
-              Perspectives on India&rsquo;s energy transition, straight from our newsletter.
-            </p>
-          </div>
+      {/* Dark hero, then the formats carousel on its own light band */}
+      <PageHero
+        art="flow"
+        eyebrow="Perspectives"
+        title="Ideas behind the investments"
+        intro={<>Perspectives on India&rsquo;s energy transition, straight from our newsletter.</>}
+      >
+        <div className="mt-10 flex flex-wrap gap-3">
+          <ButtonLink href={site.substackUrl} variant="solid">
+            Subscribe on Substack
+          </ButtonLink>
+          {site.youtubeUrl && (
+            <ButtonLink href={site.youtubeUrl} variant="outline">
+              Watch on YouTube
+            </ButtonLink>
+          )}
+        </div>
+      </PageHero>
 
-          <div className="mt-12 sm:mt-14">
-            <PerspectivesExplorer tabs={tabs} />
-          </div>
-
-          <div className="mt-12 flex flex-wrap justify-center gap-3">
-            <ButtonLink href={site.substackUrl}>Subscribe on Substack</ButtonLink>
-            {site.youtubeUrl && (
-              <ButtonLink href={site.youtubeUrl} variant="outline">
-                Watch on YouTube
-              </ButtonLink>
-            )}
-          </div>
+      {/* Clipped so the card row (which bleeds to the screen edge on phones) never causes sideways scrolling. */}
+      <section aria-label="Latest from Transition VC" className="overflow-x-clip border-b border-line bg-surface py-14 sm:py-20">
+        <div className="container-site">
+          <PerspectivesExplorer tabs={tabs} />
         </div>
       </section>
 
       {/* Full index — scannable and crawlable */}
-      <section className="border-t border-white/8 py-20 sm:py-28" aria-labelledby="index-heading">
+      <section className="py-20 sm:py-28" aria-labelledby="index-heading">
         <div className="container-site">
           <SectionHeading eyebrow="Index" title={<span id="index-heading">Everything we&rsquo;ve published</span>} />
 
           <div className="mt-14 grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
             <Reveal>
-              <h3 className="hud text-ink-400">From our Substack</h3>
+              <h3 className="eyebrow text-muted">From our Substack</h3>
               {essays.length ? (
-                <ol className="mt-4 border-t border-white/8">
-                  {essays.map((e, i) => (
-                    <li key={e.url} className="border-b border-white/8">
+                <ul className="mt-4 border-t border-line">
+                  {essays.map((e) => (
+                    <li key={e.url} className="border-b border-line">
                       <a
                         href={e.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group flex min-h-16 items-baseline gap-5 py-4"
                       >
-                        <span className="hud w-6 shrink-0 text-ink-400">{String(i + 1).padStart(2, "0")}</span>
                         <span className="flex-1">
-                          <span className="block font-serif font-light text-white transition-colors group-hover:text-teal sm:text-lg">
+                          <span className="block font-serif font-light text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
                             {e.title}
                           </span>
                           {(e.date || nameOf(e.company)) && (
-                            <span className="hud mt-1.5 block text-[0.6rem] text-ink-400">
+                            <span className="mt-1 block text-sm text-muted">
                               {[e.date && day(e.date), nameOf(e.company)].filter(Boolean).join(" · ")}
                             </span>
                           )}
                         </span>
                         <ArrowUpRight
-                          className="size-4 shrink-0 self-center text-ink-400 transition-colors group-hover:text-teal"
+                          className="size-4 shrink-0 self-center text-muted transition-colors group-hover:text-teal-ink"
                           aria-hidden
                         />
                         <span className="sr-only">(opens in a new tab)</span>
                       </a>
                     </li>
                   ))}
-                </ol>
+                </ul>
               ) : (
-                <p className="mt-4 border-t border-white/8 pt-5 text-ink-300">
+                <p className="mt-4 border-t border-line pt-5 text-muted">
                   Read every essay on{" "}
                   <a
                     href={site.substackUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white underline decoration-white/25 underline-offset-4 hover:decoration-teal"
+                    className="font-medium text-ink underline decoration-ink/25 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
                   >
                     our Substack
                   </a>
@@ -277,10 +268,10 @@ export default async function PerspectivesPage() {
 
               {reports.length > 0 && (
                 <>
-                  <h3 className="hud mt-14 text-ink-400">Reports &amp; publications</h3>
-                  <ul className="mt-4 border-t border-white/8">
+                  <h3 className="eyebrow mt-14 text-muted">Reports &amp; publications</h3>
+                  <ul className="mt-4 border-t border-line">
                     {reports.map((r) => (
-                      <li key={`${r.title}-${r.date}`} className="border-b border-white/8">
+                      <li key={`${r.title}-${r.date}`} className="border-b border-line">
                         <a
                           href={r.href ?? site.substackUrl}
                           target="_blank"
@@ -288,16 +279,16 @@ export default async function PerspectivesPage() {
                           className="group flex min-h-16 items-baseline justify-between gap-5 py-4"
                         >
                           <span>
-                            <span className="block font-serif font-light text-white transition-colors group-hover:text-teal sm:text-lg">
+                            <span className="block font-serif font-light text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
                               {r.title}
                             </span>
-                            <span className="hud mt-1.5 block text-[0.6rem] text-ink-400">
+                            <span className="mt-1 block text-sm text-muted">
                               {day(r.date)}
                               {r.isPdf && " · PDF"}
                             </span>
                           </span>
                           <ArrowUpRight
-                            className="size-4 shrink-0 self-center text-ink-400 transition-colors group-hover:text-teal"
+                            className="size-4 shrink-0 self-center text-muted transition-colors group-hover:text-teal-ink"
                             aria-hidden
                           />
                           <span className="sr-only">(opens in a new tab)</span>
@@ -310,15 +301,15 @@ export default async function PerspectivesPage() {
             </Reveal>
 
             <Reveal>
-              <h3 className="hud text-ink-400">In the news</h3>
-              <ul className="mt-4 border-t border-white/8">
+              <h3 className="eyebrow text-muted">In the news</h3>
+              <ul className="mt-4 border-t border-line">
                 {news.map((n) => (
-                  <li key={n.url} className="border-b border-white/8">
+                  <li key={n.url} className="border-b border-line">
                     <a href={n.url} target="_blank" rel="noopener noreferrer" className="group block py-5">
-                      <span className="hud block text-[0.6rem] text-ink-400">
+                      <span className="block text-sm text-muted">
                         {n.source} · <time dateTime={n.date}>{day(n.date)}</time>
                       </span>
-                      <span className="mt-2 block text-[0.95rem] leading-snug text-white transition-colors group-hover:text-teal">
+                      <span className="mt-1.5 block text-[0.95rem] leading-snug font-medium text-ink transition-colors group-hover:text-teal-ink">
                         {n.title}
                       </span>
                       <span className="sr-only">(opens in a new tab)</span>

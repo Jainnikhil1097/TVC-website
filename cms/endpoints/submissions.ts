@@ -9,12 +9,12 @@ import { intakeSchemas, validateFile } from "@/lib/schemas";
 //
 //   POST /api/submissions/upload-token  authorises one private browser→Blob upload (large decks)
 //   POST /api/submissions/intake        multipart/form-data from lib/forms.ts submitForm()
-//   GET  /api/submissions/:id/file      admin-only download of the attached deck / CV
+//   GET  /api/submissions/:id/file      admin-only download of the attached pitch deck
 //
 // Attachments are never public: with BLOB_READ_WRITE_TOKEN they go to Vercel Blob
 // as *private* blobs; without it (local dev) to .data/submissions/ (gitignored).
 
-const KINDS: FormKind[] = ["startup", "investor", "partner", "careers"];
+const KINDS: FormKind[] = ["startup", "investor", "partner"];
 const LOCAL_ROOT = path.join(process.cwd(), ".data");
 
 // ─── Rate limiting ───────────────────────────────────────────────────────────

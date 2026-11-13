@@ -1,7 +1,8 @@
 // Form constants and the single submission adapter used by every website form.
 // Safe to import from client components (no server-only code here).
+import { isStaticPreview } from "./base-path";
 
-export type FormKind = "startup" | "investor" | "partner" | "careers";
+export type FormKind = "startup" | "investor" | "partner";
 
 export type SubmitResult = { ok: true } | { ok: false; error: string };
 
@@ -33,7 +34,6 @@ export const maxUploadMb = 10;
 /** Which forms take an attachment, under which field name, and in which formats. */
 export const fileRules: Record<FormKind, { field: string; label: string; accept: string[] } | null> = {
   startup: { field: "deck", label: "pitch deck", accept: [".pdf", ".ppt", ".pptx"] },
-  careers: { field: "cv", label: "CV", accept: [".pdf", ".doc", ".docx"] },
   investor: null,
   partner: null,
 };
@@ -43,8 +43,6 @@ export const mimeTypes: Record<string, string> = {
   ".pdf": "application/pdf",
   ".ppt": "application/vnd.ms-powerpoint",
   ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-  ".doc": "application/msword",
-  ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 };
 
 export const extensionOf = (name: string) => "." + (name.split(".").pop() ?? "").toLowerCase();
@@ -55,6 +53,8 @@ export const honeypotField = "website";
 export const successMessage = "Thank you — your submission has been received. We'll be in touch.";
 
 const GENERIC_ERROR = "Something went wrong. Please try again, or email us directly.";
+const PREVIEW_ERROR =
+  "This is a preview of the new website, so forms are switched off. Please email us directly instead.";
 
 /**
  * Uploads an attachment straight from the browser to private Blob storage, so
@@ -85,6 +85,8 @@ async function directUpload(kind: FormKind, file: File, honeypot: string): Promi
  * inbox. NEXT_PUBLIC_FORMS_ENDPOINT can point elsewhere if needed.
  */
 export async function submitForm(kind: FormKind, data: FormData): Promise<SubmitResult> {
+  // The static preview (GitHub Pages) has no server to receive forms.
+  if (isStaticPreview) return { ok: false, error: PREVIEW_ERROR };
   const endpoint = process.env.NEXT_PUBLIC_FORMS_ENDPOINT || "/api/submissions/intake";
   data.set("formKind", kind);
 

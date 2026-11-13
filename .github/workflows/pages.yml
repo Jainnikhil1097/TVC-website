@@ -1,0 +1,62 @@
+# Publishes a static preview of the website to GitHub Pages on every push to main
+# (or on demand from the Actions tab). The pages use the starting content in
+# scripts/seed-data/ — there's no CMS on the preview, so edits made in /admin on
+# another copy of the site don't appear here. Forms are switched off.
+#
+# One-time setup: repo Settings → Pages → Source: "GitHub Actions".
+name: Website preview (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./.data/preview.db
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Load the starting content into a temporary database
+        run: mkdir -p .data && npm run seed
+
+      - name: Build the static pages
+        run: npm run build:pages
+        env:
+          # e.g. "/TVC-website" — the sub-folder GitHub Pages serves this repo from.
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

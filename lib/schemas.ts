@@ -41,7 +41,6 @@ export const textFields = {
         z.maxLength(2000, "Please keep this under 2,000 characters.")
       ),
   },
-  careers: contactFields,
 } satisfies Record<FormKind, Record<string, z.ZodMiniType>>;
 
 /** The hidden anti-spam field, passed through so the server can check it. */
@@ -58,7 +57,6 @@ export const intakeSchemas = {
   startup: z.object(textFields.startup),
   investor: z.object(textFields.investor),
   partner: z.object(textFields.partner),
-  careers: z.object(textFields.careers),
 };
 
 type FileLike = { name: string; size: number };

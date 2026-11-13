@@ -50,7 +50,6 @@ export const site = {
     { label: "Perspectives", href: "/perspectives" },
     { label: "Impact", href: "/impact" },
     { label: "GIFT City", href: "/gift-city" },
-    { label: "Careers", href: "/careers" },
     { label: "Contact", href: "/contact" },
   ] satisfies Link[],
 } as const;

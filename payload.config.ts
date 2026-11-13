@@ -12,12 +12,13 @@ import { Media } from "./cms/collections/Media";
 import { TeamMembers } from "./cms/collections/TeamMembers";
 import { PortfolioCompanies } from "./cms/collections/PortfolioCompanies";
 import { Funds } from "./cms/collections/Funds";
-import { Events, Jobs, News, Reports } from "./cms/collections/Content";
+import { Events, News, Reports } from "./cms/collections/Content";
 import { Submissions } from "./cms/collections/Submissions";
 import {
   Announcement,
   FundMetrics,
   GiftCityPage,
+  HomePage,
   HomeSectors,
   ImpactPage,
   PageSeo,
@@ -102,13 +103,12 @@ export default buildConfig({
     News,
     Events,
     Reports,
-    Jobs,
     Funds,
     Submissions,
     Media,
     Users,
   ],
-  globals: [SiteSettings, Announcement, PageSeo, HomeSectors, ImpactPage, GiftCityPage, FundMetrics],
+  globals: [SiteSettings, Announcement, PageSeo, HomePage, HomeSectors, ImpactPage, GiftCityPage, FundMetrics],
   db: usingSqlite
     ? sqliteAdapter({ client: { url: databaseUrl }, push: true })
     : postgresAdapter({

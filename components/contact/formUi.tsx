@@ -10,7 +10,7 @@ export function a11y(id: string, error?: string) {
 }
 
 export const fileInputClass =
-  "py-2.5 file:mr-4 file:min-h-9 file:cursor-pointer file:rounded-full file:border-0 file:bg-white/10 file:px-4 file:text-sm file:font-medium file:text-white hover:file:bg-white/15";
+  "py-2.5 file:mr-4 file:min-h-9 file:cursor-pointer file:rounded-full file:border-0 file:bg-surface file:px-4 file:text-sm file:font-medium file:text-ink hover:file:bg-line";
 
 /**
  * Anti-spam trap: invisible to people and screen readers, but naive bots fill it

@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { anyone, loggedIn } from "../access";
-import { orderField, urlField } from "../fields";
+import { urlField } from "../fields";
 import { revalidateHooks } from "../hooks/revalidate";
 import { portfolioSectors } from "@/lib/taxonomy";
 
@@ -102,47 +102,3 @@ export const Reports: CollectionConfig = {
   ],
 };
 
-export const Jobs: CollectionConfig = {
-  ...common,
-  slug: "jobs",
-  labels: { singular: "Job", plural: "Jobs" },
-  admin: {
-    useAsTitle: "title",
-    defaultColumns: ["title", "company", "open", "updatedAt"],
-    group: "Content",
-    description: "Open roles at Transition VC and portfolio companies, shown on the Careers page.",
-    preview: () => "/careers",
-  },
-  defaultSort: "order",
-  fields: [
-    { name: "title", label: "Job title", type: "text", required: true },
-    {
-      name: "company",
-      label: "Company",
-      type: "relationship",
-      relationTo: "companies",
-      admin: { description: "Leave empty for a Transition VC role." },
-    },
-    {
-      type: "row",
-      fields: [
-        { name: "function", label: "Function", type: "text", admin: { placeholder: "Investments" } },
-        { name: "experience", label: "Experience", type: "text", admin: { placeholder: "8–12 years" } },
-      ],
-    },
-    { name: "location", label: "Location", type: "text", defaultValue: "Bengaluru · On-site" },
-    urlField({
-      name: "applyUrl",
-      label: "Application link",
-      admin: { description: "Where candidates apply. If empty, the button opens an email to the info address." },
-    }),
-    {
-      name: "open",
-      label: "Accepting applications",
-      type: "checkbox",
-      defaultValue: true,
-      admin: { position: "sidebar", description: "Untick to hide the role once it's filled." },
-    },
-    orderField,
-  ],
-};

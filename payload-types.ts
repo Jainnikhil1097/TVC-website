@@ -72,7 +72,6 @@ export interface Config {
     news: News;
     events: Event;
     reports: Report;
-    jobs: Job;
     funds: Fund;
     submissions: Submission;
     media: Media;
@@ -89,7 +88,6 @@ export interface Config {
     news: NewsSelect<false> | NewsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     reports: ReportsSelect<false> | ReportsSelect<true>;
-    jobs: JobsSelect<false> | JobsSelect<true>;
     funds: FundsSelect<false> | FundsSelect<true>;
     submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -107,6 +105,7 @@ export interface Config {
     site: Site;
     announcement: Announcement;
     'page-seo': PageSeo;
+    'home-page': HomePage;
     'home-sectors': HomeSector;
     'impact-page': ImpactPage;
     'gift-city-page': GiftCityPage;
@@ -116,6 +115,7 @@ export interface Config {
     site: SiteSelect<false> | SiteSelect<true>;
     announcement: AnnouncementSelect<false> | AnnouncementSelect<true>;
     'page-seo': PageSeoSelect<false> | PageSeoSelect<true>;
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
     'home-sectors': HomeSectorsSelect<false> | HomeSectorsSelect<true>;
     'impact-page': ImpactPageSelect<false> | ImpactPageSelect<true>;
     'gift-city-page': GiftCityPageSelect<false> | GiftCityPageSelect<true>;
@@ -171,6 +171,10 @@ export interface Company {
    * SVG or transparent PNG works best. The company name is shown until a logo is added.
    */
   logo?: (number | null) | Media;
+  /**
+   * A product or team photo, shown when the company is featured on the home page (landscape, at least 1600 px wide).
+   */
+  coverImage?: (number | null) | Media;
   founders?:
     | {
         name: string;
@@ -200,7 +204,7 @@ export interface Company {
    */
   slug?: string | null;
   /**
-   * Featured companies appear first in the home page strip.
+   * Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too.
    */
   featured?: boolean | null;
   /**
@@ -355,37 +359,6 @@ export interface Report {
   createdAt: string;
 }
 /**
- * Open roles at Transition VC and portfolio companies, shown on the Careers page.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "jobs".
- */
-export interface Job {
-  id: number;
-  title: string;
-  /**
-   * Leave empty for a Transition VC role.
-   */
-  company?: (number | null) | Company;
-  function?: string | null;
-  experience?: string | null;
-  location?: string | null;
-  /**
-   * Where candidates apply. If empty, the button opens an email to the info address.
-   */
-  applyUrl?: string | null;
-  /**
-   * Untick to hide the role once it's filled.
-   */
-  open?: boolean | null;
-  /**
-   * Lower numbers appear first. Leave at 100 to add to the end.
-   */
-  order?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
  * Each fund with its size, status and SEBI registration. Only Admins can change this — these are regulated disclosures.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -417,7 +390,7 @@ export interface Fund {
 export interface Submission {
   id: number;
   status?: ('new' | 'reviewed' | 'archived') | null;
-  type: 'startup' | 'investor' | 'partner' | 'careers';
+  type: 'startup' | 'investor' | 'partner';
   name: string;
   email: string;
   phone?: string | null;
@@ -508,10 +481,6 @@ export interface PayloadLockedDocument {
         value: number | Report;
       } | null)
     | ({
-        relationTo: 'jobs';
-        value: number | Job;
-      } | null)
-    | ({
         relationTo: 'funds';
         value: number | Fund;
       } | null)
@@ -581,6 +550,7 @@ export interface CompaniesSelect<T extends boolean = true> {
   yearInvested?: T;
   website?: T;
   logo?: T;
+  coverImage?: T;
   founders?:
     | T
     | {
@@ -661,22 +631,6 @@ export interface ReportsSelect<T extends boolean = true> {
   externalUrl?: T;
   companies?: T;
   sector?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "jobs_select".
- */
-export interface JobsSelect<T extends boolean = true> {
-  title?: T;
-  company?: T;
-  function?: T;
-  experience?: T;
-  location?: T;
-  applyUrl?: T;
-  open?: T;
-  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -945,7 +899,7 @@ export interface PageSeo {
     description?: string | null;
     image?: (number | null) | Media;
   };
-  careers?: {
+  funds?: {
     title?: string | null;
     description?: string | null;
     image?: (number | null) | Media;
@@ -955,6 +909,54 @@ export interface PageSeo {
     description?: string | null;
     image?: (number | null) | Media;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The positioning line, "Why founders choose us" and the founder FAQ.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: number;
+  /**
+   * Shown above the headline figures, e.g. "India's first energy-transition venture fund".
+   */
+  positioning: string;
+  /**
+   * 4–5 works best. Keep each to one short sentence.
+   */
+  pillars?:
+    | {
+        title: string;
+        icon:
+          | 'engineering'
+          | 'research'
+          | 'india'
+          | 'capital'
+          | 'long-term'
+          | 'partnership'
+          | 'network'
+          | 'speed'
+          | 'industry'
+          | 'energy'
+          | 'growth'
+          | 'focus';
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Answers founders look for: cheque size, stages, sectors, how long decisions take, how to pitch.
+   */
+  faq?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1052,6 +1054,10 @@ export interface FundMetric {
         value: string;
         label: string;
         note?: string | null;
+        /**
+         * Pick 3–4 headline figures for the home page. All figures appear on Funds.
+         */
+        showOnHome?: boolean | null;
         id?: string | null;
       }[]
     | null;
@@ -1162,7 +1168,7 @@ export interface PageSeoSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  careers?:
+  funds?:
     | T
     | {
         title?: T;
@@ -1175,6 +1181,31 @@ export interface PageSeoSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  positioning?: T;
+  pillars?:
+    | T
+    | {
+        title?: T;
+        icon?: T;
+        text?: T;
+        id?: T;
+      };
+  faq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1256,6 +1287,7 @@ export interface FundMetricsSelect<T extends boolean = true> {
         value?: T;
         label?: T;
         note?: T;
+        showOnHome?: T;
         id?: T;
       };
   asOf?: T;

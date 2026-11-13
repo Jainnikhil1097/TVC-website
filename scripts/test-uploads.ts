@@ -16,8 +16,8 @@ assert.equal(ok.addRandomSuffix, true);
 assert.ok(ok.allowedContentTypes.includes("application/pdf"));
 assert.ok(ok.validUntil > Date.now());
 
-// CVs accept .docx; decks don't.
-await authoriseUpload("submissions/cv.docx", payload({ kind: "careers" }));
+// Decks accept PowerPoint too, but not Word documents.
+await authoriseUpload("submissions/deck.pptx", payload({ kind: "startup" }));
 await assert.rejects(authoriseUpload("submissions/deck.docx", payload({ kind: "startup" })), /Accepted formats/);
 
 // Rejections: wrong type, forms without attachments, spam trap filled, path tampering, junk payload.

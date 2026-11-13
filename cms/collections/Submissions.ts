@@ -39,7 +39,6 @@ export const Submissions: CollectionConfig = {
         { label: "Startup / founder", value: "startup" },
         { label: "Investor", value: "investor" },
         { label: "Ecosystem partner", value: "partner" },
-        { label: "Careers", value: "careers" },
       ],
       admin: { readOnly: true },
     },

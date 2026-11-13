@@ -15,7 +15,6 @@ import type {
   Person,
   PortfolioSectorId,
   Report,
-  Role,
   Video,
 } from "./types";
 import type { PageKey } from "./taxonomy";
@@ -76,6 +75,7 @@ function mapCompany(doc: CmsCompany): Company {
     exitNote: orUndefined(doc.exitNote),
     featured: Boolean(doc.featured),
     logo: image(doc.logo, "card"),
+    coverImage: image(doc.coverImage, "card"),
     founders: doc.founders?.map((f) => ({
       name: f.name,
       title: orUndefined(f.title),
@@ -128,6 +128,7 @@ export const getMetrics = cache(async () => {
     value: m.value,
     label: m.label,
     note: orUndefined(m.note),
+    showOnHome: Boolean(m.showOnHome),
   }));
   return { items, asOf: orUndefined(doc.asOf), disclaimer: doc.disclaimer ?? "" };
 });
@@ -155,6 +156,17 @@ export const getPageSeo = cache(async (page: PageKey) => {
     image: image(entry?.image, "card"),
   };
 });
+
+export const getHomePage = cache(async () => {
+  const doc = await (await payload()).findGlobal({ slug: "home-page" });
+  return {
+    positioning: doc.positioning ?? "",
+    pillars: (doc.pillars ?? []).map((p) => ({ title: p.title, text: p.text, icon: p.icon })),
+    faq: (doc.faq ?? []).map((f) => ({ question: f.question, answer: f.answer })),
+  };
+});
+
+export type HomePageContent = Awaited<ReturnType<typeof getHomePage>>;
 
 export const getInvestmentSectors = cache(async () => {
   const doc = await (await payload()).findGlobal({ slug: "home-sectors" });
@@ -287,28 +299,6 @@ export const getReports = cache(async (): Promise<Report[]> => {
       companies: (r.companies ?? [])
         .filter((c): c is CmsCompany => typeof c !== "number")
         .map((c) => c.slug ?? String(c.id)),
-    };
-  });
-});
-
-export const getJobs = cache(async (): Promise<Role[]> => {
-  const { docs } = await (await payload()).find({
-    collection: "jobs",
-    where: { open: { not_equals: false } },
-    sort: "order",
-    limit: 200,
-    depth: 1,
-  });
-  return docs.map((j) => {
-    const company = j.company && typeof j.company !== "number" ? j.company : undefined;
-    return {
-      title: j.title,
-      company: company?.name,
-      companySlug: company?.slug ?? undefined,
-      function: j.function ?? "",
-      experience: j.experience ?? "",
-      location: j.location ?? "",
-      applyUrl: orUndefined(j.applyUrl),
     };
   });
 });

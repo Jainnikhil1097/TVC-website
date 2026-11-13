@@ -10,7 +10,7 @@ export function Logo({ className }: { className?: string }) {
       <span aria-hidden className="font-serif text-[1.05rem] font-normal tracking-[0.14em] uppercase">
         Transition
       </span>
-      <span aria-hidden className="text-[0.95rem] font-bold tracking-[0.1em] text-teal">
+      <span aria-hidden className="text-[0.95rem] font-bold tracking-[0.1em] text-teal-ink in-data-[theme=dark]:text-teal">
         VC
       </span>
     </span>

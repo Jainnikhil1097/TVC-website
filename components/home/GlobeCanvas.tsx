@@ -3,11 +3,38 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import { asset } from "@/lib/base-path";
 
 // India's centroid (approx). The globe is oriented so this faces the camera.
 const INDIA_LAT = 22;
 const INDIA_LON = 80;
+// Where to aim at the end of the zoom so India's full outline (incl. the
+// northeast) is centred on screen — measured by projecting India's dots.
+const INDIA_FRAME_LON = 82.5;
+const INDIA_FRAME_LAT = 22.5;
 const DEG = Math.PI / 180;
+
+// Zoom gain by screen aspect (width / height) that fits India to ~85% of the
+// limiting side; measured, then interpolated. Beyond square, height limits it.
+const ZOOM_BY_ASPECT: [number, number][] = [
+  [0.4, 0.22],
+  [0.46, 0.34],
+  [0.56, 0.5],
+  [0.69, 0.69],
+  [0.8, 0.81],
+  [1, 0.9],
+];
+function zoomGainFor(aspect: number) {
+  if (aspect <= ZOOM_BY_ASPECT[0][0]) return ZOOM_BY_ASPECT[0][1];
+  for (let i = 1; i < ZOOM_BY_ASPECT.length; i++) {
+    const [a1, g1] = ZOOM_BY_ASPECT[i];
+    if (aspect <= a1) {
+      const [a0, g0] = ZOOM_BY_ASPECT[i - 1];
+      return g0 + ((aspect - a0) / (a1 - a0)) * (g1 - g0);
+    }
+  }
+  return ZOOM_BY_ASPECT[ZOOM_BY_ASPECT.length - 1][1];
+}
 
 export type GlobeState = {
   /** 0 → hero, 0.5 → globe beside the About text, 1 → zoomed into India. */
@@ -19,7 +46,7 @@ export type GlobeState = {
 type Points = { positions: Float32Array; india: Float32Array; seeds: Float32Array };
 
 async function loadPoints(decimate: number): Promise<Points> {
-  const res = await fetch("/globe/points.bin");
+  const res = await fetch(asset("/globe/points.bin"));
   const buf = await res.arrayBuffer();
   const view = new DataView(buf);
   const globeCount = view.getUint32(0, true);
@@ -183,16 +210,20 @@ function Globe({ points, state }: { points: Points; state: MutableRefObject<Glob
     const aspect = size.width / size.height;
     const heroScale = aspect < 1 ? 1.05 : 1.35;
 
-    // Position: rise from the bottom → slide right → recentre for the zoom.
+    // Position: rise from the bottom to the centre, then zoom.
     const x = THREE.MathUtils.lerp(0, state.current.sideOffset, toSide) * (1 - toIndia);
-    const y = THREE.MathUtils.lerp(-1.55 * heroScale, 0, toSide) + toIndia * 0.15;
+    const y = THREE.MathUtils.lerp(-1.55 * heroScale, 0, toSide);
     g.position.set(x, y, 0);
-    g.scale.setScalar(THREE.MathUtils.lerp(heroScale, 1, toSide) * (1 + toIndia * 1.9));
+    // Zoom so the whole of India ends up filling ~85% of the screen's limiting
+    // side, whatever its shape (gentle on portrait phones, deeper on wide screens).
+    g.scale.setScalar(THREE.MathUtils.lerp(heroScale, 1, toSide) * (1 + toIndia * zoomGainFor(aspect)));
 
-    // Gentle drift in the hero; settle exactly on India for the zoom.
-    const drift = Math.sin(performance.now() / 9000) * 0.12 * (1 - toIndia);
-    s.rotation.y = -INDIA_LON * DEG + drift;
-    g.rotation.x = INDIA_LAT * DEG * (0.35 + 0.65 * toSide) + toIndia * 0.08;
+    // Gentle drift in the hero (visible on phones too, ~±12° over ~45s); during the
+    // zoom it settles on India's visual centre so the country sits mid-screen.
+    const drift = Math.sin(performance.now() / 7000) * 0.22 * (1 - toIndia);
+    s.rotation.y = -THREE.MathUtils.lerp(INDIA_LON, INDIA_FRAME_LON, toIndia) * DEG + drift;
+    g.rotation.x =
+      THREE.MathUtils.lerp(INDIA_LAT * (0.35 + 0.65 * toSide), INDIA_FRAME_LAT, toIndia) * DEG;
 
     const uniforms = dots.current?.material.uniforms;
     if (uniforms) {

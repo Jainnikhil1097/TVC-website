@@ -44,7 +44,7 @@ export const pageKeys = [
   { key: "perspectives", label: "Perspectives", path: "/perspectives" },
   { key: "impact", label: "Impact", path: "/impact" },
   { key: "giftCity", label: "GIFT City", path: "/gift-city" },
-  { key: "careers", label: "Careers", path: "/careers" },
+  { key: "funds", label: "Funds", path: "/funds" },
   { key: "contact", label: "Contact", path: "/contact" },
 ] as const;
 

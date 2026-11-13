@@ -42,7 +42,7 @@ export function ContactTabs({ initial = "startup" }: { initial?: EnquiryType }) 
         role="tablist"
         aria-label="Enquiry type"
         onKeyDown={onKeyDown}
-        className="no-scrollbar -mx-1 flex gap-1 overflow-x-auto rounded-full border border-white/10 bg-white/[0.03] p-1"
+        className="no-scrollbar -mx-1 flex gap-1 overflow-x-auto rounded-full border border-line bg-surface p-1"
       >
         {enquiryTypes.map((t, i) => {
           const selected = t.id === active;
@@ -60,8 +60,8 @@ export function ContactTabs({ initial = "startup" }: { initial?: EnquiryType }) 
               tabIndex={selected ? 0 : -1}
               onClick={() => setActive(t.id)}
               className={cn(
-                "min-h-11 flex-1 rounded-full px-4 text-[0.8rem] font-semibold whitespace-nowrap transition-colors",
-                selected ? "bg-white text-ink-950" : "text-ink-200 hover:text-white"
+                "min-h-11 flex-1 rounded-full px-4 text-[0.85rem] font-semibold whitespace-nowrap transition-colors",
+                selected ? "bg-ink text-white" : "text-muted hover:text-ink"
               )}
             >
               {t.label}
@@ -81,7 +81,7 @@ export function ContactTabs({ initial = "startup" }: { initial?: EnquiryType }) 
             hidden={t.id !== active}
             className="pt-7"
           >
-            <p className="mb-6 text-sm leading-relaxed text-ink-300">{t.blurb}</p>
+            <p className="mb-6 text-sm leading-relaxed text-muted">{t.blurb}</p>
             <Form />
           </div>
         );

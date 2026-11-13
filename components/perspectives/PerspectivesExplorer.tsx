@@ -2,10 +2,10 @@
 
 import { useRef, useState, type KeyboardEvent } from "react";
 import type { PerspectiveTab } from "./types";
-import { CurvedCarousel } from "./CurvedCarousel";
+import { CardRow } from "./CardRow";
 import { cn } from "@/lib/utils";
 
-/** Accessible tablist (Substack / News / Events / Reports / YouTube), each panel a curved carousel. */
+/** Accessible tablist (Substack / News / Events / Reports / YouTube), each panel a left-aligned row of cards. */
 export function PerspectivesExplorer({ tabs }: { tabs: PerspectiveTab[] }) {
   const [selected, setSelected] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -27,7 +27,7 @@ export function PerspectivesExplorer({ tabs }: { tabs: PerspectiveTab[] }) {
         role="tablist"
         aria-label="Perspectives by format"
         onKeyDown={onKeyDown}
-        className="no-scrollbar mx-auto flex w-fit max-w-full gap-1 overflow-x-auto rounded-full border border-white/10 bg-ink-950/40 p-1 backdrop-blur-md"
+        className="no-scrollbar flex max-w-full gap-2 overflow-x-auto border-b border-line"
       >
         {tabs.map((t, i) => {
           const active = i === selected;
@@ -45,15 +45,13 @@ export function PerspectivesExplorer({ tabs }: { tabs: PerspectiveTab[] }) {
               tabIndex={active ? 0 : -1}
               onClick={() => setSelected(i)}
               className={cn(
-                "min-h-11 shrink-0 rounded-full px-4 text-[0.72rem] sm:px-5 sm:text-[0.78rem] font-semibold tracking-[0.08em] uppercase transition-colors duration-300",
-                active ? "bg-white text-ink-950" : "text-ink-200 hover:text-white"
+                "relative -mb-px min-h-12 shrink-0 border-b-2 px-3 text-[0.95rem] font-medium transition-colors duration-300 sm:px-4",
+                active ? "border-teal-ink text-ink" : "border-transparent text-muted hover:text-ink"
               )}
             >
               {t.label}
               {!t.placeholder && (
-                <span className={cn("ml-2 font-mono text-[0.65rem]", active ? "text-ink-600" : "text-ink-400")}>
-                  {t.items.length}
-                </span>
+                <span className="ml-1.5 text-xs text-muted tabular-nums">{t.items.length}</span>
               )}
             </button>
           );
@@ -64,10 +62,10 @@ export function PerspectivesExplorer({ tabs }: { tabs: PerspectiveTab[] }) {
         id={`panel-${tab.id}`}
         role="tabpanel"
         aria-labelledby={`tab-${tab.id}`}
-        className="mt-12 sm:mt-14"
+        className="mt-10 sm:mt-12"
       >
         {/* Keyed so each tab starts at its first card. */}
-        <CurvedCarousel key={tab.id} label={tab.label} items={tab.items} />
+        <CardRow key={tab.id} label={tab.label} items={tab.items} />
       </div>
     </div>
   );

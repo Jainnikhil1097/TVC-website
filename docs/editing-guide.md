@@ -1,6 +1,6 @@
 # Editing the Transition VC website
 
-Everything on the website — team, portfolio, news, jobs, events, reports, fund figures and page
+Everything on the website — team, portfolio, news, events, reports, fund figures and page
 text — is edited in the admin at **`/admin`** (for example
 `https://www.transitionventurecapital.com/admin`). No code is needed. Changes appear on the live
 site within a few seconds of saving.
@@ -19,7 +19,7 @@ you don't need to add them here.
 **Roles**
 - **Editor** — can change all website content.
 - **Admin** — can also change fund figures, funds and SEBI details, read website enquiries
-  (pitch decks, CVs) and manage users.
+  (pitch decks) and manage users.
 
 ---
 
@@ -31,9 +31,10 @@ you don't need to add them here.
    (SVG or transparent PNG is best).
 3. **Profile** tab (optional): founders, "Why we invested", the Substack essay about the company
    (paste its link — the essay and company are then linked automatically), and a video link.
-4. Click **Publish**. It appears on the Portfolio page, the map and the home page strip.
+4. Click **Publish**. It appears on the Portfolio page and the map.
    - Use **Save draft** instead to prepare it without it going live.
-   - Tick **Feature on home page** (right-hand side) to show it first on the home page.
+   - Tick **Feature on home page** (right-hand side) to show it in the home page's featured
+     portfolio section — add a **Cover image** (Basics tab) too. 3–6 featured companies works best.
 
 ### Mark a company as exited or acquired
 Open the company → **Status** tab → choose *Exited* or *Acquired*, add the year and a short note
@@ -57,12 +58,20 @@ items show first on Perspectives and the home page.
 - **Content → Reports & publications**: title, date, summary, cover image and either a PDF upload
   or an external link.
 
-### Post or close a job
-**Content → Jobs → Create new**. Leave **Company** empty for a Transition VC role, or pick a
-portfolio company. When the role is filled, untick **Accepting applications**.
+### Edit the home page
+**Pages → Home page** has three tabs:
+- **Positioning** — the line shown above the headline figures.
+- **Why founders choose us** — 4–5 short pillars, each with a title, one sentence and an icon.
+- **Founder FAQ** — questions and answers for founders (cheque size, stages, how to pitch…).
+  Good additions once agreed internally: how long a decision usually takes, and what to include
+  in a pitch deck.
+
+The headline figures come from **Fund metrics** (Admins tick *Show on home page* on 3–4 of them).
+The "Where we invest" sectors are under **Pages → Home: where we invest**.
 
 ### Change fund figures, funds or SEBI details *(Admins only)*
-- **Fund information → Fund metrics**: the track-record figures and their "as of" date.
+- **Fund information → Fund metrics**: the track-record figures and their "as of" date. Tick
+  *Show on home page* on the 3–4 figures to feature on the home page; all of them appear on Funds.
 - **Fund information → Funds**: each fund's size, status, description and SEBI registration
   (shown in the site footer).
 
@@ -81,7 +90,7 @@ link), and optionally set start/end dates. It appears at the top of every page.
 
 ### Read website enquiries *(Admins only)*
 **Inbox → Enquiries** lists everything sent through the website forms. Open one to read it and
-download any pitch deck or CV. Set **Status** to *Reviewed* or *Archived* to keep the inbox tidy.
+download any pitch deck. Set **Status** to *Reviewed* or *Archived* to keep the inbox tidy.
 
 ---
 

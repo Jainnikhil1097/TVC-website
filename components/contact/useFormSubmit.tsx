@@ -36,10 +36,10 @@ export function useFormSubmit(kind: FormKind) {
 
 export function FormSuccess({ onReset }: { onReset: () => void }) {
   return (
-    <div role="status" className="rounded-2xl border border-teal/25 bg-teal/[0.06] p-6 sm:p-8">
-      <CheckCircle2 className="size-7 text-teal" aria-hidden />
-      <p className="mt-4 text-lg text-white">{successMessage}</p>
-      <Button variant="outline" className="mt-6" onClick={onReset}>
+    <div role="status" className="rounded-2xl border border-teal-ink/25 bg-teal-ink/[0.05] p-6 sm:p-8">
+      <CheckCircle2 className="size-7 text-teal-ink" aria-hidden />
+      <p className="mt-4 text-lg text-ink">{successMessage}</p>
+      <Button variant="secondary" className="mt-6" onClick={onReset}>
         Send another
       </Button>
     </div>
@@ -52,12 +52,12 @@ export function SubmitRow({ status, label = "Submit" }: { status: Status; label?
     <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
       <div aria-live="polite" className="text-sm">
         {status.state === "error" && (
-          <p role="alert" className="text-red-300">
+          <p role="alert" className="text-red-700">
             {status.message}
           </p>
         )}
       </div>
-      <Button type="submit" disabled={sending} aria-disabled={sending} className="w-full sm:w-auto sm:min-w-40">
+      <Button type="submit" variant="primary" disabled={sending} aria-disabled={sending} className="w-full sm:w-auto sm:min-w-40">
         {sending ? "Sending…" : label}
       </Button>
     </div>

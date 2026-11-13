@@ -37,24 +37,27 @@ export default async function PortfolioPage() {
   return (
     <>
       <PageHero
+        art="blueprint"
         eyebrow="Portfolio"
         title="The companies engineering India's energy future"
-        intro="If you're building in the energy space, we want to hear from you!"
+        intro="Engineering-led companies we back across India's energy transition. Building in energy? We'd like to hear from you."
       >
         <div className="mt-10 flex flex-col gap-10 sm:flex-row sm:items-end sm:justify-between">
-          <ButtonLink href="/contact?type=startup">Pitch to us</ButtonLink>
+          <ButtonLink href="/contact?type=startup" variant="solid">
+            Pitch to us
+          </ButtonLink>
           <dl className="grid grid-cols-3 gap-6 sm:gap-10">
             {stats.map((s) => (
               <div key={s.label} className="flex flex-col-reverse">
-                <dt className="eyebrow mt-2 text-ink-400">{s.label}</dt>
-                <dd className="display text-2xl sm:text-3xl">{s.value}</dd>
+                <dt className="eyebrow mt-2 text-ink-300">{s.label}</dt>
+                <dd className="display text-2xl text-white sm:text-3xl">{s.value}</dd>
               </div>
             ))}
           </dl>
         </div>
       </PageHero>
 
-      <section aria-label="Portfolio companies" className="pb-24 sm:pb-32">
+      <section aria-label="Portfolio companies" className="pt-12 pb-24 sm:pt-16 sm:pb-32">
         <Reveal className="container-site">
           <PortfolioExplorer companies={companies} essays={essayFor} />
         </Reveal>
