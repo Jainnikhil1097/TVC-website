@@ -26,7 +26,7 @@ export default async function ContactPage() {
       <PageHero art="dots" eyebrow="Contact" title="Get in touch" intro={contactIntro} />
 
       <section className="container-site grid gap-10 pt-12 pb-24 sm:pt-16 lg:grid-cols-[1.2fr_1fr] lg:gap-14">
-        <Reveal className="rounded-3xl border border-line bg-white p-5 shadow-[0_8px_40px_rgb(11_22_38/0.05)] sm:p-10">
+        <Reveal className="rounded-3xl border border-line bg-white p-5 shadow-[0_8px_40px_rgb(10_30_63/0.05)] sm:p-10">
           <h2 className="display mb-8 text-3xl text-ink sm:text-4xl">Send us a message</h2>
           {/* Static prerender shows the default tab; ?type= selects another once hydrated. */}
           <Suspense fallback={<ContactTabs />}>

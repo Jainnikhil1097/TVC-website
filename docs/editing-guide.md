@@ -41,9 +41,17 @@ Open the company → **Status** tab → choose *Exited* or *Acquired*, add the y
 (e.g. "Acquired by …") → **Publish**. It gets a badge and is no longer counted as an active company.
 
 ### Add or update a team member
-**Content → Team → Create new** (or open an existing person). Choose their section (Founding,
-Executive, or Sector Experts & Advisors), add a portrait photo, job title and LinkedIn link, then
-**Publish**. To remove someone without deleting them, untick **Show on website**.
+**Content → Team → Create new** (or open an existing person). Choose their section (Founding
+Team, Investments, Investor Relations, Capital Formation, Portfolio Investments, Marketing &
+Engagements, Finance, Human Resources, or Sector Experts & Advisors), add a portrait photo, job
+title and LinkedIn link, then **Publish**. To remove someone without deleting them, untick
+**Show on website**.
+
+*Photos:* waist-up, 4:5 (ideally 1200 × 1500 px), on the same light studio background as the
+others, so the grid looks even. The Founding Team appears large at the top of the team section,
+with their **Short bio**; everyone else appears in a grid under their section.
+
+*Team photo:* the group photo above the team is under **Pages → About page**.
 
 *Order:* each entry has a **Display order** number — lower numbers appear first. Use gaps
 (10, 20, 30…) so you can slot people in between later.
@@ -68,6 +76,10 @@ items show first on Perspectives and the home page.
 
 The headline figures come from **Fund metrics** (Admins tick *Show on home page* on 3–4 of them).
 The "Where we invest" sectors are under **Pages → Home: where we invest**.
+Those sectors also drive the top of the home page: the last word of the headline cycles through
+the sector names, and the card beside it shows a company from that sector (tick *Feature on home
+page* on a company to make it the one shown; otherwise the first in that sector is used). For a
+company to appear, link its sector under *Portfolio sector* on the "Where we invest" entry.
 
 ### Change fund figures, funds or SEBI details *(Admins only)*
 - **Fund information → Fund metrics**: the track-record figures and their "as of" date. Tick

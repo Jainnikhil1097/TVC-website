@@ -26,6 +26,8 @@ The first account created at `/admin` automatically becomes an **Admin**.
 | `npm run check` | Lint + type-check + build — run before every commit |
 | `npm test` | Feed-parser, upload-authorisation and enquiry-intake tests (uses the local database) |
 | `npm run seed` | Imports the original content (`scripts/seed-data/`) into the CMS. Safe to re-run: skips collections and page settings that already have content; `-- --reset` wipes content (never users) first |
+| `npm run team:photos -- "<folder>"` | Turns the photographer's originals into web-sized team portraits in `scripts/seed-data/team-photos/` (crop fixes in `crops.json`; `--sheet` writes a contact sheet to /tmp) |
+| `npm run team:import` | Updates the CMS team from `scripts/seed-data/team.ts` and uploads the photos. Safe to re-run; hides (never deletes) people no longer listed |
 | `npm run generate:types` | Regenerates `payload-types.ts` after changing collections/globals |
 | `npm run generate:importmap` | Regenerates the admin import map after adding admin components |
 | `npm run migrate:create <name>` | Creates a Postgres migration after changing collections/globals (commit it) |

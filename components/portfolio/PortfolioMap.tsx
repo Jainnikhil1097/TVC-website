@@ -37,8 +37,8 @@ type PortfolioMapProps = {
 // ink as the page heroes and the home globe.
 const INK = "#d6e4f0"; // line colour
 const ACCENT = "#0ed5c2";
-const PAPER = "#0b1626"; // map background
-const TOP = "#13263f"; // tower roofs: a lighter navy so towers read as solid volumes
+const PAPER = "#0a1e3f"; // map background
+const TOP = "#163463"; // tower roofs: a lighter navy so towers read as solid volumes
 
 // Scoped to the map SVG: hairline strokes at any scale, and a slow "current" along the transmission line.
 const mapCss = `
@@ -371,8 +371,8 @@ export function PortfolioMap({
                 className={cn(
                   "group absolute -translate-y-full origin-bottom-left rounded-lg border px-2.5 py-1.5 text-left whitespace-nowrap",
                   "transition-[opacity,border-color,background-color,box-shadow,scale] duration-300 ease-out-quart motion-reduce:transition-none",
-                  "border-white/15 bg-[#0f1d31]/90 shadow-[0_2px_12px_rgb(0_0_0/0.25)] backdrop-blur-sm hover:border-teal/60",
-                  "data-[active]:scale-[1.06] data-[active]:border-teal data-[active]:bg-[#0f1d31] data-[active]:shadow-[0_14px_36px_rgb(0_0_0/0.4),0_0_0_1px_rgb(14_213_194/0.25)] motion-reduce:data-[active]:scale-100",
+                  "border-white/15 bg-[#11284f]/90 shadow-[0_2px_12px_rgb(0_0_0/0.25)] backdrop-blur-sm hover:border-teal/60",
+                  "data-[active]:scale-[1.06] data-[active]:border-teal data-[active]:bg-[#11284f] data-[active]:shadow-[0_14px_36px_rgb(0_0_0/0.4),0_0_0_1px_rgb(14_213_194/0.25)] motion-reduce:data-[active]:scale-100",
                   recede && "opacity-60",
                   dim && "pointer-events-none opacity-25"
                 )}

@@ -124,7 +124,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col rounded-t-3xl border-t border-line bg-white text-ink shadow-[0_-24px_80px_rgb(11_22_38/0.18)] lg:inset-y-0 lg:left-auto lg:max-h-none lg:w-[34rem] lg:rounded-none lg:rounded-l-3xl lg:border-t-0 lg:border-l lg:border-line"
+        className="absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col rounded-t-3xl border-t border-line bg-white text-ink shadow-[0_-24px_80px_rgb(10_30_63/0.18)] lg:inset-y-0 lg:left-auto lg:max-h-none lg:w-[34rem] lg:rounded-none lg:rounded-l-3xl lg:border-t-0 lg:border-l lg:border-line"
       >
         {/* Grab handle (mobile) + header */}
         <div className="flex items-center justify-between gap-4 px-6 pt-4 pb-2 sm:px-8 lg:pt-6">

@@ -10,32 +10,35 @@
 
 /* ─── Design tokens ─────────────────────────────────────────────────────── */
 @theme {
-  /* Dark "space" base, from the current brand's charcoal */
-  --color-ink-950: #05070a;
-  --color-ink-900: #0a0e14;
-  --color-ink-800: #10151d;
-  --color-ink-700: #1a1f27;
-  --color-ink-600: #2b2f36;
-  --color-ink-400: #6b7280;
-  --color-ink-300: #9aa1ad;
-  --color-ink-200: #c9cdd4;
+  /* Colours follow the Transition VC Brand Book: "navy-led, aqua accents".
+     Deep Navy #0A1E3F is the primary brand colour. */
+  /* Navy scale for dark bands (hero, featured portfolio, footer) and text on them */
+  --color-ink-950: #06142b;
+  --color-ink-900: #081930;
+  --color-ink-800: #0d2347;
+  --color-ink-700: #16305a;
+  --color-ink-600: #2a4068;
+  --color-ink-400: #606d82; /* Brand "Navy 65%" */
+  --color-ink-300: #9aa5b8;
+  --color-ink-200: #c8cfdb;
 
-  /* Light theme (site default) — cool and crisp. See the redesign plan. */
+  /* Light theme (site default) */
   --color-bg: #ffffff;
-  --color-surface: #f3f6f8;
-  --color-ink: #0b1626; /* text on light; also the dark bands (hero, featured, footer) */
-  --color-muted: #5a6576;
-  --color-line: #e1e6eb;
-  --color-teal-ink: #067a70; /* teal for text/links on white (WCAG AA) */
+  --color-surface: #f5f7fa; /* Brand "Cloud" */
+  --color-ink: #0a1e3f; /* Brand "Deep Navy": text on light; also the dark bands */
+  --color-muted: #606d82; /* Brand "Navy 65%" (5.2:1 on white) */
+  --color-line: #ebedf0; /* Brand "Navy 8%" hairlines */
+  --color-teal-ink: #067a70; /* teal for text/links on white: Signal Teal is 1.9:1 there, accents only */
 
-  /* Older light-page names, kept as aliases of the new palette */
-  --color-paper: #f3f6f8;
-  --color-paper-2: #e6ebef;
-  --color-stone: #0b1626;
+  /* Older light-page names, kept as aliases of the palette */
+  --color-paper: #f5f7fa; /* Cloud */
+  --color-paper-2: #ebf1f1; /* Brand "Mist" */
+  --color-stone: #0a1e3f;
 
-  /* Brand accent — use sparingly */
-  --color-teal: #0ed5c2;
-  --color-teal-soft: #8cf0e6;
+  /* Brand accents: use sparingly */
+  --color-teal: #0ed5c2; /* Brand "Signal Teal": buttons, links and heads on navy */
+  --color-aqua: #06e8d3; /* Brand "Transition Aqua": the logo symbol, highlights */
+  --color-teal-soft: #83f4e9; /* Brand "Mint": taglines on navy */
   --color-teal-deep: #067a70;
 
   --font-serif: "Merriweather", ui-serif, Georgia, serif;
@@ -147,7 +150,7 @@ html.lenis body {
 }
 
 @utility glass {
-  background: rgb(16 21 29 / 0.62);
+  background: rgb(10 30 63 / 0.62); /* Deep Navy glass */
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   border: 1px solid rgb(255 255 255 / 0.08);
@@ -251,6 +254,122 @@ html.js-motion .hero-intro > :nth-child(3) {
 }
 html.js-motion .hero-intro > :nth-child(n + 4) {
   animation-delay: 0.24s;
+}
+
+/* Home hero ("Transition sweep"). With motion on, the hero wrapper is two screens
+   tall and its panel is sticky, and the next section (.hero-cover) is pulled up a
+   screen so it slides over the panel. Without motion it's a plain one-screen hero. */
+html.js-motion .hero-scroll {
+  height: 200svh;
+}
+html.js-motion .hero-cover {
+  margin-top: -100svh;
+}
+/* The globe appears alone first; the copy follows (.hero-intro--late). */
+@keyframes hero-globe-in {
+  from {
+    opacity: 0.01;
+    scale: 0.94;
+  }
+}
+html.js-motion .hero-globe {
+  animation: hero-globe-in 1.2s var(--ease-out-quart) both;
+}
+html.js-motion .hero-intro--late > * {
+  animation-delay: 0.5s;
+}
+html.js-motion .hero-intro--late > :nth-child(2) {
+  animation-delay: 0.6s;
+}
+html.js-motion .hero-intro--late > :nth-child(3) {
+  animation-delay: 0.7s;
+}
+html.js-motion .hero-intro--late > :nth-child(n + 4) {
+  animation-delay: 0.8s;
+}
+html.js-motion .hero-card {
+  animation: hero-intro 1.1s var(--ease-out-quart) 0.9s both;
+}
+/* Swapped content (pill word, synced card, final poster): a soft blur-fade in. */
+@keyframes hero-swap {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(0.25em);
+  }
+}
+html.js-motion .hero-swap {
+  animation: hero-swap 0.6s var(--ease-out-quart) both;
+}
+
+/* "Explore portfolio" dive: the copy and card fade away while the globe zooms. */
+.hero-dive-fade {
+  transition:
+    opacity 0.35s ease-out,
+    translate 0.5s var(--ease-out-quart);
+}
+[data-diving] .hero-dive-fade {
+  opacity: 0;
+  translate: 0 -12px;
+  pointer-events: none;
+}
+
+/* ─── Page transitions (View Transitions API, driven by React <ViewTransition>) ───
+   The navy band (BandTransition, class .vt-band) morphs from one page's band to the
+   next; the page content fades out quickly and the new page rises in a beat later;
+   the nav (site-nav) sits still on top. Browsers without the API just change page. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-fade-out 0.2s ease-out both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-rise-in 0.5s var(--ease-out-quart) 0.15s both;
+  }
+  ::view-transition-group(.vt-band) {
+    animation-duration: 0.6s;
+    animation-timing-function: var(--ease-out-quart);
+    overflow: clip; /* the taller home panel is cropped as it shrinks into a page header */
+  }
+  ::view-transition-old(.vt-band) {
+    animation: vt-fade-out 0.35s ease-out both;
+  }
+  ::view-transition-new(.vt-band) {
+    animation: vt-fade-in 0.45s ease-out 0.12s both;
+  }
+}
+::view-transition-group(site-nav) {
+  z-index: 60;
+  animation: none;
+}
+::view-transition-old(site-nav) {
+  animation: none;
+  opacity: 0;
+}
+::view-transition-new(site-nav) {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
 }
 
 /* Portfolio map info card: a quick scale + fade from the side nearest the company.

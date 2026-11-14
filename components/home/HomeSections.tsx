@@ -39,7 +39,7 @@ export function PerspectivesTeaser({ essays, news, nextEvent, substackUrl }: Tea
                 href={e.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col rounded-2xl border border-line bg-white p-7 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(11_22_38/0.06)]"
+                className="group flex flex-col rounded-2xl border border-line bg-white p-7 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(10_30_63/0.06)]"
               >
                 <span className="hud text-teal-ink">Substack{e.date && ` · ${formatDate(e.date.slice(0, 10))}`}</span>
                 <h3 className="mt-5 font-serif text-xl leading-snug text-ink">{e.title}</h3>

@@ -18,6 +18,7 @@ import type {
   Video,
 } from "./types";
 import type { PageKey } from "./taxonomy";
+import { basePath, isStaticPreview } from "./base-path";
 import { siteIdentity } from "./site-config";
 import { getSubstackEssays, getYouTubeVideos } from "./feeds";
 
@@ -32,13 +33,22 @@ const visible: Where = { showOnSite: { not_equals: false } };
 
 // ─── Mapping helpers ─────────────────────────────────────────────────────────
 
+/**
+ * Uploads stored on local disk are served by the CMS at /api/media/file/<name>. The
+ * static preview has no CMS server, so there they point at copies saved alongside
+ * the pages (scripts/build-pages.mjs copies media/ into out/media/).
+ */
+function fileUrl(url: string) {
+  return isStaticPreview ? url.replace(/^(https?:\/\/[^/]+)?\/api\/media\/file\//, `${basePath}/media/`) : url;
+}
+
 function image(media: number | Media | null | undefined, size?: "card" | "portrait" | "thumbnail"): Image | undefined {
   if (!media || typeof media === "number") return undefined;
   const sized = size ? media.sizes?.[size] : undefined;
   const url = sized?.url || media.url;
   if (!url) return undefined;
   return {
-    url,
+    url: fileUrl(url),
     alt: media.alt,
     width: (sized?.url ? sized.width : media.width) ?? undefined,
     height: (sized?.url ? sized.height : media.height) ?? undefined,
