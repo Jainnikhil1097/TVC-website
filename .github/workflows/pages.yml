@@ -1,14 +1,22 @@
-# Publishes a static preview of the website to GitHub Pages on every push to main
-# (or on demand from the Actions tab). The pages use the starting content in
-# scripts/seed-data/ — there's no CMS on the preview, so edits made in /admin on
-# another copy of the site don't appear here. Forms are switched off.
+# Publishes a static preview of the website to GitHub Pages on every push to the
+# branches listed below (or on demand from the Actions tab, for any listed branch).
+# The pages use the starting content in scripts/seed-data/ — there's no CMS on the
+# preview, so edits made in /admin on another copy of the site don't appear here.
+# Forms are switched off.
 #
-# One-time setup: repo Settings → Pages → Source: "GitHub Actions".
+# A repo has ONE Pages site: whichever listed branch was pushed last is what's live.
+#
+# One-time setup (GitHub website):
+#   1. Settings → Pages → Source: "GitHub Actions" (NOT "Deploy from a branch", which
+#      would serve the raw source files instead of the built site).
+#   2. Settings → Environments → github-pages → Deployment branches: add every branch
+#      listed below. By default only the default branch may deploy, and the deploy
+#      job fails with "Branch … is not allowed to deploy to github-pages".
 name: Website preview (GitHub Pages)
 
 on:
   push:
-    branches: [main]
+    branches: [main, UI]
   workflow_dispatch:
 
 permissions:
