@@ -1,4 +1,4 @@
-import { HomeHero } from "@/components/home/HomeHero";
+import { HomeHero, type HeroSlide } from "@/components/home/HomeHero";
 import { PositioningBand } from "@/components/home/PositioningBand";
 import { FounderPillars } from "@/components/home/FounderPillars";
 import { SectorGrid } from "@/components/home/SectorGrid";
@@ -48,23 +48,40 @@ export default async function HomePage() {
     showcase.map((c) => [c.slug, essays.find((e) => sameUrl(e.url, c.essayUrl))?.url ?? c.essayUrl])
   );
   const headlineFigures = metrics.items.filter((m) => m.showOnHome);
+  // Hero: one slide per investment sector, each with a portfolio company from it if any.
+  const slides: HeroSlide[] = sectors.map((s) => {
+    const inSector = active.filter((c) => s.portfolioSector && c.sector === s.portfolioSector);
+    const c = inSector.find((x) => x.featured) ?? inSector[0];
+    return {
+      sector: s.name,
+      line: s.line,
+      company: c ? { name: c.name, summary: c.summary, logoUrl: c.logo?.url } : undefined
+    };
+  });
 
   return (
     <>
-      <HomeHero hero={site.hero} />
-      <PositioningBand
-        positioning={home.positioning || site.tagline}
-        about={site.about}
-        figures={headlineFigures.length ? headlineFigures : metrics.items.slice(0, 4)}
-        asOf={metrics.asOf}
-        disclaimer={metrics.disclaimer}
-      />
-      <SectorGrid sectors={sectors} companies={companies} />
-      <FounderPillars pillars={home.pillars} />
-      <FeaturedPortfolio companies={showcase} notes={notes} totalActive={active.length} />
-      <FundsSection funds={funds} />
-      <PerspectivesTeaser essays={essays} news={news} nextEvent={events.upcoming[0]} substackUrl={site.substackUrl} />
-      <FounderFaq faq={home.faq} email={site.contact.email} />
+      <HomeHero hero={site.hero} slides={slides} />
+      {/* Everything after the hero is one opaque layer that slides up over the sticky
+          hero panel (.hero-cover); the nav turns light once it reaches the top. */}
+      <div
+        data-nav-cover
+        className="hero-cover relative z-10 overflow-clip rounded-t-[28px] bg-white shadow-[0_-30px_60px_-40px_rgb(10_30_63/0.45)] sm:rounded-t-[40px]"
+      >
+        <PositioningBand
+          positioning={home.positioning || site.tagline}
+          about={site.about}
+          figures={headlineFigures.length ? headlineFigures : metrics.items.slice(0, 4)}
+          asOf={metrics.asOf}
+          disclaimer={metrics.disclaimer}
+        />
+        <SectorGrid sectors={sectors} companies={companies} />
+        <FounderPillars pillars={home.pillars} />
+        <FeaturedPortfolio companies={showcase} notes={notes} totalActive={active.length} />
+        <FundsSection funds={funds} />
+        <PerspectivesTeaser essays={essays} news={news} nextEvent={events.upcoming[0]} substackUrl={site.substackUrl} />
+        <FounderFaq faq={home.faq} email={site.contact.email} />
+      </div>
     </>
   );
 }

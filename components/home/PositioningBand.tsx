@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Metric } from "@/lib/types";
 import { Reveal } from "@/components/motion/Reveal";
+import { WordReveal } from "@/components/motion/WordReveal";
 import { formatDate } from "@/lib/utils";
 
 type Props = {
@@ -13,16 +14,19 @@ type Props = {
   disclaimer: string;
 };
 
-/** One claim, a short paragraph and 3–4 headline figures — straight after the hero. */
+/** One claim (revealed word by word), a short paragraph and 3–4 headline figures — straight after the hero. */
 export function PositioningBand({ positioning, about, figures, asOf, disclaimer }: Props) {
   return (
     <section aria-labelledby="positioning-title" className="py-20 sm:py-28">
       <div className="container-site grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-20">
         <Reveal>
           <p className="eyebrow text-teal-ink">About Transition VC</p>
-          <h2 id="positioning-title" className="display mt-5 text-3xl text-ink sm:text-4xl lg:text-[2.75rem]">
-            {positioning}
-          </h2>
+          <WordReveal
+            as="h2"
+            id="positioning-title"
+            text={positioning}
+            className="display mt-5 text-3xl text-ink sm:text-4xl lg:text-[2.75rem]"
+          />
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">{about}</p>
           <Link
             href="/about"

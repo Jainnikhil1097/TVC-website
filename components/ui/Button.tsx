@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps, MouseEventHandler, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "secondary" | "solid" | "outline" | "ghost" | "dark";
@@ -9,7 +9,8 @@ const variants: Record<Variant, string> = {
   primary: "bg-ink text-white hover:bg-teal-ink",
   secondary: "border border-ink/20 text-ink hover:border-teal-ink hover:text-teal-ink",
   // On dark bands (globe hero, featured portfolio, footer).
-  solid: "bg-white text-ink hover:bg-teal-soft",
+  // Brand: Signal Teal for buttons, Deep Navy text on it (8.9:1).
+  solid: "bg-teal text-ink hover:bg-teal-soft",
   outline: "border border-white/30 text-white hover:border-teal hover:text-teal",
   ghost: "text-white/80 hover:text-teal",
   /** @deprecated use "primary" */
@@ -25,9 +26,11 @@ type ButtonLinkProps = {
   className?: string;
   children: ReactNode;
   external?: boolean;
+  /** Internal links only; call preventDefault() to take over the navigation. */
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
 };
 
-export function ButtonLink({ href, variant = "primary", className, children, external }: ButtonLinkProps) {
+export function ButtonLink({ href, variant = "primary", className, children, external, onClick }: ButtonLinkProps) {
   const cls = cn(base, variants[variant], className);
   if (external || /^https?:/.test(href)) {
     return (
@@ -37,7 +40,7 @@ export function ButtonLink({ href, variant = "primary", className, children, ext
     );
   }
   return (
-    <Link href={href} className={cls}>
+    <Link href={href} className={cls} onClick={onClick}>
       {children}
     </Link>
   );

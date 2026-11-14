@@ -12,7 +12,7 @@ nextEnv.loadEnvConfig(process.cwd());
 const { default: config } = await import("../payload.config");
 const { site, metrics, funds, investmentCriteria } = await import("./seed-data/site");
 const { portfolio } = await import("./seed-data/portfolio");
-const { teamGroups } = await import("./seed-data/team");
+const { importTeam } = await import("./team-import");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
 const { investmentSectors } = await import("./seed-data/sectors");
 const { impact } = await import("./seed-data/impact");
@@ -70,27 +70,7 @@ if (await isEmpty("companies")) {
 }
 
 // ─── Team ────────────────────────────────────────────────────────────────────
-if (await isEmpty("team")) {
-  let n = 0;
-  for (const group of teamGroups) {
-    for (const [i, p] of group.people.entries()) {
-      await payload.create({
-        collection: "team",
-        context,
-        data: {
-          name: p.name,
-          title: p.title,
-          group: group.id,
-          linkedin: p.linkedin,
-          order: (i + 1) * 10,
-          _status: "published",
-        },
-      });
-      n++;
-    }
-  }
-  log(`team: ${n} added`);
-}
+if (await isEmpty("team")) await importTeam(payload, log);
 
 // ─── News, funds ─────────────────────────────────────────────────────────────
 if (await isEmpty("news")) {

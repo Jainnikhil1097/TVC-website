@@ -40,6 +40,9 @@ if (staticExport) {
   // Redirects and headers need a server, so they're dropped from the static files.
   delete config.redirects;
   delete config.headers;
+  // The CMS routes are set aside during this build, but a running dev server's generated
+  // types (.next/dev/types) still point at them. Types are checked by `npm run typecheck`.
+  config.typescript = { ...config.typescript, ignoreBuildErrors: true };
 }
 
 export default config;

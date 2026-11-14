@@ -155,7 +155,7 @@ function blueprint() {
   const pts = (list: number[][]) => list.map(([x, y]) => `${x},${y}`).join(" ");
   // Back-to-front, filled with the band colour, so nearer towers hide what's behind.
   const ordered = [...towers].sort((a, b) => a[0] + a[1] - (b[0] + b[1]));
-  const solid = "#0b1626";
+  const solid = "#0a1e3f";
   return (
     <>
       {grid}

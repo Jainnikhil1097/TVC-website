@@ -108,7 +108,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       data-theme="light"
       aria-labelledby="map-popover-title"
       tabIndex={-1}
-      className="map-popover absolute z-[200] w-[21rem] rounded-2xl border border-line bg-white p-5 text-left shadow-[0_18px_50px_rgb(11_22_38/0.16)] outline-none"
+      className="map-popover absolute z-[200] w-[21rem] rounded-2xl border border-line bg-white p-5 text-left shadow-[0_18px_50px_rgb(10_30_63/0.16)] outline-none"
       style={{
         left: pos?.left ?? 0,
         top: pos?.top ?? 0,

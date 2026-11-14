@@ -14,7 +14,7 @@ export function SectorGrid({ sectors, companies }: { sectors: InvestmentSector[]
   const active = companies.filter((c) => c.status === "active");
 
   return (
-    <section aria-labelledby="sectors-title" className="border-t border-line py-20 sm:py-28">
+    <section id="sectors" aria-labelledby="sectors-title" className="scroll-mt-20 border-t border-line py-20 sm:py-28">
       <div className="container-site">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeading
@@ -37,7 +37,7 @@ export function SectorGrid({ sectors, companies }: { sectors: InvestmentSector[]
               <li key={s.id} data-reveal>
                 <Link
                   href={href}
-                  className="group flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(11_22_38/0.06)]"
+                  className="group flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(10_30_63/0.06)]"
                 >
                   {/* Small dotted orb — a quiet echo of the globe */}
                   <span

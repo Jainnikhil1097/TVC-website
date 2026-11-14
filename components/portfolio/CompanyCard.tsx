@@ -16,7 +16,7 @@ type CompanyCardProps = {
 export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
   const status = statusLabel(company);
   return (
-    <article className="group relative flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(11_22_38/0.06)] sm:p-7">
+    <article className="group relative flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(10_30_63/0.06)] sm:p-7">
       <div className="flex items-center justify-between gap-4">
         <p className="hud text-muted">
           <span className="text-teal-ink">{number}</span> · {portfolioSectorName(company.sector)}

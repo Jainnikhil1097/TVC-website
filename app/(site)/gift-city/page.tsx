@@ -44,7 +44,7 @@ export default async function GiftCityPage() {
 
   return (
     <div data-theme="light" className="pb-24">
-      <HeroCard className="bg-[linear-gradient(180deg,#0b1626_0%,#10213a_100%)]">
+      <HeroCard className="bg-[linear-gradient(180deg,#0a1e3f_0%,#11284f_100%)]">
         <LineArt variant="skyline" className="absolute inset-x-0 bottom-0 -z-10 h-[72%] text-white/25" />
         <div className="container-site flex flex-1 flex-col justify-end pt-28 pb-10 lg:pb-16">
           <p className="eyebrow text-teal">{giftCity.eyebrow}</p>

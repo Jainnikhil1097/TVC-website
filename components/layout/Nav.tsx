@@ -12,6 +12,7 @@ import { basePath } from "@/lib/base-path";
 /**
  * Light by default; transparent with white text while it sits over a dark hero
  * (any element marked `data-nav-dark`, e.g. the home globe), then white once
+ * a `data-nav-cover` section slides over it or
  * the visitor scrolls past it.
  */
 export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; email: string }) {
@@ -24,7 +25,10 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
     const update = () => {
       setScrolled(window.scrollY > 8);
       const hero = document.querySelector<HTMLElement>("[data-nav-dark]");
-      setOverDark(Boolean(hero && hero.getBoundingClientRect().bottom > 72));
+      // A section that slides over a sticky hero ends the dark zone when it reaches the nav.
+      const cover = document.querySelector<HTMLElement>("[data-nav-cover]");
+      const covered = Boolean(cover && cover.getBoundingClientRect().top <= 72);
+      setOverDark(Boolean(hero && hero.getBoundingClientRect().bottom > 72 && !covered));
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -46,7 +50,9 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
   const investorProps = investorLoginUrl ? { target: "_blank", rel: "noopener noreferrer" } : {};
 
   return (
-    <header className="fixed inset-x-0 top-[var(--banner-h,0px)] z-50" data-theme={dark ? "dark" : undefined}>
+    // bg-transparent: data-theme="dark" would otherwise paint the band colour (globals.css) and
+    // show as a solid bar over the hero; the inner bar below owns the light-mode background.
+    <header className="fixed inset-x-0 top-[var(--banner-h,0px)] z-50 bg-transparent [view-transition-name:site-nav]" data-theme={dark ? "dark" : undefined}>
       <div
         className={cn(
           "border-b transition-[background-color,border-color] duration-300",

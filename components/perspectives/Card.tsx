@@ -16,7 +16,7 @@ export function Card({ item, interactive = true, className }: CardProps) {
     <article
       className={cn(
         "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white transition-[box-shadow,border-color] duration-300",
-        interactive && "hover:border-ink/15 hover:shadow-[0_12px_32px_-12px_rgb(11_22_38/0.18)]",
+        interactive && "hover:border-ink/15 hover:shadow-[0_12px_32px_-12px_rgb(10_30_63/0.18)]",
         className
       )}
     >

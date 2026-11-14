@@ -34,7 +34,7 @@ function Cover({ company, priority }: { company: Company; priority?: boolean }) 
       aria-hidden
       className="absolute inset-0 grid place-items-center"
       style={{
-        backgroundColor: "#0f1d31",
+        backgroundColor: "#11284f",
         backgroundImage:
           "linear-gradient(rgb(14 213 194 / 0.08) 1px, transparent 1px), linear-gradient(90deg, rgb(14 213 194 / 0.08) 1px, transparent 1px)",
         backgroundSize: "32px 32px",
