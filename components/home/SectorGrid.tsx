@@ -39,7 +39,7 @@ export function SectorGrid({ sectors, companies }: { sectors: InvestmentSector[]
                   href={href}
                   className="group flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(10_30_63/0.06)]"
                 >
-                  {/* Small dotted orb — a quiet echo of the globe */}
+                  {/* Small dotted orb */}
                   <span
                     aria-hidden
                     className="block size-9 rounded-full border border-teal-ink/30"
@@ -48,7 +48,7 @@ export function SectorGrid({ sectors, companies }: { sectors: InvestmentSector[]
                         "radial-gradient(circle, rgb(6 122 112 / 0.55) 1px, transparent 1.4px) 0 0 / 6px 6px, radial-gradient(circle at 35% 30%, #fff, #e8eef1)",
                     }}
                   />
-                  <h3 className="mt-5 font-serif text-xl text-ink">{s.name}</h3>
+                  <h3 className="mt-5 font-display text-xl text-ink">{s.name}</h3>
                   <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">{s.line}</p>
                   <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-teal-ink">
                     {count > 0 ? `${count} ${count === 1 ? "company" : "companies"}` : "Explore"}

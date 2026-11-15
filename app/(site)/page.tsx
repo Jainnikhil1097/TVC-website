@@ -1,4 +1,7 @@
-import { HomeHero, type HeroSlide } from "@/components/home/HomeHero";
+import { HomeHero, type HeroFeature } from "@/components/home/HomeHero";
+import type { HeroSlide } from "@/components/home/PhotoBackdrop";
+import { HERO_MODELS } from "@/components/home/engineering/registry";
+import { portfolioSectorName } from "@/lib/taxonomy";
 import { PositioningBand } from "@/components/home/PositioningBand";
 import { FounderPillars } from "@/components/home/FounderPillars";
 import { SectorGrid } from "@/components/home/SectorGrid";
@@ -48,20 +51,26 @@ export default async function HomePage() {
     showcase.map((c) => [c.slug, essays.find((e) => sameUrl(e.url, c.essayUrl))?.url ?? c.essayUrl])
   );
   const headlineFigures = metrics.items.filter((m) => m.showOnHome);
-  // Hero: one slide per investment sector, each with a portfolio company from it if any.
-  const slides: HeroSlide[] = sectors.map((s) => {
-    const inSector = active.filter((c) => s.portfolioSector && c.sector === s.portfolioSector);
-    const c = inSector.find((x) => x.featured) ?? inSector[0];
-    return {
-      sector: s.name,
-      line: s.line,
-      company: c ? { name: c.name, summary: c.summary, logoUrl: c.logo?.url } : undefined
-    };
+  // Hero photos: companies ticked "Show in home hero" with a cover image (up to 5, in
+  // portfolio order). Without any, the hero shows the engineering drawings instead.
+  const heroSlides: HeroSlide[] = active
+    .filter((c) => c.showInHero && c.heroImage)
+    .slice(0, 5)
+    .map((c) => ({
+      slug: c.slug,
+      name: c.name,
+      sector: portfolioSectorName(c.sector),
+      summary: c.summary,
+      image: c.heroImage!,
+    }));
+  // Hero: one engineering drawing per company that's live in the CMS (first matching slug).
+  const heroFeatures = HERO_MODELS.flatMap((m): HeroFeature[] => {
+    const c = m.slugs.map((slug) => active.find((x) => x.slug === slug)).find(Boolean);
+    return c ? [{ key: m.key, name: c.name, sector: portfolioSectorName(c.sector), summary: c.summary }] : [];
   });
-
   return (
     <>
-      <HomeHero hero={site.hero} slides={slides} />
+      <HomeHero hero={site.hero} features={heroFeatures} slides={heroSlides} />
       {/* Everything after the hero is one opaque layer that slides up over the sticky
           hero panel (.hero-cover); the nav turns light once it reaches the top. */}
       <div

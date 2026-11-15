@@ -9,7 +9,7 @@ export const site = {
   description:
     "Investing early, catalytic capital in the future of energy for India. India's first energy-transition focused venture capital fund.",
   url: "https://www.transitionventurecapital.com",
-  tagline: "Engineering India's Future of Energy",
+  tagline: "Engineering Future of Energy",
   hero: "Investing early, catalytic capital in the future of energy for India.",
   about:
     "India's first energy-transition focused venture capital fund. We back engineering-led startups building across storage, mobility, industrial decarbonisation and alternate fuels — because climate-aligned companies win, on impact and returns.",

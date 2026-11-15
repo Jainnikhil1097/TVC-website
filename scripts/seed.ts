@@ -13,6 +13,7 @@ const { default: config } = await import("../payload.config");
 const { site, metrics, funds, investmentCriteria } = await import("./seed-data/site");
 const { portfolio } = await import("./seed-data/portfolio");
 const { importTeam } = await import("./team-import");
+const { importCompanyPhotos } = await import("./company-photos");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
 const { investmentSectors } = await import("./seed-data/sectors");
 const { impact } = await import("./seed-data/impact");
@@ -71,6 +72,8 @@ if (await isEmpty("companies")) {
 
 // ─── Team ────────────────────────────────────────────────────────────────────
 if (await isEmpty("team")) await importTeam(payload, log);
+// Home hero photos (scripts/seed-data/company-photos/<slug>.jpg), once companies exist.
+await importCompanyPhotos(payload, log);
 
 // ─── News, funds ─────────────────────────────────────────────────────────────
 if (await isEmpty("news")) {

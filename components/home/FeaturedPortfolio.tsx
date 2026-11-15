@@ -45,7 +45,7 @@ function Cover({ company, priority }: { company: Company; priority?: boolean }) 
           <Image src={company.logo.url} alt="" fill sizes="224px" className="object-contain brightness-0 invert" />
         </span>
       ) : (
-        <span className="font-serif text-4xl text-white/85">{company.name}</span>
+        <span className="font-display text-4xl text-white/85">{company.name}</span>
       )}
     </div>
   );
@@ -92,7 +92,7 @@ function Details({ company, note }: { company: Company; note?: string }) {
 }
 
 /**
- * Featured portfolio companies in a dark band (echoing the globe). Desktop: tabs
+ * Featured portfolio companies in a dark band (echoing the home hero). Desktop: tabs
  * on the left, detail on the right. Mobile: swipeable cards. Every link goes to
  * that company's own profile and investment note.
  */
@@ -155,7 +155,7 @@ export function FeaturedPortfolio({ companies, notes, totalActive }: Props) {
                     selected ? "border-teal text-white" : "border-white/10 text-ink-300 hover:text-white"
                   )}
                 >
-                  <span className="block font-serif text-lg">{c.name}</span>
+                  <span className="block font-display text-lg">{c.name}</span>
                   <span className="hud mt-1 block text-ink-400">{portfolioSectorName(c.sector)}</span>
                 </button>
               );

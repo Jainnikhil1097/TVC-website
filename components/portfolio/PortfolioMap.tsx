@@ -34,7 +34,7 @@ type PortfolioMapProps = {
 };
 
 // A true blueprint: pale line art on deep navy, bright teal highlights — the same
-// ink as the page heroes and the home globe.
+// ink as the page heroes and the home hero.
 const INK = "#d6e4f0"; // line colour
 const ACCENT = "#0ed5c2";
 const PAPER = "#0a1e3f"; // map background
@@ -385,7 +385,7 @@ export function PortfolioMap({
                       {company.logo ? (
                         <CompanyLogo company={company} tone="dark" className="h-9 w-36" />
                       ) : (
-                        <span className="block font-serif text-lg leading-tight text-white">{company.name}</span>
+                        <span className="block font-display text-lg leading-tight text-white">{company.name}</span>
                       )}
                     </span>
                   </span>

@@ -41,7 +41,8 @@
   --color-teal-soft: #83f4e9; /* Brand "Mint": taglines on navy */
   --color-teal-deep: #067a70;
 
-  --font-serif: "Merriweather", ui-serif, Georgia, serif;
+  /* Brand Book: Inter for headlines and headings */
+  --font-display: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
@@ -87,7 +88,7 @@
     text-wrap: pretty;
   }
 
-  /* The site is light by default; dark bands (globe hero, featured portfolio,
+  /* The site is light by default; dark bands (home hero, featured portfolio,
      footer) opt in with data-theme="dark". */
   [data-theme="dark"] {
     color-scheme: dark;
@@ -137,16 +138,16 @@ html.lenis body {
 
 @utility hud {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.6875rem; /* 11px: the smallest that stays comfortable on phones */
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 @utility display {
-  font-family: var(--font-serif);
-  font-weight: 300;
-  letter-spacing: 0.02em;
-  line-height: 1.02;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
 }
 
 @utility glass {
@@ -265,16 +266,7 @@ html.js-motion .hero-scroll {
 html.js-motion .hero-cover {
   margin-top: -100svh;
 }
-/* The globe appears alone first; the copy follows (.hero-intro--late). */
-@keyframes hero-globe-in {
-  from {
-    opacity: 0.01;
-    scale: 0.94;
-  }
-}
-html.js-motion .hero-globe {
-  animation: hero-globe-in 1.2s var(--ease-out-quart) both;
-}
+/* The copy follows the first drawing's assembly (.hero-intro--late). */
 html.js-motion .hero-intro--late > * {
   animation-delay: 0.5s;
 }
@@ -287,22 +279,68 @@ html.js-motion .hero-intro--late > :nth-child(3) {
 html.js-motion .hero-intro--late > :nth-child(n + 4) {
   animation-delay: 0.8s;
 }
-html.js-motion .hero-card {
-  animation: hero-intro 1.1s var(--ease-out-quart) 0.9s both;
+
+/* ─── Home hero "Exploded engineering views" (components/home/HomeHero.tsx) ───
+   Blueprint paper behind the drawings: a fine 32px grid with a heavier line every
+   160px. The company card's content crossfades when the drawing changes. */
+.blueprint {
+  background-image:
+    linear-gradient(rgb(131 244 233 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(131 244 233 / 0.07) 1px, transparent 1px),
+    linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+  background-size:
+    160px 160px,
+    160px 160px,
+    32px 32px,
+    32px 32px;
 }
-/* Swapped content (pill word, synced card, final poster): a soft blur-fade in. */
-@keyframes hero-swap {
+@keyframes eng-swap {
   from {
     opacity: 0;
-    filter: blur(6px);
-    transform: translateY(0.25em);
+    translate: 0 6px;
   }
 }
-html.js-motion .hero-swap {
-  animation: hero-swap 0.6s var(--ease-out-quart) both;
+html.js-motion .eng-swap {
+  animation: eng-swap 0.5s var(--ease-out-quart) both;
 }
 
-/* "Explore portfolio" dive: the copy and card fade away while the globe zooms. */
+/* Home hero photo slideshow (components/home/PhotoBackdrop.tsx): each photo drifts in
+   slowly while it shows (Ken Burns), the active progress bar fills over the same 6s,
+   and "Explore portfolio" pushes into the photo. All motion is gated on js-motion. */
+@keyframes hero-kenburns {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.08;
+  }
+}
+html.js-motion .hero-kenburns {
+  animation: hero-kenburns 7.2s linear both;
+}
+@keyframes hero-progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+.hero-progress {
+  width: 100%;
+}
+html.js-motion .hero-progress {
+  animation: hero-progress 6s linear both;
+}
+html.js-motion [data-diving] .hero-photo[data-active] {
+  scale: 1.12;
+  transition:
+    scale 0.7s cubic-bezier(0.5, 0, 0.75, 0),
+    opacity 1.2s ease-out;
+}
+
+/* "Explore portfolio": the copy fades away while the drawing flies apart (or the photo pushes in). */
 .hero-dive-fade {
   transition:
     opacity 0.35s ease-out,

@@ -30,7 +30,7 @@ export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
         className={
           company.logo
             ? "mt-4 text-base font-semibold text-ink"
-            : "mt-6 font-serif text-2xl font-light text-ink"
+            : "mt-6 font-display text-2xl text-ink"
         }
       >
         {/* The stretched button makes the whole card open the profile. */}

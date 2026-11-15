@@ -11,7 +11,7 @@ import { basePath } from "@/lib/base-path";
 
 /**
  * Light by default; transparent with white text while it sits over a dark hero
- * (any element marked `data-nav-dark`, e.g. the home globe), then white once
+ * (any element marked `data-nav-dark`, e.g. the home hero), then white once
  * a `data-nav-cover` section slides over it or
  * the visitor scrolls past it.
  */
@@ -153,7 +153,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
                   href={item.href}
                   aria-current={pathname === item.href ? "page" : undefined}
                   onClick={() => setOpen(false)}
-                  className="flex min-h-14 items-center justify-between font-serif text-2xl font-light"
+                  className="flex min-h-14 items-center justify-between font-display text-2xl"
                 >
                   {item.label}
                   {pathname === item.href && <span className="h-px w-8 bg-teal-ink" aria-hidden />}

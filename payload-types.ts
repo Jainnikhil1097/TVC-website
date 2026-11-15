@@ -172,7 +172,7 @@ export interface Company {
    */
   logo?: (number | null) | Media;
   /**
-   * A product or team photo, shown when the company is featured on the home page (landscape, at least 1600 px wide).
+   * A product or team photo, landscape, at least 2400 px wide. Used when the company is featured on the home page or shown in the home hero. Keep the subject away from the left third, where the hero text sits, and set the focal point.
    */
   coverImage?: (number | null) | Media;
   founders?:
@@ -207,6 +207,10 @@ export interface Company {
    * Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too.
    */
   featured?: boolean | null;
+  /**
+   * Shows this company's cover image as a full-screen photo at the top of the home page (up to 5, in portfolio order). Needs a cover image.
+   */
+  showInHero?: boolean | null;
   /**
    * Untick to hide this from the website without deleting it.
    */
@@ -260,6 +264,14 @@ export interface Media {
       filename?: string | null;
     };
     portrait?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    hero?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -568,6 +580,7 @@ export interface CompaniesSelect<T extends boolean = true> {
   exitNote?: T;
   slug?: T;
   featured?: T;
+  showInHero?: T;
   showOnSite?: T;
   order?: T;
   updatedAt?: T;
@@ -714,6 +727,16 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         portrait?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        hero?:
           | T
           | {
               url?: T;

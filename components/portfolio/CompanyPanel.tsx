@@ -213,7 +213,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
                 className="group mt-3 block rounded-2xl border border-line bg-surface p-5 transition-colors hover:border-teal-ink/50"
               >
                 <span className="hud text-teal-ink">From our Substack</span>
-                <span className="mt-2 block font-serif text-lg font-light text-ink">
+                <span className="mt-2 block font-display text-lg text-ink">
                   {essay.title ?? "Read our investment note"}
                 </span>
                 {essay.teaser && <span className="mt-2 block text-sm text-muted">{essay.teaser}</span>}

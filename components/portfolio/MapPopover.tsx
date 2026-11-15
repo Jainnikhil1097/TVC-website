@@ -122,7 +122,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
           {company.logo ? (
             <CompanyLogo company={company} className="h-10 w-40" />
           ) : (
-            <span aria-hidden className="grid size-10 place-items-center rounded-lg bg-surface font-serif text-sm text-ink">
+            <span aria-hidden className="grid size-10 place-items-center rounded-lg bg-surface font-display text-sm text-ink">
               {company.name.slice(0, 2).toUpperCase()}
             </span>
           )}
@@ -143,7 +143,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       <p className="hud mt-4 text-teal-ink">
         {number} · {portfolioSectorName(company.sector)}
       </p>
-      <h3 id="map-popover-title" className="mt-1.5 font-serif text-2xl leading-tight text-ink">
+      <h3 id="map-popover-title" className="mt-1.5 font-display text-2xl leading-tight text-ink">
         {company.name}
       </h3>
       {status && <StatusBadge label={status} className="mt-2" />}

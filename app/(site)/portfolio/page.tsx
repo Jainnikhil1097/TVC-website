@@ -6,6 +6,7 @@ import type { CompanyEssay } from "@/components/portfolio/status";
 import { getEssays, getPortfolio, getSite, isActive, sameUrl } from "@/lib/cms";
 import { portfolioSectors } from "@/lib/taxonomy";
 import { pageMetadata } from "@/lib/seo";
+import { cn } from "@/lib/utils";
 
 export const revalidate = 3600;
 
@@ -46,9 +47,10 @@ export default async function PortfolioPage() {
           <ButtonLink href="/contact?type=startup" variant="solid">
             Pitch to us
           </ButtonLink>
-          <dl className="grid grid-cols-3 gap-6 sm:gap-10">
-            {stats.map((s) => (
-              <div key={s.label} className="flex flex-col-reverse">
+          {/* Phones: two columns, with the long "Stages" value on its own row */}
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 sm:gap-10">
+            {stats.map((s, i) => (
+              <div key={s.label} className={cn("flex flex-col-reverse", i === 2 && "col-span-2 sm:col-span-1")}>
                 <dt className="eyebrow mt-2 text-ink-300">{s.label}</dt>
                 <dd className="display text-2xl text-white sm:text-3xl">{s.value}</dd>
               </div>

@@ -233,7 +233,7 @@ export default async function PerspectivesPage() {
                         className="group flex min-h-16 items-baseline gap-5 py-4"
                       >
                         <span className="flex-1">
-                          <span className="block font-serif font-light text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
+                          <span className="block font-display text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
                             {e.title}
                           </span>
                           {(e.date || nameOf(e.company)) && (
@@ -279,7 +279,7 @@ export default async function PerspectivesPage() {
                           className="group flex min-h-16 items-baseline justify-between gap-5 py-4"
                         >
                           <span>
-                            <span className="block font-serif font-light text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
+                            <span className="block font-display text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
                               {r.title}
                             </span>
                             <span className="mt-1 block text-sm text-muted">

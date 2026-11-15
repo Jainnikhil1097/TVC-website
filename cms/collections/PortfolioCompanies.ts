@@ -85,7 +85,8 @@ export const PortfolioCompanies: CollectionConfig = {
               type: "upload",
               relationTo: "media",
               admin: {
-                description: "A product or team photo, shown when the company is featured on the home page (landscape, at least 1600 px wide).",
+                description:
+                  "A product or team photo, landscape, at least 2400 px wide. Used when the company is featured on the home page or shown in the home hero. Keep the subject away from the left third, where the hero text sits, and set the focal point.",
               },
             },
           ],
@@ -166,6 +167,17 @@ export const PortfolioCompanies: CollectionConfig = {
       type: "checkbox",
       defaultValue: false,
       admin: { position: "sidebar", description: "Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too." },
+    },
+    {
+      name: "showInHero",
+      label: "Show in home hero",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        position: "sidebar",
+        description:
+          "Shows this company's cover image as a full-screen photo at the top of the home page (up to 5, in portfolio order). Needs a cover image.",
+      },
     },
     showOnSiteField,
     orderField,

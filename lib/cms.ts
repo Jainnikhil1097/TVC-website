@@ -42,7 +42,7 @@ function fileUrl(url: string) {
   return isStaticPreview ? url.replace(/^(https?:\/\/[^/]+)?\/api\/media\/file\//, `${basePath}/media/`) : url;
 }
 
-function image(media: number | Media | null | undefined, size?: "card" | "portrait" | "thumbnail"): Image | undefined {
+function image(media: number | Media | null | undefined, size?: "card" | "portrait" | "thumbnail" | "hero"): Image | undefined {
   if (!media || typeof media === "number") return undefined;
   const sized = size ? media.sizes?.[size] : undefined;
   const url = sized?.url || media.url;
@@ -52,6 +52,7 @@ function image(media: number | Media | null | undefined, size?: "card" | "portra
     alt: media.alt,
     width: (sized?.url ? sized.width : media.width) ?? undefined,
     height: (sized?.url ? sized.height : media.height) ?? undefined,
+    focal: media.focalX != null && media.focalY != null ? { x: media.focalX, y: media.focalY } : undefined,
   };
 }
 
@@ -86,6 +87,8 @@ function mapCompany(doc: CmsCompany): Company {
     featured: Boolean(doc.featured),
     logo: image(doc.logo, "card"),
     coverImage: image(doc.coverImage, "card"),
+    heroImage: image(doc.coverImage, "hero"),
+    showInHero: Boolean(doc.showInHero),
     founders: doc.founders?.map((f) => ({
       name: f.name,
       title: orUndefined(f.title),

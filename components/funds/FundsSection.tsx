@@ -30,7 +30,7 @@ export function FundCards({ funds }: { funds: Fund[] }) {
       {funds.map((f) => (
         <li key={f.sebiRegistration} data-reveal className="flex flex-col rounded-2xl border border-line bg-white p-7 sm:p-8">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="font-serif text-xl leading-snug font-light text-ink">{f.name}</h3>
+            <h3 className="font-display text-xl leading-snug text-ink">{f.name}</h3>
             <span
               className={cn(
                 "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",

@@ -76,10 +76,19 @@ items show first on Perspectives and the home page.
 
 The headline figures come from **Fund metrics** (Admins tick *Show on home page* on 3–4 of them).
 The "Where we invest" sectors are under **Pages → Home: where we invest**.
-Those sectors also drive the top of the home page: the last word of the headline cycles through
-the sector names, and the card beside it shows a company from that sector (tick *Feature on home
-page* on a company to make it the one shown; otherwise the first in that sector is used). For a
-company to appear, link its sector under *Portfolio sector* on the "Where we invest" entry.
+
+### Change the photos at the top of the home page
+The top of the home page can show full-screen photos of portfolio companies' products, changing
+every few seconds, with the headline over them. To add a company's photo:
+1. **Portfolio** → open the company → **Basics** tab → **Cover image**: upload a landscape photo,
+   at least 2400 px wide. Keep the main subject away from the left third (the headline sits there)
+   and set the focal point on the subject.
+2. In the sidebar, tick **Show in home hero**, then save.
+
+Up to 5 companies are shown, in portfolio order, each with its name and one-line summary. Untick
+the box to remove one. With no hero photos at all, the home page shows engineering drawings of
+portfolio hardware instead (Matel Motion, Emo Energy, Hydgen and SUIND); their names and summaries
+also come from **Portfolio**.
 
 ### Change fund figures, funds or SEBI details *(Admins only)*
 - **Fund information → Fund metrics**: the track-record figures and their "as of" date. Tick

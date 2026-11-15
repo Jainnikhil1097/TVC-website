@@ -43,7 +43,7 @@ export function Card({ item, interactive = true, className }: CardProps) {
           />
         </div>
 
-        <h3 className={cn("font-serif text-xl leading-snug font-light text-ink sm:text-[1.4rem]", item.image ? "mt-3" : "mt-6")}>
+        <h3 className={cn("font-display text-xl leading-snug text-ink sm:text-[1.4rem]", item.image ? "mt-3" : "mt-6")}>
           <a
             href={item.href}
             target="_blank"

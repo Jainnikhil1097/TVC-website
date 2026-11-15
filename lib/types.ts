@@ -3,7 +3,14 @@
 
 export type Link = { label: string; href: string };
 
-export type Image = { url: string; alt: string; width?: number; height?: number };
+export type Image = {
+  url: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  /** Focal point set in the CMS, as percentages (for object-position). */
+  focal?: { x: number; y: number };
+};
 
 export type Metric = {
   value: string;
@@ -53,6 +60,10 @@ export type Company = {
   logo?: Image;
   /** Product/team photo for the home page's featured tabs. */
   coverImage?: Image;
+  /** The cover image at full-screen size, for the home hero. */
+  heroImage?: Image;
+  /** Shown in the home hero slideshow. */
+  showInHero?: boolean;
   whyWeInvested?: string;
   /** Substack post about this company; links the company and the essay. */
   essayUrl?: string;

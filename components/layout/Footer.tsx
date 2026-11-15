@@ -42,10 +42,11 @@ export async function Footer({ site }: { site: Site }) {
 
         <div>
           <h3 className="eyebrow text-ink-400">Explore</h3>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-3 space-y-0.5 text-sm">
             {[...nav, ...footerLinks].map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-ink-200 transition-colors hover:text-teal">
+                {/* py-1.5: a comfortable tap target on phones, same rhythm as before */}
+                <Link href={item.href} className="inline-block py-1.5 text-ink-200 transition-colors hover:text-teal">
                   {item.label}
                 </Link>
               </li>
@@ -107,10 +108,10 @@ export async function Footer({ site }: { site: Site }) {
         <p>
           © {year} {site.legalName}. All rights reserved.
         </p>
-        <ul className="flex flex-wrap gap-x-5 gap-y-2">
+        <ul className="flex flex-wrap gap-x-5">
           {site.policies.map((p) => (
             <li key={p.href}>
-              <a href={p.href} className="hover:text-teal" target="_blank" rel="noopener noreferrer">
+              <a href={p.href} className="inline-block py-1.5 hover:text-teal" target="_blank" rel="noopener noreferrer">
                 {p.label}
               </a>
             </li>

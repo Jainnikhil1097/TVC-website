@@ -42,7 +42,7 @@ export function PerspectivesTeaser({ essays, news, nextEvent, substackUrl }: Tea
                 className="group flex flex-col rounded-2xl border border-line bg-white p-7 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(10_30_63/0.06)]"
               >
                 <span className="hud text-teal-ink">Substack{e.date && ` · ${formatDate(e.date.slice(0, 10))}`}</span>
-                <h3 className="mt-5 font-serif text-xl leading-snug text-ink">{e.title}</h3>
+                <h3 className="mt-5 font-display text-xl leading-snug text-ink">{e.title}</h3>
                 <p className="mt-4 text-sm leading-relaxed text-muted">{e.teaser}</p>
                 <span className="mt-auto inline-flex items-center gap-1.5 pt-8 text-sm font-semibold text-ink group-hover:text-teal-ink">
                   Read the essay <ArrowUpRight className="size-3.5" aria-hidden />
@@ -59,7 +59,7 @@ export function PerspectivesTeaser({ essays, news, nextEvent, substackUrl }: Tea
           >
             <span>
               <span className="hud text-teal-ink">Substack</span>
-              <span className="mt-3 block font-serif text-xl text-ink">Read our latest essays on Substack</span>
+              <span className="mt-3 block font-display text-xl text-ink">Read our latest essays on Substack</span>
             </span>
             <ArrowUpRight className="size-5 shrink-0 text-muted group-hover:text-teal-ink" aria-hidden />
           </a>
@@ -74,7 +74,7 @@ export function PerspectivesTeaser({ essays, news, nextEvent, substackUrl }: Tea
             <span className="hud inline-flex items-center gap-2 text-teal-ink">
               <CalendarDays className="size-3.5" aria-hidden /> Next event · {formatDate(nextEvent.startDate.slice(0, 10))}
             </span>
-            <span className="flex-1 font-serif text-lg text-ink">{nextEvent.title}</span>
+            <span className="flex-1 font-display text-lg text-ink">{nextEvent.title}</span>
             {nextEvent.location && <span className="hud text-muted">{nextEvent.location}</span>}
           </a>
         )}

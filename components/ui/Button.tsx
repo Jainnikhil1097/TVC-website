@@ -8,7 +8,7 @@ const variants: Record<Variant, string> = {
   // On light pages (the default).
   primary: "bg-ink text-white hover:bg-teal-ink",
   secondary: "border border-ink/20 text-ink hover:border-teal-ink hover:text-teal-ink",
-  // On dark bands (globe hero, featured portfolio, footer).
+  // On dark bands (home hero, page headers, featured portfolio, footer).
   // Brand: Signal Teal for buttons, Deep Navy text on it (8.9:1).
   solid: "bg-teal text-ink hover:bg-teal-soft",
   outline: "border border-white/30 text-white hover:border-teal hover:text-teal",

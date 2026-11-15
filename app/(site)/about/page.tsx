@@ -45,7 +45,7 @@ export default async function AboutPage() {
               className={i > 0 ? "border-t border-white/15 py-5 sm:border-t-0 sm:border-l sm:pl-6" : "py-5 sm:pr-6"}
             >
               <dt className="text-sm text-ink-300">{f.label}</dt>
-              <dd className="mt-1 font-serif text-xl font-light text-white">{f.value}</dd>
+              <dd className="mt-1 font-display text-xl text-white">{f.value}</dd>
             </div>
           ))}
         </dl>

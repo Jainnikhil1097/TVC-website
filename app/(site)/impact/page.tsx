@@ -42,7 +42,7 @@ export default async function ImpactPage() {
         </p>
         <ul className="mx-auto mt-8 flex max-w-5xl flex-wrap justify-center gap-x-8 gap-y-4">
           {active.map((c) => (
-            <li key={c.slug} className="font-serif text-sm tracking-[0.1em] text-ink/55 uppercase">
+            <li key={c.slug} className="font-display text-sm tracking-[0.1em] text-ink/55 uppercase">
               {c.name}
             </li>
           ))}

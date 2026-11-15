@@ -3,27 +3,25 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { ButtonLink } from "@/components/ui/Button";
 import { pitchHref } from "@/lib/site-config";
 import { asset } from "@/lib/base-path";
 import { BandTransition } from "@/components/motion/BandTransition";
-import type { GlobeState } from "./GlobeCanvas";
+import { cn } from "@/lib/utils";
+import type { ModelKey } from "./engineering/registry";
+import { PhotoBackdrop, PhotoCaption, PhotoCaptionCompact, useSlideTimer, type HeroSlide } from "./PhotoBackdrop";
 
 // three.js ships only in this chunk, and only once we decide to mount it.
-const GlobeCanvas = dynamic(() => import("./GlobeCanvas"), { ssr: false });
+const EngineeringCanvas = dynamic(() => import("./engineering/EngineeringCanvas"), { ssr: false });
 
-export type HeroSlide = {
-  sector: string;
-  line: string;
-  company?: { name: string; summary: string; logoUrl?: string };
-};
+/** A portfolio company with a model in the hero (built in app/(site)/page.tsx). */
+export type HeroFeature = { key: ModelKey; name: string; sector: string; summary: string };
 
-const CYCLE_MS = 2800;
-// "Explore portfolio" dive: the globe turns to India and zooms in before navigating.
-const DIVE_S = 0.8;
+// "Explore portfolio": the model flies apart, then the page changes.
+const LAUNCH_MS = 700;
 
 function canUseWebGL() {
   try {
@@ -35,70 +33,47 @@ function canUseWebGL() {
 }
 
 /**
- * Home hero — "Transition sweep". A full-bleed Deep Navy panel.
- * A small tiled world turned toward India appears first; a scanning band then
- * crosses India, raising its tiles and growing solar arrays and wind turbines.
- * The headline's last word cycles through the investment sectors, with a synced
- * portfolio card. On scroll, the panel recedes (shrinking, with rounding corners, over a
- * deeper navy) while the next section slides over it (CSS sticky, so touch scrolling
- * stays native).
+ * Home hero. With hero photos in the CMS ("Show in home hero" on a company): a
+ * full-screen photo slideshow with the text overlaid (PhotoBackdrop). Otherwise,
+ * "Exploded engineering views": a full-bleed Deep Navy panel with a
+ * blueprint grid, the brand line in Inter Bold, and CAD-style line drawings of
+ * hardware our portfolio companies build (motor, battery pack, electrolyser, drone).
+ * Each assembles, explodes into labelled parts and hands over to the next, with a
+ * synced company card. Desktop visitors can drag to rotate. On scroll, the panel
+ * recedes while the next section slides over it (CSS sticky).
  *
- * The poster shows the pre-sweep world instantly; without WebGL (or with reduced
- * motion / save-data) it swaps to the finished "transitioned" poster instead.
+ * A static poster (the exploded motor) shows first, and stays for reduced-motion,
+ * Save-Data and no-WebGL visitors.
  */
-export function HomeHero({ hero, slides }: { hero: string; slides: HeroSlide[] }) {
+export function HomeHero({ hero, features, slides }: { hero: string; features: HeroFeature[]; slides: HeroSlide[] }) {
+  // With hero photos in the CMS, the hero is a full-screen photo slideshow; without
+  // any, it shows the engineering drawings.
+  const photo = slides.length > 0;
   const root = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const state = useRef<GlobeState>({ covered: 0, diveAt: 0, diveS: DIVE_S });
-  const gsapRef = useRef<(typeof import("gsap"))["gsap"] | null>(null);
   const router = useRouter();
-  const [diving, setDiving] = useState(false);
+  const [launching, setLaunching] = useState(false);
   // The band only morphs on navigation while the panel isn't covered by the content.
   const [bandActive, setBandActive] = useState(true);
-  const [mountGlobe, setMountGlobe] = useState(false);
-  const [globeReady, setGlobeReady] = useState(false);
-  const [staticPoster, setStaticPoster] = useState(false);
+  const [mount3d, setMount3d] = useState(false);
+  const [ready3d, setReady3d] = useState(false);
   const [index, setIndex] = useState(0);
-  const slide = slides[index];
+  const feature = features[index];
+  const playing = useSlideTimer(photo ? slides.length : 0, setIndex, index);
 
-  // Decide whether to mount the WebGL globe, after first paint and when idle.
+  // Decide whether to mount the 3D view, after first paint and when idle.
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-    if (reduce || saveData || !canUseWebGL()) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time capability check after mount
-      setStaticPoster(true);
-      return;
-    }
-    const start = () => setMountGlobe(true);
+    if (photo || reduce || saveData || !canUseWebGL() || !features.length) return;
+    const start = () => setMount3d(true);
     if ("requestIdleCallback" in window) {
       const id = window.requestIdleCallback(start, { timeout: 1200 });
       return () => window.cancelIdleCallback(id);
     }
     const t = setTimeout(start, 300);
     return () => clearTimeout(t);
-  }, []);
-
-  // Cycle the sector pill (not for reduced motion; paused while the tab is hidden).
-  useEffect(() => {
-    if (slides.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let id: ReturnType<typeof setInterval> | undefined;
-    const startTimer = () => {
-      clearInterval(id);
-      id = setInterval(() => setIndex((i) => (i + 1) % slides.length), CYCLE_MS);
-    };
-    // Hold the first word until the intro has played.
-    const first = setTimeout(startTimer, 1600);
-    const onVis = () => (document.visibilityState === "visible" ? startTimer() : clearInterval(id));
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      clearTimeout(first);
-      clearInterval(id);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [slides.length]);
+  }, [features.length, photo]);
 
   // Scroll handoff: while the next section slides over the sticky panel, the panel
   // recedes and dims. GSAP is loaded on demand, off the critical path.
@@ -110,7 +85,6 @@ export function HomeHero({ hero, slides }: { hero: string; slides: HeroSlide[] }
     let cancelled = false;
     Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([{ gsap }, { ScrollTrigger }]) => {
       if (cancelled) return;
-      gsapRef.current = gsap;
       gsap.registerPlugin(ScrollTrigger);
       ScrollTrigger.config({ ignoreMobileResize: true });
       const mm = gsap.matchMedia();
@@ -123,7 +97,6 @@ export function HomeHero({ hero, slides }: { hero: string; slides: HeroSlide[] }
           scrollTrigger: {
             ...scrollTrigger,
             onUpdate: (self) => {
-              state.current.covered = self.progress;
               const uncovered = self.progress < 0.3;
               setBandActive((prev) => (prev === uncovered ? prev : uncovered));
             },
@@ -142,30 +115,18 @@ export function HomeHero({ hero, slides }: { hero: string; slides: HeroSlide[] }
   // Make the portfolio page instant to arrive at.
   useEffect(() => router.prefetch("/portfolio"), [router]);
 
-  // "Explore portfolio": dive into India, then navigate. The navy band then morphs
-  // into the Portfolio page's header (BandTransition). Only with the live globe, and
+  const next = useCallback(() => setIndex((i) => (i + 1) % Math.max(features.length, 1)), [features.length]);
+
+  // "Explore portfolio": fly the model apart, then navigate; the navy band then morphs
+  // into the Portfolio page's header (BandTransition). Not for reduced motion, and
   // never for new-tab / modified clicks.
   const onExplore = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (!globeReady || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     e.preventDefault();
-    if (diving) return;
-    setDiving(true);
-    state.current.diveAt = performance.now() / 1000;
-    const g = gsapRef.current;
-    const st = stage.current;
-    const p = panel.current;
-    if (g && st && p) {
-      // Glide the globe to the middle of the panel as it zooms.
-      const a = st.getBoundingClientRect();
-      const b = p.getBoundingClientRect();
-      g.to(st, {
-        x: b.left + b.width / 2 - (a.left + a.width / 2),
-        y: b.top + b.height / 2 - (a.top + a.height / 2),
-        duration: DIVE_S,
-        ease: "power2.inOut",
-      });
-    }
-    window.setTimeout(() => router.push("/portfolio"), DIVE_S * 1000);
+    if (launching) return;
+    setLaunching(true);
+    window.setTimeout(() => router.push("/portfolio"), photo || ready3d ? LAUNCH_MS : 250);
   };
 
   return (
@@ -176,77 +137,104 @@ export function HomeHero({ hero, slides }: { hero: string; slides: HeroSlide[] }
         <BandTransition className="h-full" active={bandActive}>
           <section
             ref={panel}
-            data-diving={diving || undefined}
+            data-diving={launching || undefined}
             aria-label="Introduction"
             data-theme="dark"
             data-nav-dark
-            className="relative isolate h-full overflow-hidden bg-ink text-white"
+            className="relative isolate flex h-full flex-col overflow-hidden bg-ink text-white"
           >
-            {/* Panel light (Brand Book: navy-led, aqua accents): lighter navy pooling behind the globe */}
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10 bg-[radial-gradient(60%_55%_at_50%_32%,rgb(26_62_118/0.9),transparent_72%),linear-gradient(165deg,#0a1e3f_0%,#0c2550_55%,#081a36_100%)] lg:bg-[radial-gradient(42%_70%_at_68%_46%,rgb(26_62_118/0.9),transparent_72%),linear-gradient(165deg,#0a1e3f_0%,#0c2550_55%,#081a36_100%)]"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10 bg-[radial-gradient(30%_26%_at_50%_32%,rgb(6_232_211/0.12),transparent_70%)] lg:bg-[radial-gradient(22%_36%_at_68%_46%,rgb(6_232_211/0.12),transparent_70%)]"
-            />
-
-            {/* Globe stage */}
-            <div
-              ref={stage}
-              aria-hidden
-              className="hero-globe absolute top-[7%] left-1/2 aspect-square w-[min(108vw,50svh)] -translate-x-1/2 sm:top-[8%] sm:w-[min(88vw,56svh)] lg:top-[45%] lg:right-[5%] lg:left-auto lg:w-[min(46vw,80svh)] lg:translate-x-0 lg:-translate-y-1/2"
-            >
-              <div
-                className={`absolute inset-[7.5%] transition-opacity duration-700 ${globeReady || staticPoster ? "opacity-0" : "opacity-100"}`}
-              >
-                <Image
-                  src={asset("/globe/poster-before.svg")}
-                  alt=""
-                  width={800}
-                  height={800}
-                  priority
-                  unoptimized
-                  className="size-full"
-                />
-              </div>
-              {staticPoster && (
-                <div className="hero-swap absolute inset-[7.5%]">
-                  <Image
-                    src={asset("/globe/fallback.svg")}
-                    alt=""
-                    width={800}
-                    height={800}
-                    unoptimized
-                    className="size-full"
-                  />
-                </div>
-              )}
-              {mountGlobe && (
+            {photo ? (
+              <PhotoBackdrop slides={slides} index={index} />
+            ) : (
+              <>
+                {/* Blueprint paper: fine grid, heavier every fifth line, fading out to the edges */}
                 <div
-                  className={`absolute inset-0 transition-opacity duration-700 ${globeReady ? "opacity-100" : "opacity-0"}`}
-                >
-                  <GlobeCanvas state={state} onReady={() => setGlobeReady(true)} />
-                </div>
-              )}
-            </div>
+                  aria-hidden
+                  className="blueprint absolute inset-0 -z-10 [mask-image:radial-gradient(75%_60%_at_50%_30%,black,transparent)] lg:[mask-image:radial-gradient(55%_75%_at_70%_45%,black,transparent)]"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-0 -z-10 bg-[radial-gradient(70%_40%_at_50%_26%,rgb(22_52_99/0.8),transparent_70%)] lg:bg-[radial-gradient(40%_60%_at_70%_45%,rgb(22_52_99/0.8),transparent_70%)]"
+                />
 
-            {/* Claim, bottom-left */}
-            <div className="hero-dive-fade absolute inset-x-0 bottom-0 z-10 p-6 pb-8 sm:p-10 lg:p-14">
+                {/* The engineering stage. Phones/tablets: fills the space above the card and copy.
+                Desktop: the right-hand 60% of the panel. */}
+                <div className="hero-dive-fade relative mt-16 min-h-[26svh] flex-1 lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:w-[60%]">
+                  <div
+                    aria-hidden
+                    className={cn(
+                      "absolute inset-0 transition-opacity duration-700",
+                      ready3d ? "opacity-0" : "opacity-100"
+                    )}
+                  >
+                    <Image
+                      src={asset("/hero/engineering-poster.png")}
+                      alt=""
+                      fill
+                      priority
+                      sizes="(min-width: 1024px) 60vw, 100vw"
+                      className="object-contain p-[4%] lg:p-[6%]"
+                    />
+                  </div>
+                  {mount3d && (
+                    <div
+                      className={cn(
+                        "absolute inset-0 transition-opacity duration-700",
+                        ready3d ? "opacity-100" : "opacity-0"
+                      )}
+                    >
+                      <EngineeringCanvas
+                        keys={features.map((f) => f.key)}
+                        index={index}
+                        onCycle={next}
+                        launch={launching}
+                        onReady={() => setReady3d(true)}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Company card, phones/tablets: what this drawing is, with the product line */}
+                {feature && (
+                  <div className="hero-dive-fade relative z-10 px-6 sm:px-10 lg:hidden">
+                    <div className="glass rounded-2xl px-4 py-3.5 sm:px-5">
+                      <div key={index} className="eng-swap" aria-live="polite">
+                        <p className="eyebrow text-[0.65rem] text-teal-soft">{feature.sector}</p>
+                        <p className="mt-1 font-display text-lg leading-tight font-semibold">{feature.name}</p>
+                        <p className="mt-1 line-clamp-2 text-[0.82rem] leading-snug text-white/70">{feature.summary}</p>
+                      </div>
+                      <div className="mt-2 flex items-center justify-between">
+                        <Ticks features={features} index={index} onSelect={setIndex} />
+                        <Link
+                          href="/portfolio"
+                          className="inline-flex min-h-8 items-center gap-1 text-[0.8rem] font-semibold text-white/85 hover:text-teal"
+                        >
+                          Portfolio <ArrowUpRight className="size-3.5" aria-hidden />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Claim. Phones/tablets: below the card. Desktop: bottom-left. */}
+            <div
+              className={cn(
+                "hero-dive-fade z-10 p-6 pb-8 sm:p-10 lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:w-[52%] lg:flex-col lg:justify-end lg:p-14 lg:pb-16",
+                // Photos: the text overlays the photo, at the bottom on phones too.
+                photo ? "absolute inset-x-0 bottom-0 pt-6" : "relative pt-6"
+              )}
+            >
               <div className="hero-intro hero-intro--late max-w-[44rem]">
-                <p className="hud flex items-center gap-3 text-teal-soft">
-                  <span aria-hidden className="block h-px w-8 bg-teal" />
-                  India&rsquo;s first energy-transition venture fund
-                </p>
-                <h1 className="display mt-5 text-[2.35rem] sm:text-6xl lg:text-[4.4rem]">
-                  Engineering India&rsquo;s
+                <p className="eyebrow text-teal-soft">India&rsquo;s first energy-transition venture fund</p>
+                <h1 className="mt-4 font-display text-[2.3rem] leading-[1.02] font-bold tracking-[-0.04em] sm:mt-5 sm:text-6xl lg:text-[4.25rem]">
+                  Engineering
                   <br />
-                  future of <span className="sr-only">energy</span>
-                  <SectorPill words={slides.map((s) => s.sector)} index={index} />
+                  Future of Energy.
                 </h1>
-                <p className="mt-5 max-w-md text-[0.95rem] leading-relaxed text-white/75 sm:text-base">{hero}</p>
-                <div className="mt-7 flex flex-wrap gap-3">
+                <p className="mt-4 max-w-md text-[0.9rem] leading-relaxed text-white/75 sm:mt-6 sm:text-lg">{hero}</p>
+                <div className="mt-6 flex flex-wrap gap-3 sm:mt-8">
                   <ButtonLink href={pitchHref} variant="solid">
                     Pitch to us
                   </ButtonLink>
@@ -254,48 +242,39 @@ export function HomeHero({ hero, slides }: { hero: string; slides: HeroSlide[] }
                     Explore portfolio
                   </ButtonLink>
                 </div>
+                {photo && <PhotoCaptionCompact slides={slides} index={index} onSelect={setIndex} playing={playing} />}
               </div>
             </div>
 
-            {/* Portfolio card, synced to the pill (desktop) */}
-            {slide && (
-              <div className="hero-dive-fade">
-                <Link
-                  href="/portfolio"
-                  className="hero-card glass absolute right-14 bottom-14 z-10 hidden w-72 rounded-2xl p-5 transition-colors hover:border-teal/40 lg:block"
-                >
-                  <div key={index} className="hero-swap">
-                    <p className="hud flex items-center justify-between text-teal-soft">
-                      {slide.sector}
-                      <ArrowUpRight className="size-3.5 text-white/60" aria-hidden />
-                    </p>
-                    {slide.company ? (
-                      <>
-                        <div className="mt-4 flex items-center gap-3">
-                          {slide.company.logoUrl && (
-                            <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-lg bg-white p-1.5">
-                              {/* Logos come from the CMS at arbitrary sizes. */}
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={slide.company.logoUrl}
-                                alt=""
-                                className="max-h-full max-w-full object-contain"
-                              />
-                            </span>
-                          )}
-                          <p className="font-semibold">{slide.company.name}</p>
-                        </div>
-                        <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-white/70">
-                          {slide.company.summary}
+            {photo ? (
+              <PhotoCaption slides={slides} index={index} onSelect={setIndex} playing={playing} />
+            ) : (
+              <>
+                {/* Company card, synced to the drawing (desktop) */}
+                {feature && (
+                  <div className="hero-dive-fade absolute right-12 bottom-12 z-10 hidden w-80 lg:block">
+                    <div className="glass rounded-2xl p-5">
+                      <div key={index} className="eng-swap">
+                        <p className="eyebrow flex items-center justify-between text-teal-soft">
+                          {feature.sector}
+                          <span className="hud text-white/40">{ready3d ? "Drag to rotate" : ""}</span>
                         </p>
-                        <p className="mt-4 text-xs text-white/50">In our portfolio</p>
-                      </>
-                    ) : (
-                      <p className="mt-4 text-sm leading-relaxed text-white/75">{slide.line}</p>
-                    )}
+                        <p className="mt-3 font-display text-xl font-semibold">{feature.name}</p>
+                        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/70">{feature.summary}</p>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between">
+                        <Ticks features={features} index={index} onSelect={setIndex} />
+                        <Link
+                          href="/portfolio"
+                          className="inline-flex items-center gap-1 text-sm font-semibold text-white/85 hover:text-teal"
+                        >
+                          View in portfolio <ArrowUpRight className="size-3.5" aria-hidden />
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                </Link>
-              </div>
+                )}
+              </>
             )}
 
             {/* Dims as the panel recedes */}
@@ -307,44 +286,35 @@ export function HomeHero({ hero, slides }: { hero: string; slides: HeroSlide[] }
   );
 }
 
-/** The cycling last word: the pill eases to each word's width while the words crossfade. */
-function SectorPill({ words, index }: { words: string[]; index: number }) {
-  const sizer = useRef<HTMLSpanElement>(null);
-  const [widths, setWidths] = useState<number[]>([]);
-
-  useLayoutEffect(() => {
-    const el = sizer.current;
-    if (!el) return;
-    const measure = () => setWidths(Array.from(el.children, (c) => (c as HTMLElement).offsetWidth));
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    document.fonts?.ready.then(measure);
-    return () => ro.disconnect();
-  }, [words]);
-
-  if (!words.length) return <>energy.</>;
+/** Which company's drawing is showing; each tick jumps to one (touch-sized hit areas). */
+function Ticks({
+  features,
+  index,
+  onSelect,
+}: {
+  features: HeroFeature[];
+  index: number;
+  onSelect: (i: number) => void;
+}) {
   return (
-    <span aria-hidden className="relative ml-[0.15em] inline-block align-[0.12em]">
-      {/* Invisible copies, to measure each word at the pill's type size */}
-      <span ref={sizer} className="pointer-events-none invisible absolute top-0 left-0 flex whitespace-nowrap">
-        {words.map((w, i) => (
-          <span key={i} className="px-[0.55em] text-[0.5em] leading-none font-normal tracking-normal">
-            {w}
-          </span>
-        ))}
-      </span>
-      <span
-        className="relative inline-flex h-[0.86em] items-center overflow-hidden rounded-full border border-white/45 transition-[width] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"
-        style={{ width: widths[index] ? widths[index] + 2 : undefined }}
-      >
-        <span
-          key={index}
-          className="hero-swap px-[0.55em] text-[0.5em] leading-none font-normal tracking-normal whitespace-nowrap"
+    <div className="-ml-1 flex" role="group" aria-label="Show company">
+      {features.map((f, i) => (
+        <button
+          key={f.key}
+          type="button"
+          aria-label={f.name}
+          aria-pressed={i === index}
+          onClick={() => onSelect(i)}
+          className="group grid h-8 place-items-center px-1"
         >
-          {words[index]}
-        </span>
-      </span>
-    </span>
+          <span
+            className={cn(
+              "block h-1 rounded-full transition-all duration-500",
+              i === index ? "w-8 bg-teal" : "w-4 bg-white/25 group-hover:bg-white/50"
+            )}
+          />
+        </button>
+      ))}
+    </div>
   );
 }

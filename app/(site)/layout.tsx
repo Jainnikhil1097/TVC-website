@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource/merriweather/latin-300.css";
-import "@fontsource/merriweather/latin-ext-300.css";
-import "@fontsource/merriweather/latin-400.css";
+// Brand Book: Inter for headlines (variable weight axis; self-hosted, OFL).
+import "@fontsource-variable/inter/wght.css";
 import "@fontsource-variable/manrope/index.css";
 import "./globals.css";
 import { siteIdentity as site } from "@/lib/site-config";
