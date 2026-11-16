@@ -2,8 +2,8 @@
 // (updating an existing CMS). For each photo in scripts/seed-data/company-photos/
 // named after a company's slug (e.g. matel-motion.jpg or suind.webp):
 //   - uploads it to the media library once (by file name),
-//   - sets it as that company's cover image, and
-//   - ticks "Show in home hero", so it appears in the home page slideshow.
+//   - sets it as that company's cover image (the home spotlight's fallback when
+//     there's no product render).
 // Companies without a photo file are left alone. Safe to run repeatedly.
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
@@ -51,7 +51,7 @@ export async function importCompanyPhotos(payload: Payload, log: (msg: string) =
       collection: "companies",
       id: company.id,
       context,
-      data: { coverImage: media.id, showInHero: true },
+      data: { coverImage: media.id },
     });
     attached++;
   }

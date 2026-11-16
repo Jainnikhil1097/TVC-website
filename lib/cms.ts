@@ -42,7 +42,7 @@ function fileUrl(url: string) {
   return isStaticPreview ? url.replace(/^(https?:\/\/[^/]+)?\/api\/media\/file\//, `${basePath}/media/`) : url;
 }
 
-function image(media: number | Media | null | undefined, size?: "card" | "portrait" | "thumbnail" | "hero"): Image | undefined {
+function image(media: number | Media | null | undefined, size?: "card" | "portrait" | "thumbnail"): Image | undefined {
   if (!media || typeof media === "number") return undefined;
   const sized = size ? media.sizes?.[size] : undefined;
   const url = sized?.url || media.url;
@@ -87,8 +87,6 @@ function mapCompany(doc: CmsCompany): Company {
     featured: Boolean(doc.featured),
     logo: image(doc.logo, "card"),
     coverImage: image(doc.coverImage, "card"),
-    heroImage: image(doc.coverImage, "hero"),
-    showInHero: Boolean(doc.showInHero),
     founders: doc.founders?.map((f) => ({
       name: f.name,
       title: orUndefined(f.title),
@@ -98,6 +96,17 @@ function mapCompany(doc: CmsCompany): Company {
     whyWeInvested: orUndefined(doc.whyWeInvested),
     essayUrl: orUndefined(doc.essayUrl),
     videoUrl: orUndefined(doc.videoUrl),
+    productImage: image(doc.productImage),
+    callouts: doc.callouts?.map((c) => ({ label: c.label, detail: orUndefined(c.detail), x: c.x, y: c.y })),
+    proof: doc.proofValue && doc.proofLabel ? { value: doc.proofValue, label: doc.proofLabel } : undefined,
+    deployment: orUndefined(doc.deployment),
+    customers: orUndefined(doc.customers),
+    marketGap: orUndefined(doc.marketGap),
+    breakthrough: orUndefined(doc.breakthrough),
+    traction: doc.traction?.map((t) => t.point).filter(Boolean),
+    marketOpportunity: orUndefined(doc.marketOpportunity),
+    founderTrackRecord: orUndefined(doc.founderTrackRecord),
+    whyTheyWin: orUndefined(doc.whyTheyWin),
   };
 }
 

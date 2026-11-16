@@ -5,6 +5,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { AccentRule } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { HeroCard } from "@/components/light/HeroCard";
+import { PauseOffscreen } from "@/components/motion/PauseOffscreen";
 import { LineArt, type LineArtVariant } from "@/components/light/LineArt";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +46,8 @@ export default async function GiftCityPage() {
   return (
     <div data-theme="light" className="pb-24">
       <HeroCard className="bg-[linear-gradient(180deg,#0a1e3f_0%,#11284f_100%)]">
-        <LineArt variant="skyline" className="absolute inset-x-0 bottom-0 -z-10 h-[72%] text-white/25" />
+        <LineArt variant="skyline" animated className="absolute inset-x-0 bottom-0 -z-10 h-[72%] text-white/25" />
+        <PauseOffscreen />
         <div className="container-site flex flex-1 flex-col justify-end pt-28 pb-10 lg:pb-16">
           <p className="eyebrow text-teal">{giftCity.eyebrow}</p>
           <h1 className="display mt-5 max-w-4xl text-[2.3rem] leading-[0.98] tracking-[0.04em] uppercase sm:text-6xl lg:max-w-[58%] lg:text-7xl">

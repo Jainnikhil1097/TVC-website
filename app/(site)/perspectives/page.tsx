@@ -190,7 +190,7 @@ export default async function PerspectivesPage() {
     <>
       {/* Dark hero, then the formats carousel on its own light band */}
       <PageHero
-        art="flow"
+        art="writing"
         eyebrow="Perspectives"
         title="Ideas behind the investments"
         intro={<>Perspectives on India&rsquo;s energy transition, straight from our newsletter.</>}

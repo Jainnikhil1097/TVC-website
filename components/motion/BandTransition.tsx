@@ -3,8 +3,8 @@
 import { ViewTransition, useEffect, useRef, useState, type ReactNode } from "react";
 
 /**
- * The navy band at the top of every page (the home hero panel and each inner
- * page's PageHero) is one shared element: on navigation it morphs from one page's
+ * The navy band at the top of every page (the home hero and each inner page's
+ * PageHero) is one shared element: on navigation it morphs from one page's
  * band to the next while the rest of the page fades (styles: `.vt-band` in
  * globals.css). React drives this through the browser's View Transitions API.
  * Browsers without it, and reduced-motion users, simply change page.
@@ -36,10 +36,14 @@ export function BandTransition({
     return () => io.disconnect();
   }, []);
 
+  // The name stays fixed: React only forgets a name if it's still set when the band
+  // unmounts, so toggling it (e.g. after scrolling past the header) left a stale entry
+  // and the next page's band was reported as a duplicate. Opting out is done with
+  // share="none" instead, which skips the morph for that navigation.
   return (
     <ViewTransition
-      name={inView && active ? "page-band" : undefined}
-      share="vt-band"
+      name="page-band"
+      share={inView && active ? "vt-band" : "none"}
       enter="none"
       exit="none"
       update="none"

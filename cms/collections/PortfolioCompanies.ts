@@ -86,7 +86,7 @@ export const PortfolioCompanies: CollectionConfig = {
               relationTo: "media",
               admin: {
                 description:
-                  "A product or team photo, landscape, at least 2400 px wide. Used when the company is featured on the home page or shown in the home hero. Keep the subject away from the left third, where the hero text sits, and set the focal point.",
+                  "A product or team photo, landscape, at least 1600 px wide. Shown in the home page spotlight when the company is featured and has no product image. Set the focal point on the subject.",
               },
             },
           ],
@@ -124,6 +124,104 @@ export const PortfolioCompanies: CollectionConfig = {
               admin: { description: "Paste the Substack post URL about this company. It links the two automatically." },
             }),
             urlField({ name: "videoUrl", label: "Video URL (YouTube)" }),
+          ],
+        },
+        {
+          label: "One-pager",
+          description:
+            "Product, proof and story from the company's one-pager. Everything here is public — never add revenue, fundraising, valuation or return figures.",
+          fields: [
+            {
+              name: "productImage",
+              label: "Product image",
+              type: "upload",
+              relationTo: "media",
+              admin: {
+                description:
+                  "A clean product render on a white or transparent background, without text labels (add those as callouts below). At least 1600 px wide.",
+              },
+            },
+            {
+              name: "callouts",
+              label: "Product callouts",
+              type: "array",
+              maxRows: 4,
+              labels: { singular: "Callout", plural: "Callouts" },
+              admin: {
+                description:
+                  "Labels pointing at parts of the product image. Position is a percentage of the image: 0/0 is the top-left corner, 50/50 the centre.",
+                initCollapsed: true,
+              },
+              fields: [
+                {
+                  type: "row",
+                  fields: [
+                    { name: "label", label: "Label", type: "text", required: true, admin: { placeholder: "e.g. Motor controller unit" } },
+                    { name: "detail", label: "Short detail", type: "text", maxLength: 90 },
+                  ],
+                },
+                {
+                  type: "row",
+                  fields: [
+                    { name: "x", label: "Across (% from left)", type: "number", required: true, min: 0, max: 100, defaultValue: 50 },
+                    { name: "y", label: "Down (% from top)", type: "number", required: true, min: 0, max: 100, defaultValue: 50 },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "proofValue",
+                  label: "Headline number",
+                  type: "text",
+                  admin: { placeholder: "e.g. 200,000+", description: "Shown large in the home page proof band." },
+                },
+                {
+                  name: "proofLabel",
+                  label: "What it counts",
+                  type: "text",
+                  admin: { placeholder: "e.g. motors deployed" },
+                },
+              ],
+            },
+            {
+              name: "deployment",
+              label: "Deployment",
+              type: "text",
+              admin: { placeholder: "e.g. 200,000+ motors across mobility & pumps" },
+            },
+            { name: "customers", label: "Customers", type: "text", admin: { description: "Only customers that are cleared to be named publicly." } },
+            {
+              name: "marketGap",
+              label: "The gap",
+              type: "textarea",
+              maxLength: 500,
+              admin: { description: "The problem in the market, in two or three sentences." },
+            },
+            {
+              name: "breakthrough",
+              label: "The breakthrough",
+              type: "textarea",
+              maxLength: 500,
+              admin: { description: "What the company built and why it's different. The first sentence also shows on the home page." },
+            },
+            {
+              name: "traction",
+              label: "Traction",
+              type: "array",
+              maxRows: 4,
+              labels: { singular: "Point", plural: "Points" },
+              admin: {
+                description: "Milestones: deployments, pilots, patents, partners. No revenue, fundraising or return figures.",
+                initCollapsed: true,
+              },
+              fields: [{ name: "point", label: "Point", type: "text", required: true, maxLength: 200 }],
+            },
+            { name: "marketOpportunity", label: "Market opportunity", type: "textarea", maxLength: 500 },
+            { name: "founderTrackRecord", label: "Founder track record", type: "textarea", maxLength: 500 },
+            { name: "whyTheyWin", label: "Why they win", type: "textarea", maxLength: 500 },
           ],
         },
         {
@@ -166,18 +264,7 @@ export const PortfolioCompanies: CollectionConfig = {
       label: "Feature on home page",
       type: "checkbox",
       defaultValue: false,
-      admin: { position: "sidebar", description: "Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too." },
-    },
-    {
-      name: "showInHero",
-      label: "Show in home hero",
-      type: "checkbox",
-      defaultValue: false,
-      admin: {
-        position: "sidebar",
-        description:
-          "Shows this company's cover image as a full-screen photo at the top of the home page (up to 5, in portfolio order). Needs a cover image.",
-      },
+      admin: { position: "sidebar", description: "Shown in the product spotlight on the home page (3–6 works best). Add a product image (One-pager tab) or a cover image too." },
     },
     showOnSiteField,
     orderField,

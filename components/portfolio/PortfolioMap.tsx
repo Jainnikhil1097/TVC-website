@@ -34,7 +34,7 @@ type PortfolioMapProps = {
 };
 
 // A true blueprint: pale line art on deep navy, bright teal highlights — the same
-// ink as the page heroes and the home hero.
+// ink as the page heroes.
 const INK = "#d6e4f0"; // line colour
 const ACCENT = "#0ed5c2";
 const PAPER = "#0a1e3f"; // map background

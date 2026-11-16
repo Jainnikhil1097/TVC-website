@@ -1,6 +1,6 @@
 import type { PortfolioSectorId } from "./types";
 
-/** The eight investment themes — these are the "planets" in the home hero. */
+/** The eight investment themes (the home "Where we invest" grid). */
 export type InvestmentSector = {
   id: string;
   name: string;

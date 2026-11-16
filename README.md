@@ -28,7 +28,8 @@ The first account created at `/admin` automatically becomes an **Admin**.
 | `npm run seed` | Imports the original content (`scripts/seed-data/`) into the CMS. Safe to re-run: skips collections and page settings that already have content; `-- --reset` wipes content (never users) first |
 | `npm run team:photos -- "<folder>"` | Turns the photographer's originals into web-sized team portraits in `scripts/seed-data/team-photos/` (crop fixes in `crops.json`; `--sheet` writes a contact sheet to /tmp) |
 | `npm run team:import` | Updates the CMS team from `scripts/seed-data/team.ts` and uploads the photos. Safe to re-run; hides (never deletes) people no longer listed |
-| `npm run company:photos` | Attaches `scripts/seed-data/company-photos/<slug>.jpg` as each company's cover image and adds it to the home hero slideshow (the seed does this too). Safe to re-run |
+| `npm run company:photos` | Attaches `scripts/seed-data/company-photos/<slug>.jpg` as each company's cover image (the seed does this too). Safe to re-run |
+| `npm run company:onepagers` | Fills empty One-pager fields from `scripts/seed-data/one-pagers.ts` and attaches `scripts/seed-data/company-products/<slug>-product.png` as product images (the seed does this too). Never overwrites editors' text; safe to re-run |
 | `npm run generate:types` | Regenerates `payload-types.ts` after changing collections/globals |
 | `npm run generate:importmap` | Regenerates the admin import map after adding admin components |
 | `npm run migrate:create <name>` | Creates a Postgres migration after changing collections/globals (commit it) |
@@ -76,7 +77,7 @@ Pitch decks are uploaded straight from the browser to **private** Vercel Blob st
 
 ## Static preview on GitHub Pages
 
-A look-only copy of the site for sharing before launch: every page, the home engineering drawings, the portfolio
+A look-only copy of the site for sharing before launch: every page, the home energy-flow hero, the portfolio
 map and the animations, but **no /admin, and forms are switched off** (they show a "preview"
 note). It's hidden from search engines.
 
@@ -131,11 +132,10 @@ PoK, Aksai Chin, Siachen) and Arunachal Pradesh.
 
 ## Performance notes
 
-- The home hero shows full-screen company photos (`components/home/PhotoBackdrop.tsx`) when any
-  company has "Show in home hero" ticked: served as 2400 px WebP, only the current and next photo
-  are loaded. Otherwise the engineering drawings (three.js, `components/home/engineering/`) load only on
-  the home page, after first paint, in their own lazily loaded chunk. Reduced-motion, Save-Data
-  and no-WebGL visitors get a static poster instead (`public/hero/engineering-poster.png`).
+- The home hero's "energy flow" (`components/home/EnergyFlow.tsx`) is plain Canvas 2D with no
+  libraries and no images: about 30 fps, device-pixel ratio capped at 2, paused when off-screen or in
+  a background tab. Reduced-motion and Save-Data visitors get a single still frame. The headline is
+  ordinary text, so it paints first and stays the LCP element.
 - Page-to-page motion uses the browser's View Transitions API through React `<ViewTransition>`
   (`components/motion/BandTransition.tsx`); browsers without it just change page.
 - GSAP is imported on demand by the home scroll scene and the word-by-word heading reveal only. Scroll reveals elsewhere use one

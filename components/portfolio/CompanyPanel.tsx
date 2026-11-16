@@ -13,6 +13,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { hostname } from "@/lib/utils";
 import { CompanyLogo, StatusBadge } from "./CompanyLogo";
+import { ProductCallouts } from "./ProductCallouts";
 import { statusLabel, type CompanyEssay } from "./status";
 
 gsap.registerPlugin(useGSAP);
@@ -112,6 +113,15 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
     { label: "Focus sector", value: portfolioSectorName(company.sector) },
     { label: "Year invested", value: String(company.yearInvested) },
   ];
+  const snapshot = [
+    { label: "Deployment", value: company.deployment },
+    { label: "Customers", value: company.customers },
+  ].filter((f): f is { label: string; value: string } => Boolean(f.value));
+  // One-pager story sections, each shown only when filled in.
+  const story = [
+    { title: "The gap", text: company.marketGap },
+    { title: "The breakthrough", text: company.breakthrough },
+  ];
 
   // Portalled to <body> so no transformed ancestor (e.g. a Reveal wrapper) can
   // become the containing block for this fixed overlay.
@@ -168,6 +178,64 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             <p className="mt-3 leading-relaxed text-ink/80">{company.summary}</p>
           </section>
 
+          {company.productImage && (
+            <section className="mt-8">
+              <h3 className="eyebrow text-muted">The product</h3>
+              <div className="mt-4">
+                <ProductCallouts company={company} sizes="(min-width: 1024px) 480px, 100vw" />
+              </div>
+            </section>
+          )}
+
+          {snapshot.length > 0 && (
+            <dl className="mt-8 divide-y divide-line rounded-2xl border border-line bg-surface px-5">
+              {snapshot.map((f) => (
+                <div key={f.label} className="grid grid-cols-[6.5rem_1fr] gap-4 py-3.5">
+                  <dt className="hud pt-0.5 text-muted">{f.label}</dt>
+                  <dd className="text-sm text-ink">{f.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
+          {story.map(
+            (s) =>
+              s.text && (
+                <section key={s.title} className="mt-8">
+                  <h3 className="eyebrow text-muted">{s.title}</h3>
+                  <p className="mt-3 leading-relaxed text-ink/80">{s.text}</p>
+                </section>
+              )
+          )}
+
+          {company.traction && company.traction.length > 0 && (
+            <section className="mt-8">
+              <h3 className="eyebrow text-muted">Traction</h3>
+              <ul className="mt-3 space-y-2.5">
+                {company.traction.map((t) => (
+                  <li key={t} className="flex gap-3 leading-relaxed text-ink/80">
+                    <span aria-hidden className="mt-[0.6em] size-1.5 shrink-0 rounded-full bg-teal-ink" />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {company.marketOpportunity && (
+            <section className="mt-8">
+              <h3 className="eyebrow text-muted">Market opportunity</h3>
+              <p className="mt-3 leading-relaxed text-ink/80">{company.marketOpportunity}</p>
+            </section>
+          )}
+
+          {company.whyTheyWin && (
+            <section className="mt-8">
+              <h3 className="eyebrow text-muted">Why they win</h3>
+              <p className="mt-3 leading-relaxed text-ink/80">{company.whyTheyWin}</p>
+            </section>
+          )}
+
           {company.whyWeInvested && (
             <section className="mt-8">
               <h3 className="eyebrow text-muted">Why we invested</h3>
@@ -175,11 +243,12 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             </section>
           )}
 
-          {company.founders && company.founders.length > 0 && (
+          {((company.founders && company.founders.length > 0) || company.founderTrackRecord) && (
             <section className="mt-8">
               <h3 className="eyebrow text-muted">Founders</h3>
+              {company.founderTrackRecord && <p className="mt-3 leading-relaxed text-ink/80">{company.founderTrackRecord}</p>}
               <ul className="mt-4 space-y-3">
-                {company.founders.map((f) => (
+                {company.founders?.map((f) => (
                   <li key={f.name} className="flex items-center gap-4">
                     <Avatar name={f.name} photo={f.photo} sizes="48px" className="size-12 shrink-0 rounded-full" />
                     <div className="min-w-0 flex-1">

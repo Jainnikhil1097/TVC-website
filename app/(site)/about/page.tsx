@@ -37,7 +37,7 @@ export default async function AboutPage() {
 
   return (
     <>
-      <PageHero art="network" eyebrow="About us" title="India's first energy-transition venture fund" intro={site.about}>
+      <PageHero art="paths" eyebrow="About us" title="India's first energy-transition venture fund" intro={site.about}>
         <dl className="mt-12 grid max-w-3xl grid-cols-1 border-y border-white/15 sm:grid-cols-3">
           {facts.map((f, i) => (
             <div

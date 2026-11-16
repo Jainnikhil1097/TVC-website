@@ -33,7 +33,7 @@ export default async function ImpactPage() {
 
   return (
     <div data-theme="light" className="pb-24">
-      <PageHero art="shell" eyebrow={impact.eyebrow} title={impact.headline} intro={impact.intro} />
+      <PageHero art="decouple" eyebrow={impact.eyebrow} title={impact.headline} intro={impact.intro} />
 
       {/* Portfolio wordmarks */}
       <section className="container-site border-b border-ink/10 py-14" aria-labelledby="impact-backing">

@@ -11,7 +11,7 @@ import { basePath } from "@/lib/base-path";
 
 /**
  * Light by default; transparent with white text while it sits over a dark hero
- * (any element marked `data-nav-dark`, e.g. the home hero), then white once
+ * (any element marked `data-nav-dark`: the home hero and page headers), then white once
  * a `data-nav-cover` section slides over it or
  * the visitor scrolls past it.
  */

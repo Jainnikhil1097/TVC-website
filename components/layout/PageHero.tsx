@@ -3,6 +3,7 @@ import { AccentRule } from "@/components/ui/SectionHeading";
 import { LineArt, type LineArtVariant } from "@/components/light/LineArt";
 import { cn } from "@/lib/utils";
 import { BandTransition } from "@/components/motion/BandTransition";
+import { PauseOffscreen } from "@/components/motion/PauseOffscreen";
 
 type PageHeroProps = {
   eyebrow: string;
@@ -17,7 +18,9 @@ type PageHeroProps = {
 /**
  * Hero for every inner page — the same ink band as the home page: tall, headline
  * anchored bottom-left, and a line-art motif on the right that fades into the
- * band so text stays readable. Server-rendered SVG, no JavaScript. Marked
+ * band so text stays readable. The motif is animated in the home hero's style
+ * (it draws in, keeps a gentle loop, aqua pulses run along it): server-rendered SVG
+ * with CSS motion, paused off-screen by a tiny client helper. Marked
  * `data-nav-dark` so the nav sits transparent over it. The headline is never
  * hidden, so it's a safe LCP element. Wrapped in BandTransition so it morphs from/to
  * the previous page's band on navigation.
@@ -33,7 +36,8 @@ export function PageHero({ eyebrow, title, intro, art, children, className }: Pa
           className
         )}
       >
-        <LineArt variant={art} className="absolute inset-0 -z-10 text-white/30 lg:left-[35%] lg:w-[65%]" />
+        <LineArt variant={art} animated className="absolute inset-0 -z-10 text-white/30 lg:left-[35%] lg:w-[65%]" />
+        <PauseOffscreen />
         <div
           aria-hidden
           className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,#0a1e3f_0%,rgb(10_30_63/0.85)_45%,rgb(10_30_63/0.1)_100%)]"

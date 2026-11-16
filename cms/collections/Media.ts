@@ -22,8 +22,6 @@ export const Media: CollectionConfig = {
       { name: "thumbnail", width: 320, height: 320, position: "centre" },
       { name: "card", width: 960, withoutEnlargement: true },
       { name: "portrait", width: 1200, height: 1500, position: "centre", withoutEnlargement: true },
-      // Full-screen home hero photos: large, but WebP keeps them light.
-      { name: "hero", width: 2400, withoutEnlargement: true, formatOptions: { format: "webp", options: { quality: 78 } } },
     ],
   },
   fields: [

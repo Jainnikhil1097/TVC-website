@@ -172,7 +172,7 @@ export interface Company {
    */
   logo?: (number | null) | Media;
   /**
-   * A product or team photo, landscape, at least 2400 px wide. Used when the company is featured on the home page or shown in the home hero. Keep the subject away from the left third, where the hero text sits, and set the focal point.
+   * A product or team photo, landscape, at least 1600 px wide. Shown in the home page spotlight when the company is featured and has no product image. Set the focal point on the subject.
    */
   coverImage?: (number | null) | Media;
   founders?:
@@ -194,6 +194,52 @@ export interface Company {
   essayUrl?: string | null;
   videoUrl?: string | null;
   /**
+   * A clean product render on a white or transparent background, without text labels (add those as callouts below). At least 1600 px wide.
+   */
+  productImage?: (number | null) | Media;
+  /**
+   * Labels pointing at parts of the product image. Position is a percentage of the image: 0/0 is the top-left corner, 50/50 the centre.
+   */
+  callouts?:
+    | {
+        label: string;
+        detail?: string | null;
+        x: number;
+        y: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Shown large in the home page proof band.
+   */
+  proofValue?: string | null;
+  proofLabel?: string | null;
+  deployment?: string | null;
+  /**
+   * Only customers that are cleared to be named publicly.
+   */
+  customers?: string | null;
+  /**
+   * The problem in the market, in two or three sentences.
+   */
+  marketGap?: string | null;
+  /**
+   * What the company built and why it's different. The first sentence also shows on the home page.
+   */
+  breakthrough?: string | null;
+  /**
+   * Milestones: deployments, pilots, patents, partners. No revenue, fundraising or return figures.
+   */
+  traction?:
+    | {
+        point: string;
+        id?: string | null;
+      }[]
+    | null;
+  marketOpportunity?: string | null;
+  founderTrackRecord?: string | null;
+  whyTheyWin?: string | null;
+  /**
    * Exited and acquired companies get a badge and aren't counted as active.
    */
   status: 'active' | 'exited' | 'acquired';
@@ -204,13 +250,9 @@ export interface Company {
    */
   slug?: string | null;
   /**
-   * Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too.
+   * Shown in the product spotlight on the home page (3–6 works best). Add a product image (One-pager tab) or a cover image too.
    */
   featured?: boolean | null;
-  /**
-   * Shows this company's cover image as a full-screen photo at the top of the home page (up to 5, in portfolio order). Needs a cover image.
-   */
-  showInHero?: boolean | null;
   /**
    * Untick to hide this from the website without deleting it.
    */
@@ -264,14 +306,6 @@ export interface Media {
       filename?: string | null;
     };
     portrait?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    hero?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -575,12 +609,36 @@ export interface CompaniesSelect<T extends boolean = true> {
   whyWeInvested?: T;
   essayUrl?: T;
   videoUrl?: T;
+  productImage?: T;
+  callouts?:
+    | T
+    | {
+        label?: T;
+        detail?: T;
+        x?: T;
+        y?: T;
+        id?: T;
+      };
+  proofValue?: T;
+  proofLabel?: T;
+  deployment?: T;
+  customers?: T;
+  marketGap?: T;
+  breakthrough?: T;
+  traction?:
+    | T
+    | {
+        point?: T;
+        id?: T;
+      };
+  marketOpportunity?: T;
+  founderTrackRecord?: T;
+  whyTheyWin?: T;
   status?: T;
   exitYear?: T;
   exitNote?: T;
   slug?: T;
   featured?: T;
-  showInHero?: T;
   showOnSite?: T;
   order?: T;
   updatedAt?: T;
@@ -727,16 +785,6 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         portrait?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        hero?:
           | T
           | {
               url?: T;

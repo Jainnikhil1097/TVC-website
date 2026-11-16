@@ -20,6 +20,9 @@ const context = { disableRevalidate: true };
 await payload.updateGlobal({ slug: "home-page", data: { positioning: "Edited by an editor" }, context });
 await payload.updateGlobal({ slug: "site", data: { tagline: "Edited tagline" }, context });
 const before = await payload.count({ collection: "companies" });
+const matel = (await payload.find({ collection: "companies", where: { slug: { equals: "matel-motion" } }, limit: 1 })).docs[0];
+assert.ok(matel.breakthrough && matel.traction?.length && matel.callouts?.length, "one-pager content is seeded");
+await payload.update({ collection: "companies", id: matel.id, data: { breakthrough: "Edited breakthrough", traction: [] }, context });
 
 // …then someone re-runs the seed.
 execFileSync(process.execPath, ["--import", "tsx", "scripts/seed.ts"], { env: process.env, stdio: "pipe" });
@@ -31,6 +34,17 @@ assert.equal(home.positioning, "Edited by an editor", "home page edits survive a
 assert.equal(site.tagline, "Edited tagline", "site settings edits survive a re-seed");
 assert.equal(after.totalDocs, before.totalDocs, "no duplicate companies");
 assert.ok((home.pillars ?? []).length > 0 && (home.faq ?? []).length > 0, "seeded pillars and FAQ are present");
+const matelAfter = await payload.findByID({ collection: "companies", id: matel.id });
+assert.equal(matelAfter.breakthrough, "Edited breakthrough", "one-pager edits survive a re-seed");
+assert.ok(matelAfter.traction?.length, "emptied one-pager fields are filled again");
 
-console.log("seed: re-running the seed preserves edits");
+// One-pager content is public: no company financials or return figures.
+const { onePagers } = await import("./seed-data/one-pagers");
+const FORBIDDEN = /revenue|raised|raising|\breturns?\b|EBITDA|\bIRR\b|\bIPO\b|valuation|margin|funding|order book/i;
+for (const [slug, content] of Object.entries(onePagers)) {
+  const text = JSON.stringify(content);
+  assert.ok(!FORBIDDEN.test(text), `one-pager for ${slug} mentions "${text.match(FORBIDDEN)?.[0]}"`);
+}
+
+console.log("seed: re-running the seed preserves edits; one-pagers are seeded and public-safe");
 process.exit(0);

@@ -58,17 +58,30 @@ export type Company = {
   founders?: Person[];
   /** Falls back to a serif wordmark. */
   logo?: Image;
-  /** Product/team photo for the home page's featured tabs. */
+  /** Product/team photo; the home spotlight's fallback when there's no product render. */
   coverImage?: Image;
-  /** The cover image at full-screen size, for the home hero. */
-  heroImage?: Image;
-  /** Shown in the home hero slideshow. */
-  showInHero?: boolean;
   whyWeInvested?: string;
   /** Substack post about this company; links the company and the essay. */
   essayUrl?: string;
   videoUrl?: string;
+  // One-pager (public-safe subset: no revenue, fundraising or return figures).
+  /** Clean product render, annotated with callouts. */
+  productImage?: Image;
+  callouts?: Callout[];
+  /** Headline number for the home page proof band. */
+  proof?: { value: string; label: string };
+  deployment?: string;
+  customers?: string;
+  marketGap?: string;
+  breakthrough?: string;
+  traction?: string[];
+  marketOpportunity?: string;
+  founderTrackRecord?: string;
+  whyTheyWin?: string;
 };
+
+/** A label pointing at part of a product image; x/y are percentages of the image. */
+export type Callout = { label: string; detail?: string; x: number; y: number };
 
 export type FundStatus = "raising" | "investing" | "deployed" | "closed";
 

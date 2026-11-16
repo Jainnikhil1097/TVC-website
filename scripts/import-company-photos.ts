@@ -1,5 +1,5 @@
-// Attaches the photos in scripts/seed-data/company-photos/ to their companies and
-// puts them in the home hero slideshow:
+// Attaches the photos in scripts/seed-data/company-photos/ to their companies as
+// cover images:
 //
 //   npm run company:photos
 //

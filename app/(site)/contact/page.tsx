@@ -23,7 +23,7 @@ export default async function ContactPage() {
 
   return (
     <>
-      <PageHero art="dots" eyebrow="Contact" title="Get in touch" intro={contactIntro} />
+      <PageHero art="meet" eyebrow="Contact" title="Get in touch" intro={contactIntro} />
 
       <section className="container-site grid gap-10 pt-12 pb-24 sm:pt-16 lg:grid-cols-[1.2fr_1fr] lg:gap-14">
         <Reveal className="min-w-0 rounded-3xl border border-line bg-white p-5 shadow-[0_8px_40px_rgb(10_30_63/0.05)] sm:p-10">
