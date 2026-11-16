@@ -26,6 +26,8 @@ export type Layout = {
   px: number;
   /** Radius of the interaction zone around the drawing, in px. */
   r: number;
+  /** Box the drawing is fitted into, in px (scale = fit / model.size). */
+  fit: number;
 };
 
 /** Visitor interaction for this frame: extra rotation, pull-apart and a focused part. */
@@ -174,7 +176,15 @@ function scribble(ctx: CanvasRenderingContext2D, x: number, y: number, w: number
  * Draws one frame and returns each part's screen centre (null if not drawn), used to
  * find the part nearest the pointer.
  */
-export function drawFrame(ctx: CanvasRenderingContext2D, model: Model, layout: Layout, f: Frame, view: View = NO_VIEW) {
+export function drawFrame(
+  ctx: CanvasRenderingContext2D,
+  model: Model,
+  layout: Layout,
+  f: Frame,
+  view: View = NO_VIEW,
+  /** Several sketches share the hero: skip the free-floating notes (they'd collide). */
+  compact = false
+) {
   const project = projector(model, layout, f.time, view);
   const centres: ([number, number] | null)[] = model.parts.map(() => null);
   const maxOrder = Math.max(0, ...model.parts.map((p) => p.order ?? 0));
@@ -247,7 +257,7 @@ export function drawFrame(ctx: CanvasRenderingContext2D, model: Model, layout: L
         scribble(ctx, x0, ey - 8, w - 8, 70 + i, 1);
         scribble(ctx, x0, ey + 9, (w - 8) * 0.7, 90 + i, 1);
       }
-    } else {
+    } else if (!compact) {
       for (let r = 0; r < a.rows; r++) {
         const w = a.w * k * (r === a.rows - 1 ? 0.6 : 1);
         scribble(ctx, layout.cx + a.dx * k, layout.cy + a.dy * k + r * 11 * k, w, 200 + i * 13 + r, clamp01(rv * 1.4 - r * 0.25));
@@ -316,4 +326,73 @@ export function drawFrame(ctx: CanvasRenderingContext2D, model: Model, layout: L
     if (sn) centres[pi] = [sx / sn, sy / sn];
   });
   return centres;
+}
+
+/**
+ * Where each sketch sits in the hero. One: right of the headline on desktop, the top
+ * half on phones. Three or four: a "drawing sheet" of figures in the same area.
+ */
+export type Placement = "side" | "background";
+
+export function layoutsFor(count: number, width: number, height: number, placement: Placement = "side"): Layout[] {
+  const desktop = width >= 1024;
+  const make = (cx: number, cy: number, fit: number): Layout => ({ cx, cy, scale: 1, px: Math.max(0.5, Math.min(1, fit / 560)), r: fit * 0.62, fit });
+  if (placement === "background") {
+    // Behind everything: one large drawing across the hero, or an even "wallpaper" of
+    // figures (4 × 2 on desktop, 2 × 4 on phones).
+    if (count <= 1) {
+      return [desktop ? make(width * 0.55, height * 0.52, Math.min(width * 0.78, height * 1.05)) : make(width * 0.5, height * 0.45, Math.min(width * 1.15, height * 0.72))];
+    }
+    const cols = desktop ? 4 : 2;
+    const rows = Math.ceil(count / cols);
+    const fit = desktop ? Math.min(width / cols, height / rows) * 0.92 : Math.min(width / cols, height / rows) * 0.95;
+    return Array.from({ length: count }, (_, i) => {
+      const c = i % cols;
+      const r = Math.floor(i / cols);
+      // Rows stagger slightly (one left, one right), like a drafting sheet rather than
+      // a table, while every figure stays inside the hero.
+      const x = ((c + (desktop ? (r % 2 ? 0.62 : 0.38) : 0.5)) * width) / cols;
+      return make(x, ((r + 0.5) * height) / rows, fit);
+    });
+  }
+  if (count <= 1) {
+    const fit = desktop ? Math.min(width * 0.5, height * 0.72) : Math.min(width * 0.92, height * 0.44);
+    return [make(desktop ? width * 0.68 : width * 0.5, desktop ? height * 0.5 : height * 0.3, fit)];
+  }
+  // Cell centres as fractions of a region; the region is right of the headline on
+  // desktop and the top of the hero on phones.
+  const cells: [number, number][] =
+    count === 3
+      ? desktop
+        ? [[0.24, 0.3], [0.74, 0.36], [0.48, 0.76]]
+        : [[0.18, 0.5], [0.5, 0.5], [0.82, 0.5]]
+      : [[0.26, 0.27], [0.75, 0.27], [0.26, 0.75], [0.75, 0.75]];
+  const region = desktop
+    ? { x: width * 0.46, y: height * 0.12, w: width * 0.48, h: height * 0.8 }
+    : { x: 0, y: height * 0.08, w: width, h: height * 0.44 };
+  const fit = desktop
+    ? Math.min(region.w * (count === 3 ? 0.44 : 0.46), region.h * (count === 3 ? 0.44 : 0.43))
+    : count === 3
+      ? Math.min(width * 0.31, region.h * 0.62)
+      : Math.min(width * 0.44, region.h * 0.44);
+  return cells.slice(0, count).map(([u, v]) => make(region.x + u * region.w, region.y + v * region.h, fit));
+}
+
+/** "FIG. 01" under a sketch on a multi-figure sheet. */
+export function drawFigureLabel(ctx: CanvasRenderingContext2D, layout: Layout, n: number, alpha: number) {
+  const x = layout.cx - layout.r * 0.55;
+  const y = layout.cy + layout.r * 0.92;
+  ctx.save();
+  ctx.font = `${Math.round(10 * Math.max(0.9, layout.px))}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+  ctx.fillStyle = `rgba(${MINT}, ${0.55 * alpha})`;
+  ctx.strokeStyle = `rgba(${MINT}, ${0.35 * alpha})`;
+  ctx.lineWidth = 0.8;
+  const text = `FIG. ${String(n).padStart(2, "0")}`;
+  ctx.fillText(text, x, y);
+  const w = ctx.measureText(text).width;
+  ctx.beginPath();
+  ctx.moveTo(x, y + 5);
+  ctx.lineTo(x + w + 26, y + 5);
+  ctx.stroke();
+  ctx.restore();
 }

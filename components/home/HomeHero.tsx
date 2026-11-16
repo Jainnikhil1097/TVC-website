@@ -13,6 +13,11 @@ type Props = {
   intro: string;
   /** Background motion; defaults to the energy flow. */
   background?: ReactNode;
+  /**
+   * The background spans the whole hero (behind the copy) instead of fading out to
+   * the side; a soft navy shade behind the copy keeps the text readable.
+   */
+  backgroundFull?: boolean;
 };
 
 /**
@@ -23,7 +28,7 @@ type Props = {
  * scrub, loaded on demand). Like PageHero, the band morphs into the next page's
  * band on navigation (BandTransition) while it's still uncovered.
  */
-export function HomeHero({ tagline, intro, background }: Props) {
+export function HomeHero({ tagline, intro, background, backgroundFull = false }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLElement>(null);
   // Only morph on navigation while the panel isn't covered by the content.
@@ -90,14 +95,25 @@ export function HomeHero({ tagline, intro, background }: Props) {
             data-nav-dark
             className="starfield relative isolate flex h-full flex-col overflow-hidden bg-ink text-white"
           >
-            {/* The flow fills the panel and fades out behind the copy: from the bottom on
-              phones (copy below), from the left on desktop (copy on the left). */}
+            {/* The motion fills the panel and fades out behind the copy: from the bottom on
+              phones (copy below), from the left on desktop (copy on the left). Full-bleed
+              backgrounds stay whole, with a navy shade behind the copy instead. */}
             <div
               aria-hidden
-              className="absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,black_30%,transparent_75%)] lg:[mask-image:linear-gradient(to_right,transparent_12%,black_58%)]"
+              className={
+                backgroundFull
+                  ? "absolute inset-0 -z-10"
+                  : "absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,black_30%,transparent_75%)] lg:[mask-image:linear-gradient(to_right,transparent_12%,black_58%)]"
+              }
             >
               {background ?? <EnergyFlow tone="dark" />}
             </div>
+            {backgroundFull && (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(0deg,rgb(10_30_63/0.92)_0%,rgb(10_30_63/0.55)_45%,transparent_80%)] lg:bg-[radial-gradient(70%_80%_at_18%_60%,rgb(10_30_63/0.88),rgb(10_30_63/0.4)_55%,transparent_85%)]"
+              />
+            )}
 
             <div className="container-site flex h-full w-full flex-col pt-24 pb-10 sm:pb-14 lg:pt-28">
               <div className="flex flex-1 flex-col justify-end pb-10 lg:justify-center lg:pb-0">
