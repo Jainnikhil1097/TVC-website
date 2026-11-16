@@ -11,16 +11,39 @@ import { MODELS } from "./models";
  * TEMPORARY (/hero-lab): the real home hero with one blueprint sketch behind it.
  * ‹ › or ← → change the sketch; "Run only" skips the assembly so the mechanism just
  * runs (to compare the two approaches). The choice is kept in the URL (?v=3&run=1).
+ * Works in development and on the GitHub Pages preview.
  */
-export function SketchLab({ tagline, intro, initial, initialRunOnly }: { tagline: string; intro: string; initial: number; initialRunOnly: boolean }) {
-  const [index, setIndex] = useState(Math.min(initial, MODELS.length - 1));
-  const [runOnly, setRunOnly] = useState(initialRunOnly);
+export function SketchLab({ tagline, intro }: { tagline: string; intro: string }) {
+  const [index, setIndex] = useState(0);
+  const [runOnly, setRunOnly] = useState(false);
 
+  // Pick up ?v= / ?run= from the address (read in the browser so the page can be
+  // exported statically for the GitHub Pages preview).
   useEffect(() => {
-    window.history.replaceState(null, "", `?v=${index + 1}${runOnly ? "&run=1" : ""}`);
-  }, [index, runOnly]);
+    const params = new URLSearchParams(window.location.search);
+    const v = Number(params.get("v"));
+    const run = params.get("run") === "1";
+    const id = requestAnimationFrame(() => {
+      if (Number.isInteger(v) && v >= 1 && v <= MODELS.length) setIndex(v - 1);
+      setRunOnly(run);
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
 
-  const go = useCallback((next: number) => setIndex((next + MODELS.length) % MODELS.length), []);
+  const remember = (i: number, run: boolean) => window.history.replaceState(null, "", `?v=${i + 1}${run ? "&run=1" : ""}`);
+
+  const go = useCallback(
+    (next: number) => {
+      const i = (next + MODELS.length) % MODELS.length;
+      setIndex(i);
+      remember(i, runOnly);
+    },
+    [runOnly]
+  );
+  const toggleRun = () => {
+    setRunOnly(!runOnly);
+    remember(index, !runOnly);
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -54,7 +77,7 @@ export function SketchLab({ tagline, intro, initial, initialRunOnly }: { tagline
           <button
             type="button"
             aria-pressed={runOnly}
-            onClick={() => setRunOnly((r) => !r)}
+            onClick={toggleRun}
             className={cn("ml-1 rounded-full px-4 py-2 text-xs font-semibold transition-colors", runOnly ? "bg-ink text-white" : "bg-ink/5 text-ink hover:bg-ink/10")}
           >
             {runOnly ? "Run only: on" : "Run only: off"}

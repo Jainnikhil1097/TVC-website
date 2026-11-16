@@ -1,25 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getSite } from "@/lib/cms";
+import { isStaticPreview } from "@/lib/base-path";
 import { SketchLab } from "@/components/home/sketch/SketchLab";
 
 // TEMPORARY: the real home hero with each mechanical blueprint sketch behind it, for
-// choosing one. Development only (404 in production builds). Delete this route and
-// components/home/sketch/SketchLab.tsx once a sketch is picked.
+// choosing one. Available in development and on the GitHub Pages preview (which is
+// hidden from search engines); a 404 on the real production site. Delete this route
+// and components/home/sketch/SketchLab.tsx once a sketch is picked.
 
 export const metadata: Metadata = { title: "Hero lab", robots: { index: false, follow: false } };
 
-export default async function HeroLabPage({ searchParams }: { searchParams: Promise<{ v?: string; run?: string }> }) {
-  if (process.env.NODE_ENV === "production") notFound();
-  const params = await searchParams;
+export default async function HeroLabPage() {
+  if (process.env.NODE_ENV === "production" && !isStaticPreview) notFound();
   const site = await getSite();
-  const v = Number(params.v);
-  return (
-    <SketchLab
-      tagline={site.tagline}
-      intro={site.hero}
-      initial={Number.isInteger(v) && v >= 1 ? v - 1 : 0}
-      initialRunOnly={params.run === "1"}
-    />
-  );
+  // Static (no search params on the server), so the GitHub Pages export can include it;
+  // the lab reads ?v= and ?run= in the browser.
+  return <SketchLab tagline={site.tagline} intro={site.hero} />;
 }
