@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { BandTransition } from "@/components/motion/BandTransition";
 import { pitchHref } from "@/lib/site-config";
@@ -11,6 +11,8 @@ type Props = {
   tagline: string;
   /** Site settings → Messaging → Home page intro line. */
   intro: string;
+  /** Background motion; defaults to the energy flow. */
+  background?: ReactNode;
 };
 
 /**
@@ -21,7 +23,7 @@ type Props = {
  * scrub, loaded on demand). Like PageHero, the band morphs into the next page's
  * band on navigation (BandTransition) while it's still uncovered.
  */
-export function HomeHero({ tagline, intro }: Props) {
+export function HomeHero({ tagline, intro, background }: Props) {
   const root = useRef<HTMLDivElement>(null);
   const panel = useRef<HTMLElement>(null);
   // Only morph on navigation while the panel isn't covered by the content.
@@ -94,7 +96,7 @@ export function HomeHero({ tagline, intro }: Props) {
               aria-hidden
               className="absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,black_30%,transparent_75%)] lg:[mask-image:linear-gradient(to_right,transparent_12%,black_58%)]"
             >
-              <EnergyFlow tone="dark" />
+              {background ?? <EnergyFlow tone="dark" />}
             </div>
 
             <div className="container-site flex h-full w-full flex-col pt-24 pb-10 sm:pb-14 lg:pt-28">
