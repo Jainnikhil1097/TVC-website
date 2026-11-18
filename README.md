@@ -1,5 +1,6 @@
 # Transition VC — website
 
+
 Website for [Transition VC](https://www.transitionventurecapital.com), India's first
 energy-transition venture fund. Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4,
 with **Payload CMS 3** built in at `/admin` so the team can update content without a developer.
