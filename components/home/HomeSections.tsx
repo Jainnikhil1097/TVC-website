@@ -39,12 +39,12 @@ export function PerspectivesTeaser({ essays, news, nextEvent, substackUrl }: Tea
                 href={e.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col rounded-2xl border border-line bg-white p-7 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(10_30_63/0.06)]"
+                className="group flex flex-col rounded-2xl border border-line bg-white p-7 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
               >
                 <span className="hud text-teal-ink">Substack{e.date && ` · ${formatDate(e.date.slice(0, 10))}`}</span>
-                <h3 className="mt-5 font-display text-xl leading-snug text-ink">{e.title}</h3>
+                <h3 className="mt-5 font-display font-bold text-xl leading-snug text-ink">{e.title}</h3>
                 <p className="mt-4 text-sm leading-relaxed text-muted">{e.teaser}</p>
-                <span className="mt-auto inline-flex items-center gap-1.5 pt-8 text-sm font-semibold text-ink group-hover:text-teal-ink">
+                <span className="mt-auto inline-flex items-center gap-1.5 pt-8 text-sm font-bold text-ink group-hover:text-teal-ink">
                   Read the essay <ArrowUpRight className="size-3.5" aria-hidden />
                 </span>
               </a>

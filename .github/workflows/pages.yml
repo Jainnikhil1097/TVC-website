@@ -16,7 +16,7 @@ name: Website preview (GitHub Pages)
 
 on:
   push:
-    branches: [main, UI, newUI, waveUI, sample]
+    branches: [main, UI, newUI, waveUI, sample, finalUI]
   workflow_dispatch:
 
 permissions:

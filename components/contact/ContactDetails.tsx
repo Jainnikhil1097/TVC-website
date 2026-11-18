@@ -28,7 +28,7 @@ function MapCard({ address, mapUrl }: { address: string[]; mapUrl: string }) {
         href={mapUrl || `https://www.google.com/maps/search/?api=1&query=${query}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex min-h-12 items-center justify-between px-5 py-3 text-sm font-medium text-ink hover:text-teal-ink"
+        className="flex min-h-12 items-center justify-between px-5 py-3 text-sm font-normal text-ink hover:text-teal-ink"
       >
         Open in Google Maps <ArrowUpRight className="size-4" aria-hidden />
       </a>
@@ -46,7 +46,7 @@ export function ContactDetails({ site }: { site: ContactInfo }) {
 
       <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         <div className="rounded-2xl border border-line bg-surface p-5">
-          <dt className="flex items-center gap-3 text-sm font-semibold text-ink">
+          <dt className="flex items-center gap-3 text-sm font-bold text-ink">
             <span className="grid size-9 place-items-center rounded-full border border-line bg-white text-teal-ink">
               <Mail className="size-4" aria-hidden />
             </span>
@@ -62,7 +62,7 @@ export function ContactDetails({ site }: { site: ContactInfo }) {
           </dd>
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5">
-          <dt className="flex items-center gap-3 text-sm font-semibold text-ink">
+          <dt className="flex items-center gap-3 text-sm font-bold text-ink">
             <span className="grid size-9 place-items-center rounded-full border border-line bg-white text-teal-ink">
               <MapPin className="size-4" aria-hidden />
             </span>

@@ -258,7 +258,7 @@ export default async function PerspectivesPage() {
                     href={site.substackUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-ink underline decoration-ink/25 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
+                    className="font-normal text-ink underline decoration-ink/25 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
                   >
                     our Substack
                   </a>
@@ -309,7 +309,7 @@ export default async function PerspectivesPage() {
                       <span className="block text-sm text-muted">
                         {n.source} · <time dateTime={n.date}>{day(n.date)}</time>
                       </span>
-                      <span className="mt-1.5 block text-[0.95rem] leading-snug font-medium text-ink transition-colors group-hover:text-teal-ink">
+                      <span className="mt-1.5 block text-[0.95rem] leading-snug font-normal text-ink transition-colors group-hover:text-teal-ink">
                         {n.title}
                       </span>
                       <span className="sr-only">(opens in a new tab)</span>

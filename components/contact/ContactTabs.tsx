@@ -60,7 +60,7 @@ export function ContactTabs({ initial = "startup" }: { initial?: EnquiryType }) 
               tabIndex={selected ? 0 : -1}
               onClick={() => setActive(t.id)}
               className={cn(
-                "min-h-11 flex-1 rounded-full px-4 text-[0.85rem] font-semibold whitespace-nowrap transition-colors",
+                "min-h-11 flex-1 rounded-full px-4 text-[0.85rem] font-bold whitespace-nowrap transition-colors",
                 selected ? "bg-ink text-white" : "text-muted hover:text-ink"
               )}
             >

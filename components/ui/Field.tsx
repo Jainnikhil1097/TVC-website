@@ -20,7 +20,7 @@ type FieldProps = {
 export function Field({ label, name, error, hint, optional, className, children }: FieldProps) {
   return (
     <div className={className}>
-      <label htmlFor={name} className="mb-2 flex items-baseline justify-between text-sm font-medium text-ink">
+      <label htmlFor={name} className="mb-2 flex items-baseline justify-between text-sm font-normal text-ink">
         <span>{label}</span>
         {optional && <span className="text-xs font-normal text-muted">Optional</span>}
       </label>

@@ -6,6 +6,7 @@ import { AccentRule } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { HeroCard } from "@/components/light/HeroCard";
 import { PauseOffscreen } from "@/components/motion/PauseOffscreen";
+import { spectrumCss } from "@/components/home/flow-geometry";
 import { LineArt, type LineArtVariant } from "@/components/light/LineArt";
 import { cn } from "@/lib/utils";
 
@@ -26,10 +27,10 @@ function pick(items: Metric[], keyword: RegExp, fallback: number) {
 
 // Bento layout: wide cards carry placeholder art (replace with photography when available).
 const bento: { span: boolean; art?: { variant: LineArtVariant; className: string } }[] = [
-  { span: true, art: { variant: "skyline", className: "bg-[linear-gradient(180deg,#1f2b33,#6f8790)] text-white/40" } },
+  { span: true, art: { variant: "skyline", className: "bg-[linear-gradient(180deg,#1c1c1c,#6b6b6b)] text-white/40" } },
   { span: false },
   { span: false },
-  { span: true, art: { variant: "network", className: "bg-[linear-gradient(135deg,#e6ebef,#cfd8df)] text-ink/40" } },
+  { span: true, art: { variant: "network", className: "bg-[linear-gradient(135deg,#ebebeb,#d4d4d4)] text-ink/40" } },
 ];
 
 export default async function GiftCityPage() {
@@ -45,15 +46,23 @@ export default async function GiftCityPage() {
 
   return (
     <div data-theme="light" className="pb-24">
-      <HeroCard className="bg-[linear-gradient(180deg,#0a1e3f_0%,#11284f_100%)]">
-        <LineArt variant="skyline" animated className="absolute inset-x-0 bottom-0 -z-10 h-[72%] text-white/25" />
+      <HeroCard className="bg-[linear-gradient(180deg,#000000_0%,#0b0e13_100%)]">
+        <LineArt variant="skyline" animated className="hero-depth absolute inset-x-0 bottom-0 -z-10 h-[72%] text-white/35" />
+        {/* Amber → aqua tint, matching the home wave (see PageHero). */}
+        <div
+          aria-hidden
+          className="hero-depth pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[72%] mix-blend-color"
+          style={{ backgroundImage: spectrumCss() }}
+        />
         <PauseOffscreen />
         <div className="container-site flex flex-1 flex-col justify-end pt-28 pb-10 lg:pb-16">
-          <p className="eyebrow text-teal">{giftCity.eyebrow}</p>
-          <h1 className="display mt-5 max-w-4xl text-[2.3rem] leading-[0.98] tracking-[0.04em] uppercase sm:text-6xl lg:max-w-[58%] lg:text-7xl">
-            {giftCity.headline}
-          </h1>
-          <p className="mt-8 max-w-xl leading-relaxed text-white/80 lg:hidden">{giftCity.intro}</p>
+          <div className="hero-intro">
+            <p className="eyebrow text-teal">{giftCity.eyebrow}</p>
+            <h1 className="display mt-5 max-w-4xl text-[2.3rem] leading-[0.98] tracking-[0.04em] uppercase sm:text-6xl lg:max-w-[58%] lg:text-[3.75rem] lg:leading-[1.2]">
+              {giftCity.headline}
+            </h1>
+            <p className="mt-8 max-w-xl leading-relaxed text-white/80 lg:hidden">{giftCity.intro}</p>
+          </div>
         </div>
         {/* Notched intro panel (desktop), echoing the Nilsson reference. */}
         <div className="absolute right-0 bottom-0 hidden rounded-tl-[1.75rem] bg-paper p-8 pl-10 text-ink/75 lg:block lg:max-w-[22rem] xl:max-w-sm">

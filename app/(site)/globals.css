@@ -10,40 +10,44 @@
 
 /* ─── Design tokens ─────────────────────────────────────────────────────── */
 @theme {
-  /* Colours follow the Transition VC Brand Book: "navy-led, aqua accents".
-     Deep Navy #0A1E3F is the primary brand colour. */
-  /* Navy scale for dark bands (page headers, home portfolio, footer) and text on them */
-  --color-ink-950: #06142b;
-  --color-ink-900: #081930;
-  --color-ink-800: #0d2347;
-  --color-ink-700: #16305a;
-  --color-ink-600: #2a4068;
-  --color-ink-400: #606d82; /* Brand "Navy 65%" */
-  --color-ink-300: #9aa5b8;
-  --color-ink-200: #c8cfdb;
+  /* Colours: the Brand Book's aqua accents on black and white. The book is
+     "navy-led", but the site uses black in place of Deep Navy (owner's choice). */
+  /* Neutral scale for dark bands (page headers, home portfolio, footer) and text on them */
+  --color-ink-950: #000000;
+  --color-ink-900: #050505;
+  --color-ink-800: #111111;
+  --color-ink-700: #1c1c1c;
+  --color-ink-600: #2e2e2e;
+  --color-ink-400: #6b6b6b;
+  --color-ink-300: #a3a3a3;
+  --color-ink-200: #d1d1d1;
 
   /* Light theme (site default) */
   --color-bg: #ffffff;
   --color-surface: #f5f7fa; /* Brand "Cloud" */
-  --color-ink: #0a1e3f; /* Brand "Deep Navy": text on light; also the dark bands */
-  --color-muted: #606d82; /* Brand "Navy 65%" (5.2:1 on white) */
-  --color-line: #ebedf0; /* Brand "Navy 8%" hairlines */
+  --color-ink: #000000; /* Black: text on light; also the dark bands */
+  --color-muted: #6b6b6b; /* Secondary text (5.3:1 on white) */
+  --color-line: #ebebeb; /* Hairlines */
   --color-teal-ink: #067a70; /* teal for text/links on white: Signal Teal is 1.9:1 there, accents only */
 
   /* Older light-page names, kept as aliases of the palette */
   --color-paper: #f5f7fa; /* Cloud */
   --color-paper-2: #ebf1f1; /* Brand "Mist" */
-  --color-stone: #0a1e3f;
+  --color-stone: #000000;
 
   /* Brand accents: use sparingly */
-  --color-teal: #0ed5c2; /* Brand "Signal Teal": buttons, links and heads on navy */
+  --color-teal: #0ed5c2; /* Brand "Signal Teal": buttons, links and heads on black */
   --color-aqua: #06e8d3; /* Brand "Transition Aqua": the logo symbol, highlights */
-  --color-teal-soft: #83f4e9; /* Brand "Mint": taglines on navy */
+  --color-teal-soft: #83f4e9; /* Brand "Mint": taglines on black */
   --color-teal-deep: #067a70;
 
   /* Brand Book: Inter for headlines and headings */
   --font-display: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  /* Brand Book: Calibri for body and interface. Carlito is its free twin with identical
+     metrics; real Calibri wins where it's installed. */
+  --font-sans: "Calibri", "Carlito", ui-sans-serif, system-ui, sans-serif;
+  /* Brand Book: Baron for taglines. Montserrat stands in until Baron is licensed. */
+  --font-tagline: "Montserrat Variable", "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -64,6 +68,14 @@
     @apply bg-bg text-ink font-sans antialiased;
     /* Room for the optional announcement bar (see AnnouncementBar). */
     padding-top: var(--banner-h, 0px);
+    line-height: 1.6;
+    /* Calibri/Carlito has a small x-height; match the reading size the layout was set
+       for. Inter and Montserrat opt out (see .display, .font-display, .tagline). */
+    font-size-adjust: 0.5;
+  }
+
+  .font-display {
+    font-size-adjust: none;
     font-feature-settings: "ss01", "cv11";
   }
 
@@ -128,30 +140,48 @@ html.lenis body {
   }
 }
 
+/* Brand Book "Labels 13 SemiBold" (body font). Carlito has no 600, so bold stands in. */
 @utility eyebrow {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
   text-transform: uppercase;
 }
 
+/* Small data labels: the same Brand Book label style, tighter tracking. */
 @utility hud {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem; /* 11px: the smallest that stays comfortable on phones */
-  letter-spacing: 0.12em;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
   text-transform: uppercase;
 }
 
+/* Brand Book headlines: Inter, Regular 400 / Bold 700 only. */
 @utility display {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.05;
+  font-size-adjust: none;
+  font-feature-settings: "ss01", "cv11";
+}
+
+/* Brand Book taglines: Baron (Montserrat stand-in), all caps, Regular; 30/36 → 1.2. */
+@utility tagline {
+  font-family: var(--font-tagline);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  font-size-adjust: none;
 }
 
 @utility glass {
-  background: rgb(10 30 63 / 0.62); /* Deep Navy glass */
+  background: rgb(0 0 0 / 0.62); /* dark glass */
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   border: 1px solid rgb(255 255 255 / 0.08);
@@ -268,6 +298,36 @@ html.js-motion .callout-label {
 }
 html.js-motion .callout-ping {
   animation: callout-ping 2.4s var(--ease-out-quart) infinite;
+}
+
+/* ─── Inner-page headers: accent rule draw-in and scroll depth ───
+   The rule under each page headline draws across on arrival (with the .hero-intro
+   lift-in). While the header scrolls away, its drawing and colour overlay drift down
+   relative to the page and dim, like the home hero receding. Scroll-driven animations
+   only where supported; elsewhere the header simply stays still. */
+@keyframes page-rule {
+  from {
+    transform: scaleX(0);
+  }
+}
+html.js-motion .page-rule {
+  transform-origin: left;
+  animation: page-rule 0.7s var(--ease-out-quart) 0.35s both;
+}
+@keyframes hero-depth {
+  to {
+    transform: translateY(18%);
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .hero-depth {
+      animation: hero-depth linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+  }
 }
 
 /* ─── Header line-art motion (LineArt `animated`, inner-page headers) ───
@@ -438,7 +498,7 @@ html.js-motion .hero-cover {
   margin-top: -100svh;
 }
 /* ─── Page transitions (View Transitions API, driven by React <ViewTransition>) ───
-   The navy band (BandTransition, class .vt-band) morphs from one page's band to the
+   The black band (BandTransition, class .vt-band) morphs from one page's band to the
    next; the page content fades out quickly and the new page rises in a beat later;
    the nav (site-nav) sits still on top. Browsers without the API just change page. */
 @media (prefers-reduced-motion: no-preference) {

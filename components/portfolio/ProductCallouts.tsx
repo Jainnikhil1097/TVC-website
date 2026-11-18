@@ -5,21 +5,21 @@ import { useState, type CSSProperties } from "react";
 import type { Callout, Company } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-// Annotated product renders, shared by the home page spotlight and the company profile.
+// Annotated product renders for the company profile.
 // The render sits on a light "datasheet" plate (white backgrounds disappear into it via
 // multiply), with numbered hotspots. The active hotspot shows a label on a leader line
 // (sm and up); the numbered legend below is the accessible control on every screen size.
 
 const pad = (n: number) => String(n + 1).padStart(2, "0");
 
-/** Light plate with a faint navy grid, used for product renders and their fallbacks. */
+/** Light plate with a faint grey grid, used for product renders and their fallbacks. */
 function Plate({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
     <div
       className={cn("relative overflow-hidden rounded-2xl bg-surface", className)}
       style={{
         backgroundImage:
-          "linear-gradient(rgb(10 30 63 / 0.05) 1px, transparent 1px), linear-gradient(90deg, rgb(10 30 63 / 0.05) 1px, transparent 1px)",
+          "linear-gradient(rgb(0 0 0 / 0.05) 1px, transparent 1px), linear-gradient(90deg, rgb(0 0 0 / 0.05) 1px, transparent 1px)",
         backgroundSize: "28px 28px",
       }}
     >
@@ -116,8 +116,8 @@ function Hotspot({ callout, index, active, onActive }: { callout: Callout; index
         onPointerEnter={onActive}
         onClick={onActive}
         className={cn(
-          "absolute top-0 left-0 grid size-7 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full font-mono text-[0.625rem] font-semibold transition-colors",
-          active ? "bg-ink text-aqua" : "bg-white text-ink shadow-[0_2px_10px_rgb(10_30_63/0.18)] ring-1 ring-ink/15 hover:bg-ink hover:text-aqua"
+          "absolute top-0 left-0 grid size-7 -translate-x-1/2 -translate-y-1/2 cursor-pointer place-items-center rounded-full font-sans text-[0.6875rem] font-bold tabular-nums font-bold transition-colors",
+          active ? "bg-ink text-aqua" : "bg-white text-ink shadow-[0_2px_10px_rgb(0_0_0/0.18)] ring-1 ring-ink/15 hover:bg-ink hover:text-aqua"
         )}
       >
         {!active && <span className="callout-ping absolute inset-0 rounded-full ring-2 ring-teal/60" />}
@@ -130,8 +130,8 @@ function Hotspot({ callout, index, active, onActive }: { callout: Callout; index
           className={cn("pointer-events-none absolute top-0 hidden -translate-y-1/2 items-center sm:flex", toLeft ? "right-0 flex-row-reverse" : "left-0")}
         >
           <span className={cn("callout-line block h-px w-12 bg-ink", toLeft ? "mr-3.5 origin-right" : "ml-3.5 origin-left")} />
-          <span className="callout-label block w-max max-w-[13rem] rounded-xl bg-white px-3.5 py-2.5 text-left shadow-[0_10px_30px_rgb(10_30_63/0.16)] ring-1 ring-ink/10">
-            <span className="block text-[0.8125rem] leading-snug font-semibold text-ink">{callout.label}</span>
+          <span className="callout-label block w-max max-w-[13rem] rounded-xl bg-white px-3.5 py-2.5 text-left shadow-[0_10px_30px_rgb(0_0_0/0.16)] ring-1 ring-ink/10">
+            <span className="block text-[0.8125rem] leading-snug font-bold text-ink">{callout.label}</span>
             {callout.detail && <span className="mt-0.5 block text-xs leading-snug text-muted">{callout.detail}</span>}
           </span>
         </span>
@@ -177,7 +177,7 @@ export function CalloutLegend({ callouts, active, onActive, tone = "light", clas
                       : "border-line text-ink/80 hover:border-ink/40"
                 )}
               >
-                <span className={cn("font-mono text-[0.625rem]", dark ? "text-teal" : on ? "text-aqua" : "text-teal-ink")}>{pad(i)}</span>
+                <span className={cn("font-sans text-[0.6875rem] font-bold tabular-nums", dark ? "text-teal" : on ? "text-aqua" : "text-teal-ink")}>{pad(i)}</span>
                 {c.label}
               </button>
             </li>

@@ -86,7 +86,7 @@ export const PortfolioCompanies: CollectionConfig = {
               relationTo: "media",
               admin: {
                 description:
-                  "A product or team photo, landscape, at least 1600 px wide. Shown in the home page spotlight when the company is featured and has no product image. Set the focal point on the subject.",
+                  "A product or team photo, landscape, at least 2400 px wide. Shown when the company is featured on the home page. Set the focal point on the subject.",
               },
             },
           ],
@@ -176,7 +176,7 @@ export const PortfolioCompanies: CollectionConfig = {
                   name: "proofValue",
                   label: "Headline number",
                   type: "text",
-                  admin: { placeholder: "e.g. 200,000+", description: "Shown large in the home page proof band." },
+                  admin: { placeholder: "e.g. 200,000+", description: "Not shown on the site at the moment — kept for future use." },
                 },
                 {
                   name: "proofLabel",
@@ -264,7 +264,18 @@ export const PortfolioCompanies: CollectionConfig = {
       label: "Feature on home page",
       type: "checkbox",
       defaultValue: false,
-      admin: { position: "sidebar", description: "Shown in the product spotlight on the home page (3–6 works best). Add a product image (One-pager tab) or a cover image too." },
+      admin: { position: "sidebar", description: "Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too." },
+    },
+    {
+      name: "homeOrder",
+      label: "Home page position",
+      type: "number",
+      min: 1,
+      admin: {
+        position: "sidebar",
+        condition: (data) => Boolean(data?.featured),
+        description: "1 shows first among the featured companies. Leave empty to follow the portfolio order.",
+      },
     },
     showOnSiteField,
     orderField,

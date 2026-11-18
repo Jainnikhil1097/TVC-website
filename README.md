@@ -30,6 +30,7 @@ The first account created at `/admin` automatically becomes an **Admin**.
 | `npm run team:import` | Updates the CMS team from `scripts/seed-data/team.ts` and uploads the photos. Safe to re-run; hides (never deletes) people no longer listed |
 | `npm run company:photos` | Attaches `scripts/seed-data/company-photos/<slug>.jpg` as each company's cover image (the seed does this too). Safe to re-run |
 | `npm run company:onepagers` | Fills empty One-pager fields from `scripts/seed-data/one-pagers.ts` and attaches `scripts/seed-data/company-products/<slug>-product.png` as product images (the seed does this too). Never overwrites editors' text; safe to re-run |
+| `npm run company:logos` | Attaches `scripts/seed-data/company-logos/<slug>.png` as each company's logo, only where the company has none (the seed does this too). Safe to re-run |
 | `npm run generate:types` | Regenerates `payload-types.ts` after changing collections/globals |
 | `npm run generate:importmap` | Regenerates the admin import map after adding admin components |
 | `npm run migrate:create <name>` | Creates a Postgres migration after changing collections/globals (commit it) |
@@ -142,4 +143,6 @@ PoK, Aksai Chin, Siachen) and Arunachal Pradesh.
   shared IntersectionObserver (`components/motion/RevealObserver.tsx`) and CSS.
 - No CMS/admin code ships on public pages (admin lives in its own route group, `app/(payload)`).
   Public pages load 146–173 KB of JS (gzipped), ~126 KB of which is React + Next.js.
-- Fonts are self-hosted via Fontsource (Merriweather + Manrope).
+- Fonts follow the Brand Book and are self-hosted via Fontsource (all OFL): Inter for headlines, Carlito
+  (Calibri's metric-identical twin; real Calibri is used where installed) for body and interface, and
+  Montserrat as a stand-in for the Baron tagline face until licensed Baron web fonts are supplied.

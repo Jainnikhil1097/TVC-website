@@ -21,10 +21,10 @@ export function generateMetadata() {
 
 // Placeholder art per theme — replace with photography when available.
 const themeArt: { variant: LineArtVariant; className: string }[] = [
-  { variant: "arcs", className: "bg-[linear-gradient(135deg,#e6ebef,#cfd8df)] text-ink/35" },
-  { variant: "flow", className: "bg-[linear-gradient(135deg,#1f2b31,#4d6a72)] text-white/40" },
-  { variant: "network", className: "bg-[linear-gradient(135deg,#eef2f5,#d8e0e6)] text-ink/40" },
-  { variant: "dots", className: "bg-[linear-gradient(135deg,#2a3a3d,#6f8a88)] text-white/45" },
+  { variant: "arcs", className: "bg-[linear-gradient(135deg,#ebebeb,#d4d4d4)] text-ink/35" },
+  { variant: "flow", className: "bg-[linear-gradient(135deg,#1c1c1c,#4a4a4a)] text-white/40" },
+  { variant: "network", className: "bg-[linear-gradient(135deg,#f0f0f0,#dcdcdc)] text-ink/40" },
+  { variant: "dots", className: "bg-[linear-gradient(135deg,#262626,#6b6b6b)] text-white/45" },
 ];
 
 export default async function ImpactPage() {

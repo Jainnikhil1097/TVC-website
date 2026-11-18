@@ -4,6 +4,7 @@ import type { Site } from "@/lib/cms";
 import { getFunds } from "@/lib/cms";
 import { footerLinks, nav, pitchHref } from "@/lib/site-config";
 import { NewsletterForm } from "./NewsletterForm";
+import { FooterWave } from "./FooterWave";
 import { Logo } from "@/components/ui/Logo";
 import { AccentRule } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
@@ -13,7 +14,9 @@ export async function Footer({ site }: { site: Site }) {
   const funds = await getFunds();
 
   return (
-    <footer data-theme="dark" className="relative bg-ink text-white">
+    <footer data-theme="dark" className="relative isolate bg-ink text-white">
+      {/* A quiet, static echo of the home hero's wave */}
+      <FooterWave />
       {/* Newsletter signup — on every page */}
       <Reveal className="container-site grid gap-8 py-16 md:grid-cols-[1.2fr_1fr] md:items-end md:py-20">
         <div>

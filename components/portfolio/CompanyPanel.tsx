@@ -134,7 +134,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col rounded-t-3xl border-t border-line bg-white text-ink shadow-[0_-24px_80px_rgb(10_30_63/0.18)] lg:inset-y-0 lg:left-auto lg:max-h-none lg:w-[34rem] lg:rounded-none lg:rounded-l-3xl lg:border-t-0 lg:border-l lg:border-line"
+        className="absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col rounded-t-3xl border-t border-line bg-white text-ink shadow-[0_-24px_80px_rgb(0_0_0/0.18)] lg:inset-y-0 lg:left-auto lg:max-h-none lg:w-[34rem] lg:rounded-none lg:rounded-l-3xl lg:border-t-0 lg:border-l lg:border-line"
       >
         {/* Grab handle (mobile) + header */}
         <div className="flex items-center justify-between gap-4 px-6 pt-4 pb-2 sm:px-8 lg:pt-6">
@@ -168,7 +168,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             {facts.map((f) => (
               <div key={f.label}>
                 <dt className="hud text-muted">{f.label}</dt>
-                <dd className="mt-2 text-sm font-medium text-ink">{f.value}</dd>
+                <dd className="mt-2 text-sm font-normal text-ink">{f.value}</dd>
               </div>
             ))}
           </dl>
@@ -252,7 +252,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
                   <li key={f.name} className="flex items-center gap-4">
                     <Avatar name={f.name} photo={f.photo} sizes="48px" className="size-12 shrink-0 rounded-full" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-ink">{f.name}</p>
+                      <p className="text-sm font-normal text-ink">{f.name}</p>
                       {f.title && <p className="text-xs text-muted">{f.title}</p>}
                     </div>
                     {f.linkedin && (
@@ -286,7 +286,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
                   {essay.title ?? "Read our investment note"}
                 </span>
                 {essay.teaser && <span className="mt-2 block text-sm text-muted">{essay.teaser}</span>}
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-ink group-hover:text-teal-ink">
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-ink group-hover:text-teal-ink">
                   Read our investment note <ArrowUpRight className="size-3.5" aria-hidden />
                 </span>
               </a>
@@ -304,7 +304,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             )}
             <Link
               href="/contact?type=startup"
-              className="inline-flex min-h-11 items-center px-2 text-[0.9rem] font-medium text-muted transition-colors hover:text-teal-ink"
+              className="inline-flex min-h-11 items-center px-2 text-[0.9rem] font-normal text-muted transition-colors hover:text-teal-ink"
             >
               Building something similar? Pitch to us
             </Link>

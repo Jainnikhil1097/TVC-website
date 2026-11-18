@@ -80,7 +80,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative px-3 py-2 text-[0.9rem] font-medium transition-colors",
+                      "relative px-3 py-2 text-[0.9rem] font-normal transition-colors",
                       dark
                         ? active
                           ? "text-white"
@@ -110,7 +110,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
               href={investorHref}
               {...investorProps}
               className={cn(
-                "hidden items-center gap-1 px-2 py-2 text-[0.85rem] font-medium transition-colors md:inline-flex",
+                "hidden items-center gap-1 px-2 py-2 text-[0.85rem] font-normal transition-colors md:inline-flex",
                 dark ? "text-white/70 hover:text-white" : "text-muted hover:text-ink"
               )}
             >
@@ -119,7 +119,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
             <Link
               href={pitchHref}
               className={cn(
-                "hidden min-h-10 items-center rounded-full px-5 text-[0.85rem] font-semibold transition-colors sm:inline-flex",
+                "hidden min-h-10 items-center rounded-full px-5 text-[0.85rem] font-bold transition-colors sm:inline-flex",
                 dark ? "bg-white text-ink hover:bg-teal-soft" : "bg-ink text-white hover:bg-teal-ink"
               )}
             >
@@ -165,7 +165,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
             <Link
               href={pitchHref}
               onClick={() => setOpen(false)}
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink text-[0.95rem] font-semibold text-white"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink text-[0.95rem] font-bold text-white"
             >
               Pitch to us
             </Link>
@@ -173,7 +173,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
               href={investorHref}
               {...investorProps}
               onClick={() => setOpen(false)}
-              className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-line text-[0.95rem] font-medium"
+              className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-line text-[0.95rem] font-normal"
             >
               Investor login <ArrowUpRight className="size-4" aria-hidden />
             </a>

@@ -9,7 +9,7 @@ const variants: Record<Variant, string> = {
   primary: "bg-ink text-white hover:bg-teal-ink",
   secondary: "border border-ink/20 text-ink hover:border-teal-ink hover:text-teal-ink",
   // On dark bands (page headers, home portfolio, footer).
-  // Brand: Signal Teal for buttons, Deep Navy text on it (8.9:1).
+  // Brand: Signal Teal for buttons, black text on it.
   solid: "bg-teal text-ink hover:bg-teal-soft",
   outline: "border border-white/30 text-white hover:border-teal hover:text-teal",
   ghost: "text-white/80 hover:text-teal",
@@ -18,7 +18,7 @@ const variants: Record<Variant, string> = {
 };
 
 const base =
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 text-[0.9rem] font-semibold transition-colors duration-300 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 text-[0.9rem] font-bold transition-colors duration-300 disabled:opacity-50 disabled:pointer-events-none";
 
 type ButtonLinkProps = {
   href: string;

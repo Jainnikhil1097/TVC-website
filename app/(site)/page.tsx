@@ -2,7 +2,7 @@ import { HomeHero } from "@/components/home/HomeHero";
 import { PositioningBand } from "@/components/home/PositioningBand";
 import { FounderPillars } from "@/components/home/FounderPillars";
 import { SectorGrid } from "@/components/home/SectorGrid";
-import { PortfolioShowcase } from "@/components/home/PortfolioShowcase";
+import { FeaturedPortfolio } from "@/components/home/FeaturedPortfolio";
 import { PerspectivesTeaser } from "@/components/home/HomeSections";
 import { FounderFaq } from "@/components/home/FounderFaq";
 import { FundsSection } from "@/components/funds/FundsSection";
@@ -41,13 +41,14 @@ export default async function HomePage() {
   ]);
 
   const active = companies.filter(isActive);
-  // Companies marked "Feature on home page"; until any are, show the four most recent.
-  const featured = active.filter((c) => c.featured);
+  // Companies marked "Feature on home page", by their home page position (then portfolio
+  // order); until any are, show the four most recent.
+  const featured = active
+    .filter((c) => c.featured)
+    .map((c, i) => ({ c, i }))
+    .sort((a, b) => (a.c.homeOrder ?? Infinity) - (b.c.homeOrder ?? Infinity) || a.i - b.i)
+    .map(({ c }) => c);
   const showcase = featured.length ? featured : active.slice(0, 4);
-  // Proof band: every company with a headline number, in portfolio order (up to 6).
-  const proofs = active.filter((c) => c.proof).slice(0, 6);
-  // Datasheet cards: the next few companies that aren't in the spotlight.
-  const others = active.filter((c) => !showcase.includes(c)).slice(0, 6);
   const notes = Object.fromEntries(
     showcase.map((c) => [c.slug, essays.find((e) => sameUrl(e.url, c.essayUrl))?.url ?? c.essayUrl])
   );
@@ -59,7 +60,7 @@ export default async function HomePage() {
           hero panel (.hero-cover). */}
       <div
         data-nav-cover
-        className="hero-cover relative z-10 overflow-clip rounded-t-[28px] bg-white shadow-[0_-30px_60px_-40px_rgb(10_30_63/0.45)] sm:rounded-t-[40px]"
+        className="hero-cover relative z-10 overflow-clip rounded-t-[28px] bg-white shadow-[0_-30px_60px_-40px_rgb(0_0_0/0.45)] sm:rounded-t-[40px]"
       >
         <PositioningBand
           positioning={home.positioning || site.tagline}
@@ -70,13 +71,7 @@ export default async function HomePage() {
         />
         <SectorGrid sectors={sectors} companies={companies} />
         <FounderPillars pillars={home.pillars} />
-        <PortfolioShowcase
-          spotlight={showcase}
-          proofs={proofs}
-          others={others}
-          notes={notes}
-          totalActive={active.length}
-        />
+        <FeaturedPortfolio companies={showcase} notes={notes} totalActive={active.length} />
         <FundsSection funds={funds} />
         <PerspectivesTeaser essays={essays} news={news} nextEvent={events.upcoming[0]} substackUrl={site.substackUrl} />
         <FounderFaq faq={home.faq} email={site.contact.email} />

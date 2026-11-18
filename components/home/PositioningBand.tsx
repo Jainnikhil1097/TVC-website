@@ -30,7 +30,7 @@ export function PositioningBand({ positioning, about, figures, asOf, disclaimer 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">{about}</p>
           <Link
             href="/about"
-            className="mt-8 inline-flex min-h-11 items-center gap-2 font-semibold text-ink underline decoration-line decoration-2 underline-offset-8 transition-colors hover:text-teal-ink hover:decoration-teal-ink"
+            className="mt-8 inline-flex min-h-11 items-center gap-2 font-bold text-ink underline decoration-line decoration-2 underline-offset-8 transition-colors hover:text-teal-ink hover:decoration-teal-ink"
           >
             Meet the team <ArrowRight className="size-4" aria-hidden />
           </Link>
@@ -42,7 +42,7 @@ export function PositioningBand({ positioning, about, figures, asOf, disclaimer 
               {figures.map((m) => (
                 <li key={m.label} data-reveal className="border-r border-b border-line p-5 sm:p-8">
                   <p className="display text-[1.75rem] whitespace-nowrap text-ink sm:text-5xl">{m.value}</p>
-                  <p className="mt-3 text-sm font-medium text-ink">{m.label}</p>
+                  <p className="mt-3 text-sm font-normal text-ink">{m.label}</p>
                   {m.note && <p className="mt-1 text-xs text-muted">{m.note}</p>}
                 </li>
               ))}

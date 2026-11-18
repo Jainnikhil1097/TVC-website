@@ -62,7 +62,7 @@ export default async function AboutPage() {
           </Reveal>
           <Reveal className="lg:pt-12">
             <p className="text-base leading-relaxed text-muted sm:text-lg">{site.thesis}</p>
-            <h3 className="mt-10 text-sm font-semibold text-ink">Sectors we invest in</h3>
+            <h3 className="mt-10 text-sm font-bold text-ink">Sectors we invest in</h3>
             <ul className="mt-4 flex flex-wrap gap-2">
               {investmentSectors.map((s) => (
                 <li key={s.id} className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm text-ink">

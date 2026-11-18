@@ -14,6 +14,7 @@ const { site, metrics, funds, investmentCriteria } = await import("./seed-data/s
 const { portfolio } = await import("./seed-data/portfolio");
 const { importTeam } = await import("./team-import");
 const { importCompanyPhotos } = await import("./company-photos");
+const { importCompanyLogos } = await import("./company-logos");
 const { importOnePagers } = await import("./one-pagers");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
 const { investmentSectors } = await import("./seed-data/sectors");
@@ -38,9 +39,8 @@ async function isEmpty(collection: Slug) {
 }
 
 // ─── Portfolio ───────────────────────────────────────────────────────────────
-// Recent investments with published investment notes, shown in the home page's
-// Featured portfolio tabs (editors can change this in the CMS).
-const FEATURED = ["suind", "albatross-energetics", "prithu", "workongrid"];
+// The home page's Featured portfolio tabs, in this order (editors can change this in the CMS).
+const FEATURED = ["matel-motion", "emo-energy", "fitsol", "comminent"];
 
 const companyIds = new Map<string, number>();
 if (await isEmpty("companies")) {
@@ -58,6 +58,7 @@ if (await isEmpty("companies")) {
         website: c.website,
         status: "active",
         featured: FEATURED.includes(c.slug),
+        homeOrder: FEATURED.includes(c.slug) ? FEATURED.indexOf(c.slug) + 1 : undefined,
         founders: c.founders?.map((f) => ({ name: f.name, title: f.title })),
         order: (i + 1) * 10,
         _status: "published",
@@ -75,6 +76,8 @@ if (await isEmpty("companies")) {
 if (await isEmpty("team")) await importTeam(payload, log);
 // Company cover photos (scripts/seed-data/company-photos/<slug>.jpg), once companies exist.
 await importCompanyPhotos(payload, log);
+// Company logos (scripts/seed-data/company-logos/<slug>.png); fills empty logos only.
+await importCompanyLogos(payload, log);
 // One-pager content and product renders (scripts/seed-data/one-pagers.ts); fills empty fields only.
 await importOnePagers(payload, log);
 

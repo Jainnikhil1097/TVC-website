@@ -3,7 +3,7 @@
 import { ViewTransition, useEffect, useRef, useState, type ReactNode } from "react";
 
 /**
- * The navy band at the top of every page (the home hero and each inner page's
+ * The black band at the top of every page (the home hero and each inner page's
  * PageHero) is one shared element: on navigation it morphs from one page's
  * band to the next while the rest of the page fades (styles: `.vt-band` in
  * globals.css). React drives this through the browser's View Transitions API.

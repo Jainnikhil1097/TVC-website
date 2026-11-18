@@ -4,7 +4,7 @@ import { BrandSymbol } from "@/components/ui/BrandSymbol";
 /**
  * Stand-in for the Brand Book's primary logo (aqua symbol + "TRANSITION" wordmark)
  * until the official SVG is supplied. Replace the contents with it, keeping the props.
- * The wordmark inherits the text colour (Deep Navy on light, white on dark bands).
+ * The wordmark inherits the text colour (black on light, white on dark bands).
  */
 export function Logo({ className }: { className?: string }) {
   return (

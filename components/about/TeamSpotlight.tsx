@@ -66,7 +66,7 @@ export function TeamSpotlight({ label, people, fallbackTitle = "" }: TeamSpotlig
         </div>
         <div className="flex flex-col">
           <div key={`t-${index}`} className="spot-text">
-            {title && <p className="text-sm font-semibold text-teal-ink">{title}</p>}
+            {title && <p className="text-sm font-bold text-teal-ink">{title}</p>}
             <p className="display mt-2 text-4xl text-ink sm:text-5xl">{person.name}</p>
             {person.bio && <p className="mt-5 max-w-lg text-[0.95rem] leading-relaxed text-muted">{person.bio}</p>}
             {person.linkedin && (
@@ -74,7 +74,7 @@ export function TeamSpotlight({ label, people, fallbackTitle = "" }: TeamSpotlig
                 href={person.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-ink underline decoration-line underline-offset-4 transition-colors hover:text-teal-ink hover:decoration-teal-ink"
+                className="mt-5 inline-flex min-h-11 items-center gap-1.5 text-sm font-normal text-ink underline decoration-line underline-offset-4 transition-colors hover:text-teal-ink hover:decoration-teal-ink"
               >
                 LinkedIn <ArrowUpRight className="size-3.5" aria-hidden />
                 <span className="sr-only">profile of {person.name} (opens in a new tab)</span>
@@ -137,7 +137,7 @@ export function TeamSpotlight({ label, people, fallbackTitle = "" }: TeamSpotlig
                 <span
                   className={cn(
                     "mt-2 block truncate text-xs",
-                    active ? "font-semibold text-ink" : "text-muted group-hover:text-ink"
+                    active ? "font-bold text-ink" : "text-muted group-hover:text-ink"
                   )}
                 >
                   {p.name}

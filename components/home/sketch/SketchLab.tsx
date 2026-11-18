@@ -97,15 +97,15 @@ export function SketchLab({ tagline, intro }: { tagline: string; intro: string }
         <p className="rounded-full bg-ink/80 px-3 py-1 text-xs text-white/80 backdrop-blur">
           {entry.background ? "Background only (not interactive)" : "Try it: hover · drag · scroll (tap on phones)"}
         </p>
-        <div className="flex items-center gap-1 rounded-full bg-white p-1.5 text-ink shadow-[0_12px_40px_rgb(10_30_63/0.35)] ring-1 ring-ink/10">
+        <div className="flex items-center gap-1 rounded-full bg-white p-1.5 text-ink shadow-[0_12px_40px_rgb(0_0_0/0.35)] ring-1 ring-ink/10">
           <button type="button" onClick={() => go(index - 1)} aria-label="Previous sketch" className="grid size-10 place-items-center rounded-full hover:bg-ink/5">
             <ChevronLeft className="size-5" />
           </button>
           <p className="min-w-[17rem] px-2 text-center text-sm" aria-live="polite">
-            <span className="font-mono text-xs text-teal-ink">
+            <span className="font-sans text-xs font-bold tabular-nums text-teal-ink">
               {index + 1} / {ENTRIES.length}
             </span>{" "}
-            · <span className="font-semibold">{entry.name}</span> <span className="text-muted">— {entry.format}</span>
+            · <span className="font-bold">{entry.name}</span> <span className="text-muted">— {entry.format}</span>
           </p>
           <button type="button" onClick={() => go(index + 1)} aria-label="Next sketch" className="grid size-10 place-items-center rounded-full hover:bg-ink/5">
             <ChevronRight className="size-5" />
@@ -114,7 +114,7 @@ export function SketchLab({ tagline, intro }: { tagline: string; intro: string }
             type="button"
             aria-pressed={runOnly}
             onClick={toggleRun}
-            className={cn("ml-1 rounded-full px-4 py-2 text-xs font-semibold transition-colors", runOnly ? "bg-ink text-white" : "bg-ink/5 text-ink hover:bg-ink/10")}
+            className={cn("ml-1 rounded-full px-4 py-2 text-xs font-bold transition-colors", runOnly ? "bg-ink text-white" : "bg-ink/5 text-ink hover:bg-ink/10")}
           >
             {runOnly ? "Run only: on" : "Run only: off"}
           </button>

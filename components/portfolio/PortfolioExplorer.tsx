@@ -114,7 +114,7 @@ function ExplorerView({
                 setShowExits((v) => !v);
               }}
               className={cn(
-                "inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[0.85rem] font-medium transition-colors",
+                "inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[0.85rem] font-normal transition-colors",
                 showExits ? "border-ink bg-ink text-white" : "border-line bg-white text-ink hover:border-teal-ink/50 hover:text-teal-ink"
               )}
             >
@@ -134,7 +134,7 @@ function ExplorerView({
                 aria-pressed={view === id}
                 onClick={() => setView(id)}
                 className={cn(
-                  "inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-[0.85rem] font-medium transition-colors",
+                  "inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-[0.85rem] font-normal transition-colors",
                   view === id ? "bg-white text-ink shadow-sm" : "text-muted hover:text-ink"
                 )}
               >

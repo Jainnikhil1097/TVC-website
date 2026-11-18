@@ -35,7 +35,7 @@ export function FounderFaq({ faq, email }: { faq: Faq[]; email: string }) {
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <ButtonLink href={pitchHref}>Pitch to us</ButtonLink>
             {email && (
-              <a href={`mailto:${email}`} className="text-sm font-medium text-muted underline underline-offset-4 hover:text-teal-ink">
+              <a href={`mailto:${email}`} className="text-sm font-normal text-muted underline underline-offset-4 hover:text-teal-ink">
                 {email}
               </a>
             )}
@@ -46,7 +46,7 @@ export function FounderFaq({ faq, email }: { faq: Faq[]; email: string }) {
           {faq.map((f) => (
             <li key={f.question}>
               <details className="group">
-                <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-5 text-left text-lg font-semibold text-ink marker:hidden hover:text-teal-ink [&::-webkit-details-marker]:hidden">
+                <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-5 text-left text-lg font-bold text-ink marker:hidden hover:text-teal-ink [&::-webkit-details-marker]:hidden">
                   {f.question}
                   <Plus
                     className="size-5 shrink-0 text-teal-ink transition-transform duration-300 group-open:rotate-45"

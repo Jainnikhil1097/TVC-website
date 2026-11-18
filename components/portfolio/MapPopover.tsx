@@ -108,7 +108,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       data-theme="light"
       aria-labelledby="map-popover-title"
       tabIndex={-1}
-      className="map-popover absolute z-[200] w-[21rem] rounded-2xl border border-line bg-white p-5 text-left shadow-[0_18px_50px_rgb(10_30_63/0.16)] outline-none"
+      className="map-popover absolute z-[200] w-[21rem] rounded-2xl border border-line bg-white p-5 text-left shadow-[0_18px_50px_rgb(0_0_0/0.16)] outline-none"
       style={{
         left: pos?.left ?? 0,
         top: pos?.top ?? 0,
@@ -143,7 +143,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       <p className="hud mt-4 text-teal-ink">
         {number} · {portfolioSectorName(company.sector)}
       </p>
-      <h3 id="map-popover-title" className="mt-1.5 font-display text-2xl leading-tight text-ink">
+      <h3 id="map-popover-title" className="mt-1.5 font-display font-bold text-2xl leading-tight text-ink">
         {company.name}
       </h3>
       {status && <StatusBadge label={status} className="mt-2" />}
@@ -152,11 +152,11 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       <dl className="mt-4 grid grid-cols-3 gap-3 border-y border-line py-3 text-sm">
         <div>
           <dt className="text-xs text-muted">Stage</dt>
-          <dd className="mt-0.5 font-medium text-ink">{company.stage}</dd>
+          <dd className="mt-0.5 font-normal text-ink">{company.stage}</dd>
         </div>
         <div>
           <dt className="text-xs text-muted">Invested</dt>
-          <dd className="mt-0.5 font-medium text-ink">{company.yearInvested}</dd>
+          <dd className="mt-0.5 font-normal text-ink">{company.yearInvested}</dd>
         </div>
         <div className="min-w-0">
           <dt className="text-xs text-muted">Website</dt>
@@ -165,7 +165,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
               href={company.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-teal-ink underline-offset-2 hover:underline"
+              className="font-normal text-teal-ink underline-offset-2 hover:underline"
             >
               {hostname(company.website)}
             </a>
@@ -178,7 +178,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
         <button
           type="button"
           onClick={() => onOpenProfile(company.slug)}
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-teal-ink"
+          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-ink px-4 text-sm font-bold text-white transition-colors hover:bg-teal-ink"
         >
           Full profile <ArrowRight className="size-3.5" aria-hidden />
         </button>
@@ -187,7 +187,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
             href={essay.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-ink/20 px-4 text-sm font-semibold text-ink transition-colors hover:border-teal-ink hover:text-teal-ink"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-ink/20 px-4 text-sm font-bold text-ink transition-colors hover:border-teal-ink hover:text-teal-ink"
           >
             Investment note <ArrowUpRight className="size-3.5" aria-hidden />
           </Link>

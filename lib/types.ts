@@ -55,10 +55,12 @@ export type Company = {
   exitYear?: number;
   exitNote?: string;
   featured?: boolean;
+  /** Position among the featured companies on the home page (1 first). */
+  homeOrder?: number;
   founders?: Person[];
   /** Falls back to a serif wordmark. */
   logo?: Image;
-  /** Product/team photo; the home spotlight's fallback when there's no product render. */
+  /** Product/team photo for the home page's featured tabs. */
   coverImage?: Image;
   whyWeInvested?: string;
   /** Substack post about this company; links the company and the essay. */

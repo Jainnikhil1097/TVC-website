@@ -58,11 +58,11 @@ export function AnnouncementBar({ id, message, link }: Props) {
         <p className="truncate">{message}</p>
         {link &&
           (external ? (
-            <a href={link.href} target="_blank" rel="noopener noreferrer" className="hidden shrink-0 items-center gap-1 font-semibold text-teal hover:underline sm:inline-flex">
+            <a href={link.href} target="_blank" rel="noopener noreferrer" className="hidden shrink-0 items-center gap-1 font-bold text-teal hover:underline sm:inline-flex">
               {link.label} <ArrowRight className="size-3.5" aria-hidden />
             </a>
           ) : (
-            <Link href={link.href} className="hidden shrink-0 items-center gap-1 font-semibold text-teal hover:underline sm:inline-flex">
+            <Link href={link.href} className="hidden shrink-0 items-center gap-1 font-bold text-teal hover:underline sm:inline-flex">
               {link.label} <ArrowRight className="size-3.5" aria-hidden />
             </Link>
           ))}

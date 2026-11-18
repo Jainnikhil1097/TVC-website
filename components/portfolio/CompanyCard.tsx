@@ -16,7 +16,7 @@ type CompanyCardProps = {
 export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
   const status = statusLabel(company);
   return (
-    <article className="group relative flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(10_30_63/0.06)] sm:p-7">
+    <article className="group relative flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(0_0_0/0.06)] sm:p-7">
       <div className="flex items-center justify-between gap-4">
         <p className="hud text-muted">
           <span className="text-teal-ink">{number}</span> · {portfolioSectorName(company.sector)}
@@ -29,7 +29,7 @@ export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
       <h3
         className={
           company.logo
-            ? "mt-4 text-base font-semibold text-ink"
+            ? "mt-4 text-base font-bold text-ink"
             : "mt-6 font-display text-2xl text-ink"
         }
       >
@@ -47,7 +47,7 @@ export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
       <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">{company.summary}</p>
 
       <div className="mt-auto flex items-center justify-between gap-3 pt-6">
-        <span className="rounded-full border border-line bg-surface px-3 py-1 text-[0.72rem] font-medium text-ink">
+        <span className="rounded-full border border-line bg-surface px-3 py-1 text-[0.72rem] font-normal text-ink">
           {company.stage === "TBD" ? "Stage undisclosed" : company.stage}
         </span>
         <a

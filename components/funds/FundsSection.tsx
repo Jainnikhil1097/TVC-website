@@ -30,10 +30,10 @@ export function FundCards({ funds }: { funds: Fund[] }) {
       {funds.map((f) => (
         <li key={f.sebiRegistration} data-reveal className="flex flex-col rounded-2xl border border-line bg-white p-7 sm:p-8">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="font-display text-xl leading-snug text-ink">{f.name}</h3>
+            <h3 className="font-display font-bold text-xl leading-snug text-ink">{f.name}</h3>
             <span
               className={cn(
-                "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",
+                "shrink-0 rounded-full px-2.5 py-1 text-xs font-normal",
                 f.status === "raising" ? "bg-teal-ink text-white" : "bg-surface text-muted"
               )}
             >
@@ -77,7 +77,7 @@ export function FundsSection({
           {!showAll && (
             <Link
               href="/funds"
-              className="inline-flex min-h-11 shrink-0 items-center gap-2 font-semibold text-ink hover:text-teal-ink"
+              className="inline-flex min-h-11 shrink-0 items-center gap-2 font-bold text-ink hover:text-teal-ink"
             >
               All funds and track record <ArrowRight className="size-4" aria-hidden />
             </Link>

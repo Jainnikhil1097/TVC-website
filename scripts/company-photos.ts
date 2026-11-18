@@ -2,8 +2,8 @@
 // (updating an existing CMS). For each photo in scripts/seed-data/company-photos/
 // named after a company's slug (e.g. matel-motion.jpg or suind.webp):
 //   - uploads it to the media library once (by file name),
-//   - sets it as that company's cover image (the home spotlight's fallback when
-//     there's no product render).
+//   - sets it as that company's cover image (shown in the home page portfolio tabs
+//     when the company is featured).
 // Companies without a photo file are left alone. Safe to run repeatedly.
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";

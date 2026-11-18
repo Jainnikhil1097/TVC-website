@@ -35,9 +35,12 @@ you don't need to add them here.
    [Add a company's one-pager](#add-a-companys-one-pager) below.
 5. Click **Publish**. It appears on the Portfolio page and the map.
    - Use **Save draft** instead to prepare it without it going live.
-   - Tick **Feature on home page** (right-hand side) to show it in the home page's product
-     spotlight — add a **Product image** (One-pager tab) or a **Cover image** (Basics tab) too.
-     3–6 featured companies works best.
+   - Tick **Feature on home page** (right-hand side) to show it in the home page's featured
+     portfolio tabs — add a **Cover image** (Basics tab) too. 3–6 featured companies works best.
+   - **Home page position** (appears once it's featured) sets the tab order: 1 shows first.
+     Companies without a position follow, in portfolio order.
+   - **Logo** (Basics tab): an SVG or a large transparent PNG works best. The current logos are
+     placeholders cropped from the portfolio PDF; uploading the official file here replaces one.
 
 ### Add a company's one-pager
 Open the company → **One-pager** tab. Everything here is **public**: never add revenue,
@@ -45,16 +48,15 @@ fundraising, valuation, margin or return figures, deal-pipeline companies, or cu
 haven't agreed to be named.
 
 - **Product image**: a clean render on a white or transparent background, without text labels,
-  at least 1600 px wide. It's shown on a light panel in the home page spotlight and the profile.
+  at least 1600 px wide. It's shown on a light panel in the company profile.
 - **Product callouts** (up to 4): a label, a short detail, and where on the image it points —
   *Across* and *Down* are percentages of the image (0/0 is the top-left corner, 50/50 the
   centre). Save, preview, and nudge the numbers until each dot sits on the right part.
-- **Headline number** + **What it counts** (e.g. "200,000+" / "motors deployed"): shown large in
-  the home page's proof band. Up to 6 appear, in portfolio order — clear the number to drop one.
+- **Headline number** + **What it counts** (e.g. "200,000+" / "motors deployed"): not shown on
+  the site at the moment; kept for future use.
 - **Deployment** and **Customers**: the snapshot rows on the home page and profile.
 - **The gap**, **The breakthrough**, **Traction**, **Market opportunity**, **Founder track
   record**, **Why they win**: sections on the company profile, each shown only when filled in.
-  The breakthrough also appears in the home page spotlight.
 
 ### Mark a company as exited or acquired
 Open the company → **Status** tab → choose *Exited* or *Acquired*, add the year and a short note

@@ -37,7 +37,7 @@ export function SectorFilter({ companies, value, onChange }: SectorFilterProps) 
               aria-pressed={active}
               onClick={() => onChange(o.id)}
               className={cn(
-                "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-[0.85rem] font-medium transition-colors duration-300",
+                "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-[0.85rem] font-normal transition-colors duration-300",
                 active
                   ? "border-ink bg-ink text-white"
                   : "border-line bg-white text-ink hover:border-teal-ink/50 hover:text-teal-ink"

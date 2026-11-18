@@ -85,6 +85,7 @@ function mapCompany(doc: CmsCompany): Company {
     exitYear: orUndefined(doc.exitYear),
     exitNote: orUndefined(doc.exitNote),
     featured: Boolean(doc.featured),
+    homeOrder: orUndefined(doc.homeOrder),
     logo: image(doc.logo, "card"),
     coverImage: image(doc.coverImage, "card"),
     founders: doc.founders?.map((f) => ({

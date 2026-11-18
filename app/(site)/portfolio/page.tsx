@@ -1,4 +1,5 @@
 import { PageHero } from "@/components/layout/PageHero";
+import { PortfolioHeaderSketches } from "@/components/portfolio/PortfolioHeaderSketches";
 import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { PortfolioExplorer } from "@/components/portfolio/PortfolioExplorer";
@@ -38,7 +39,7 @@ export default async function PortfolioPage() {
   return (
     <>
       <PageHero
-        art="blueprint"
+        background={<PortfolioHeaderSketches />}
         eyebrow="Portfolio"
         title="The companies engineering India's energy future"
         intro="Engineering-led companies we back across India's energy transition. Building in energy? We'd like to hear from you."

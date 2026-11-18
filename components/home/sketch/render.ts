@@ -383,7 +383,7 @@ export function drawFigureLabel(ctx: CanvasRenderingContext2D, layout: Layout, n
   const x = layout.cx - layout.r * 0.55;
   const y = layout.cy + layout.r * 0.92;
   ctx.save();
-  ctx.font = `${Math.round(10 * Math.max(0.9, layout.px))}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+  ctx.font = `bold ${Math.round(12 * Math.max(0.9, layout.px))}px Calibri, Carlito, sans-serif`; // Brand Book label face
   ctx.fillStyle = `rgba(${MINT}, ${0.55 * alpha})`;
   ctx.strokeStyle = `rgba(${MINT}, ${0.35 * alpha})`;
   ctx.lineWidth = 0.8;

@@ -172,7 +172,7 @@ export interface Company {
    */
   logo?: (number | null) | Media;
   /**
-   * A product or team photo, landscape, at least 1600 px wide. Shown in the home page spotlight when the company is featured and has no product image. Set the focal point on the subject.
+   * A product or team photo, landscape, at least 2400 px wide. Shown when the company is featured on the home page. Set the focal point on the subject.
    */
   coverImage?: (number | null) | Media;
   founders?:
@@ -210,7 +210,7 @@ export interface Company {
       }[]
     | null;
   /**
-   * Shown large in the home page proof band.
+   * Not shown on the site at the moment — kept for future use.
    */
   proofValue?: string | null;
   proofLabel?: string | null;
@@ -250,9 +250,13 @@ export interface Company {
    */
   slug?: string | null;
   /**
-   * Shown in the product spotlight on the home page (3–6 works best). Add a product image (One-pager tab) or a cover image too.
+   * Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too.
    */
   featured?: boolean | null;
+  /**
+   * 1 shows first among the featured companies. Leave empty to follow the portfolio order.
+   */
+  homeOrder?: number | null;
   /**
    * Untick to hide this from the website without deleting it.
    */
@@ -639,6 +643,7 @@ export interface CompaniesSelect<T extends boolean = true> {
   exitNote?: T;
   slug?: T;
   featured?: T;
+  homeOrder?: T;
   showOnSite?: T;
   order?: T;
   updatedAt?: T;

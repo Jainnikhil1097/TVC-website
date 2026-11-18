@@ -1,34 +1,151 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { buildLines, flowY, mix, rgb, seededRandom, smoothstep, spectrumAt, SPECTRUM, type FlowLine, type RGB } from "./flow-geometry";
 
-// Brand colours (globals.css): Deep Navy, Signal Teal, Transition Aqua.
-const NAVY = "10, 30, 63";
+// Brand colours (globals.css): Signal Teal, Transition Aqua; lines sit on black.
+const BLACK = "0, 0, 0";
 const WHITE = "255, 255, 255";
 const TEAL = "14, 213, 194";
-const AQUA = "6, 232, 211";
+const AQUA = "6, 232, 211"; // Brand "Transition Aqua"
+
+const HOT_WARM: RGB = [255, 233, 210];
+const HOT_CLEAN: RGB = [201, 255, 249];
 
 const FRAME_MS = 1000 / 30; // ~30 fps is plenty for slow motion and halves the work
 const POINTER_RADIUS = 150;
 const POINTER_PUSH = 34;
 
-type Line = { y0: number; phase: number; alpha: number; teal: boolean };
+type Tone = "light" | "dark";
 type Pulse = { line: number; p: number; speed: number };
+export type FlowState = { width: number; height: number; tone: Tone; lines: FlowLine[]; pulses: Pulse[]; neonLines: number[] };
+export type FlowPointer = { x: number; y: number };
 
-const smoothstep = (a: number, b: number, x: number) => {
-  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
+/** Lines and pulses for a canvas of this size (deterministic, so every visit matches). */
+export function buildFlow(width: number, height: number, tone: Tone): FlowState {
+  const mobile = width < 768;
+  const dark = tone === "dark";
+  // The original line count: 64 on desktop, 32 on phones.
+  const count = mobile ? 32 : 64;
+  const rand = seededRandom(7);
+  // On black the plain lines are only texture; the neon carries the picture.
+  const lines = buildLines(count, dark, dark ? 4 : 7, rand);
+  const neonLines = lines.flatMap((l, i) => (l.neon ? [i] : []));
+  const pulses = Array.from({ length: dark ? (mobile ? 7 : 14) : mobile ? 5 : 10 }, (_, i) => ({
+    line: neonLines[i % neonLines.length] ?? i,
+    p: rand(),
+    speed: 0.05 + rand() * 0.06,
+  }));
+  return { width, height, tone, lines, pulses, neonLines };
+}
+
+/** y of a line at horizontal position u (0..1) and time t (seconds). */
+function yAt(s: FlowState, l: FlowLine, u: number, t: number, pointer: FlowPointer | null) {
+  let y = flowY(l, u, t, s.height);
+  if (pointer) {
+    const dx = u * s.width - pointer.x;
+    const dy = y - pointer.y;
+    const f = Math.exp(-(dx * dx + dy * dy) / (POINTER_RADIUS * POINTER_RADIUS));
+    y += Math.sign(dy || 1) * f * POINTER_PUSH;
+  }
+  return y;
+}
+
+function trace(ctx: CanvasRenderingContext2D, pts: [number, number][]) {
+  ctx.beginPath();
+  pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+}
+
+/**
+ * Draws one frame. On black ("dark"), neon lines are three stacked fine strokes — a soft
+ * halo, a glow and a bright core — in the fossil → clean spectrum, added together
+ * ("lighter") so they brighten where they cross. No shadowBlur (too costly per frame).
+ */
+export function drawFlow(ctx: CanvasRenderingContext2D, s: FlowState, time: number, pointer: FlowPointer | null) {
+  const dark = s.tone === "dark";
+  ctx.clearRect(0, 0, s.width, s.height);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  const steps = Math.max(24, Math.round(s.width / 18));
+  const path = (l: FlowLine, from = 0, to = 1, n = steps): [number, number][] =>
+    Array.from({ length: n + 1 }, (_, k) => {
+      const u = from + ((to - from) * k) / n;
+      return [u * s.width, yAt(s, l, u, time, pointer)];
+    });
+
+  // Texture lines first (normal blending).
+  for (const l of s.lines) {
+    if (l.neon && dark) continue;
+    trace(ctx, path(l));
+    ctx.lineWidth = l.neon ? 1.25 : 1;
+    ctx.strokeStyle = l.neon ? `rgba(${TEAL}, 0.42)` : `rgba(${dark ? WHITE : BLACK}, ${l.alpha})`;
+    ctx.stroke();
+  }
+
+  if (dark) {
+    ctx.globalCompositeOperation = "lighter";
+    // One spectrum gradient per pass, shared by every line; breathing via globalAlpha.
+    const passes = ([[3.2, 0.08], [1.4, 0.22], [0.75, 0.95]] as const).map(([w, a]) => {
+      const g = ctx.createLinearGradient(0, 0, s.width, 0);
+      for (const [stop, c] of SPECTRUM) g.addColorStop(stop, `rgba(${rgb(c)}, ${a})`);
+      return { w, g };
+    });
+    for (const l of s.lines) {
+      if (!l.neon) continue;
+      const pts = path(l);
+      // Each line breathes slowly on its own phase (75–100% intensity).
+      ctx.globalAlpha = 0.75 + 0.25 * (0.5 + 0.5 * Math.sin(time * 0.6 + l.phase * 3));
+      for (const { w, g } of passes) {
+        trace(ctx, pts);
+        ctx.lineWidth = w;
+        ctx.strokeStyle = g;
+        ctx.stroke();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Pulses: a hot packet with a fading tail, coloured by where it is (warm → clean).
+  for (const pulse of s.pulses) {
+    const l = s.lines[pulse.line];
+    if (!l) continue;
+    const head = pulse.p;
+    const tail = Math.max(0, head - 0.07);
+    const pts = path(l, tail, head, 10);
+    const here: RGB = dark ? spectrumAt(Math.min(1, head)) : [6, 232, 211];
+    const grad = ctx.createLinearGradient(tail * s.width, 0, head * s.width, 0);
+    grad.addColorStop(0, `rgba(${dark ? rgb(spectrumAt(tail)) : TEAL}, 0)`);
+    grad.addColorStop(1, `rgba(${dark ? rgb(here) : AQUA}, 0.95)`);
+    if (dark) {
+      trace(ctx, pts);
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = `rgba(${rgb(here)}, 0.22)`;
+      ctx.stroke();
+    }
+    trace(ctx, pts);
+    ctx.lineWidth = dark ? 1.8 : 2;
+    ctx.strokeStyle = grad;
+    ctx.stroke();
+    if (dark) {
+      trace(ctx, path(l, tail + (head - tail) * 0.72, head, 4));
+      ctx.lineWidth = 1.1;
+      ctx.strokeStyle = `rgba(${rgb(mix(HOT_WARM, HOT_CLEAN, smoothstep(0.2, 0.65, head)))}, 1)`;
+      ctx.stroke();
+    }
+  }
+  ctx.globalCompositeOperation = "source-over";
+}
 
 /**
  * Abstract "energy flow" for the home hero: streamlines run left to right, loose and
  * wavy at the left and drawing into an ordered bundle at the right (the transition),
- * with bright pulses travelling along a few of them. Plain Canvas 2D, no libraries.
+ * with hot pulses travelling along the neon lines. On black the neon shifts from warm
+ * amber (left) to Transition Aqua (right). Plain Canvas 2D, no libraries.
  *
  * Cheap by design: ~30 fps, DPR capped at 2, paused off-screen and in hidden tabs.
  * Reduced motion and Save-Data get a single still frame. Purely decorative.
  */
-export function EnergyFlow({ className, tone = "light" }: { className?: string; tone?: "light" | "dark" }) {
+export function EnergyFlow({ className, tone = "light" }: { className?: string; tone?: Tone }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -40,110 +157,24 @@ export function EnergyFlow({ className, tone = "light" }: { className?: string; 
       window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
       Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
     const finePointer = window.matchMedia("(pointer: fine)").matches;
-    // On navy the base lines are faint white and the teal lines a touch brighter.
-    const baseRgb = tone === "dark" ? WHITE : NAVY;
-    const tealAlpha = tone === "dark" ? 0.5 : 0.42;
 
-    let width = 0;
-    let height = 0;
-    let lines: Line[] = [];
-    let pulses: Pulse[] = [];
+    let state = buildFlow(0, 0, tone);
     let raf = 0;
     let last = 0;
     let visible = true;
     let time = 0;
     const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
 
-    const build = () => {
-      const count = width < 768 ? 32 : 64;
-      // Deterministic pseudo-random, so every visit (and every resize) looks the same.
-      let seed = 7;
-      const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-      lines = Array.from({ length: count }, (_, i) => ({
-        y0: 0.04 + (0.92 * i) / (count - 1),
-        phase: rand() * Math.PI * 2,
-        alpha: 0.05 + rand() * 0.07,
-        teal: i % 7 === 3,
-      }));
-      const tealLines = lines.flatMap((l, i) => (l.teal ? [i] : []));
-      pulses = Array.from({ length: width < 768 ? 5 : 10 }, (_, i) => ({
-        line: tealLines[i % tealLines.length] ?? i,
-        p: rand(),
-        speed: 0.05 + rand() * 0.06,
-      }));
-    };
+    const draw = () => drawFlow(ctx, state, time, pointer.x > -1000 ? pointer : null);
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      build();
+      state = buildFlow(rect.width, rect.height, tone);
       draw();
-    };
-
-    /** y of line `l` at horizontal position u (0..1) and time t (seconds). */
-    const yAt = (l: Line, u: number, t: number) => {
-      const converge = smoothstep(0.1, 1, u);
-      const centre = 0.5;
-      const base = centre + (l.y0 - centre) * (1 - 0.62 * converge);
-      const amp = 0.055 * (1 - 0.72 * converge);
-      const wave =
-        Math.sin(u * 6.2 + t * 0.32 + l.phase) * 0.62 + Math.sin(u * 11.5 - t * 0.21 + l.phase * 1.7) * 0.38;
-      let y = (base + amp * wave) * height;
-      if (pointer.x > -1000) {
-        const dx = u * width - pointer.x;
-        const dy = y - pointer.y;
-        const f = Math.exp(-(dx * dx + dy * dy) / (POINTER_RADIUS * POINTER_RADIUS));
-        y += Math.sign(dy || 1) * f * POINTER_PUSH;
-      }
-      return y;
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-      const steps = Math.max(24, Math.round(width / 18));
-
-      for (const l of lines) {
-        ctx.beginPath();
-        for (let s = 0; s <= steps; s++) {
-          const u = s / steps;
-          const y = yAt(l, u, time);
-          if (s === 0) ctx.moveTo(0, y);
-          else ctx.lineTo(u * width, y);
-        }
-        ctx.lineWidth = l.teal ? 1.25 : 1;
-        ctx.strokeStyle = l.teal ? `rgba(${TEAL}, ${tealAlpha})` : `rgba(${baseRgb}, ${l.alpha})`;
-        ctx.stroke();
-      }
-
-      // Pulses: a short bright segment with a fading tail.
-      for (const pulse of pulses) {
-        const l = lines[pulse.line];
-        if (!l) continue;
-        const head = pulse.p;
-        const tail = Math.max(0, head - 0.07);
-        const x0 = tail * width;
-        const x1 = head * width;
-        const grad = ctx.createLinearGradient(x0, 0, x1, 0);
-        grad.addColorStop(0, `rgba(${TEAL}, 0)`);
-        grad.addColorStop(1, `rgba(${AQUA}, 0.95)`);
-        ctx.beginPath();
-        const segs = 10;
-        for (let s = 0; s <= segs; s++) {
-          const u = tail + ((head - tail) * s) / segs;
-          const y = yAt(l, u, time);
-          if (s === 0) ctx.moveTo(u * width, y);
-          else ctx.lineTo(u * width, y);
-        }
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
-        ctx.strokeStyle = grad;
-        ctx.stroke();
-      }
     };
 
     const tick = (now: number) => {
@@ -152,11 +183,13 @@ export function EnergyFlow({ className, tone = "light" }: { className?: string; 
       const dt = last ? Math.min((now - last) / 1000, 0.1) : 0;
       last = now;
       time += dt;
-      for (const pulse of pulses) {
+      for (const pulse of state.pulses) {
         pulse.p += pulse.speed * dt;
         if (pulse.p > 1.07) {
           pulse.p = 0;
-          pulse.line = Math.floor(Math.random() * lines.length);
+          // Pulses ride the neon lines.
+          const pool = state.neonLines.length ? state.neonLines : state.lines.map((_, i) => i);
+          pulse.line = pool[Math.floor(Math.random() * pool.length)];
         }
       }
       // Ease the pointer so the lines part smoothly rather than snapping.

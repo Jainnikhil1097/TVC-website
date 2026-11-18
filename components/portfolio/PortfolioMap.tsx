@@ -33,12 +33,12 @@ type PortfolioMapProps = {
   essays: Record<string, CompanyEssay | undefined>;
 };
 
-// A true blueprint: pale line art on deep navy, bright teal highlights — the same
-// ink as the page heroes.
-const INK = "#d6e4f0"; // line colour
+// A blueprint: pale line art on black, bright teal highlights — the same black as
+// the page heroes.
+const INK = "#e0e0e0"; // line colour
 const ACCENT = "#0ed5c2";
-const PAPER = "#0a1e3f"; // map background
-const TOP = "#163463"; // tower roofs: a lighter navy so towers read as solid volumes
+const PAPER = "#000000"; // map background
+const TOP = "#1f1f1f"; // tower roofs: a lighter grey so towers read as solid volumes
 
 // Scoped to the map SVG: hairline strokes at any scale, and a slow "current" along the transmission line.
 const mapCss = `
@@ -302,7 +302,7 @@ export function PortfolioMap({
                       x={z.u + 20}
                       y={z.v + PLOT - 22}
                       fill={on ? ACCENT : "#8fa3b8"}
-                      style={{ fontFamily: "var(--font-mono)", fontSize: 15, letterSpacing: 2.5 }}
+                      style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 700, letterSpacing: 2.5 }}
                     >
                       {`${z.number} — ${z.name.toUpperCase()}`}
                     </text>
@@ -371,8 +371,8 @@ export function PortfolioMap({
                 className={cn(
                   "group absolute -translate-y-full origin-bottom-left rounded-lg border px-2.5 py-1.5 text-left whitespace-nowrap",
                   "transition-[opacity,border-color,background-color,box-shadow,scale] duration-300 ease-out-quart motion-reduce:transition-none",
-                  "border-white/15 bg-[#11284f]/90 shadow-[0_2px_12px_rgb(0_0_0/0.25)] backdrop-blur-sm hover:border-teal/60",
-                  "data-[active]:scale-[1.06] data-[active]:border-teal data-[active]:bg-[#11284f] data-[active]:shadow-[0_14px_36px_rgb(0_0_0/0.4),0_0_0_1px_rgb(14_213_194/0.25)] motion-reduce:data-[active]:scale-100",
+                  "border-white/15 bg-[#161616]/90 shadow-[0_2px_12px_rgb(0_0_0/0.25)] backdrop-blur-sm hover:border-teal/60",
+                  "data-[active]:scale-[1.06] data-[active]:border-teal data-[active]:bg-[#161616] data-[active]:shadow-[0_14px_36px_rgb(0_0_0/0.4),0_0_0_1px_rgb(14_213_194/0.25)] motion-reduce:data-[active]:scale-100",
                   recede && "opacity-60",
                   dim && "pointer-events-none opacity-25"
                 )}
@@ -383,7 +383,10 @@ export function PortfolioMap({
                   <span className="overflow-hidden">
                     <span className="block pt-1 pb-2">
                       {company.logo ? (
-                        <CompanyLogo company={company} tone="dark" className="h-9 w-36" />
+                        // In its own colours on a white chip (an inverted logo turns boxed marks solid white).
+                        <span className="block rounded-md bg-white px-2 py-1.5">
+                          <CompanyLogo company={company} className="h-7 w-32" />
+                        </span>
                       ) : (
                         <span className="block font-display text-lg leading-tight text-white">{company.name}</span>
                       )}
@@ -392,7 +395,7 @@ export function PortfolioMap({
                 </span>
                 <span className="flex items-baseline gap-2">
                   <span className="hud text-teal">{pin.number}</span>
-                  <span className={cn("text-[0.75rem] font-semibold text-white", !company.logo && "group-data-[active]:hidden")}>
+                  <span className={cn("text-[0.75rem] font-bold text-white", !company.logo && "group-data-[active]:hidden")}>
                     {company.name}
                   </span>
                   {status && <span className="hud text-ink-300">· {status}</span>}

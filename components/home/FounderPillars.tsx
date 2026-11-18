@@ -53,7 +53,7 @@ export function FounderPillars({ pillars }: { pillars: Pillar[] }) {
                 <span className="grid size-11 place-items-center rounded-full bg-teal/10 text-teal-ink">
                   <Icon className="size-5" aria-hidden />
                 </span>
-                <h3 className="mt-6 text-lg font-semibold text-ink">{p.title}</h3>
+                <h3 className="mt-6 text-lg font-bold text-ink">{p.title}</h3>
                 <p className="mt-2 text-[0.95rem] leading-relaxed text-muted">{p.text}</p>
               </li>
             );
