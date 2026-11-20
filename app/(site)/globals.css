@@ -66,6 +66,9 @@
 
   body {
     @apply bg-bg text-ink font-sans antialiased;
+    /* Never let a decorative transform widen the page sideways. clip (not hidden) keeps
+       position: sticky working. */
+    overflow-x: clip;
     /* Room for the optional announcement bar (see AnnouncementBar). */
     padding-top: var(--banner-h, 0px);
     line-height: 1.6;
@@ -227,6 +230,16 @@ html.js-motion [data-reveal] {
 }
 html.js-motion [data-reveal][data-revealed] {
   opacity: 1;
+  transform: none;
+}
+/* Team rows and founder cards (About): flip up from below into place. */
+html.js-motion .flip-in[data-reveal] {
+  /* Tilted back (top edge away from the viewer), so the waiting card is smaller in
+     perspective, never wider than its slot (a forward tilt overflowed the page). */
+  transform: perspective(1000px) rotateX(38deg) translateY(28px);
+  transform-origin: 50% 100%;
+}
+html.js-motion .flip-in[data-reveal][data-revealed] {
   transform: none;
 }
 

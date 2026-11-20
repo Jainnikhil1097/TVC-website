@@ -63,17 +63,20 @@ Open the company → **Status** tab → choose *Exited* or *Acquired*, add the y
 (e.g. "Acquired by …") → **Publish**. It gets a badge and is no longer counted as an active company.
 
 ### Add or update a team member
-**Content → Team → Create new** (or open an existing person). Choose their section (Founding
+**Content → Team → Create new** (or open an existing person). Choose their **Team** (Founding
 Team, Investments, Investor Relations, Capital Formation, Portfolio Investments, Marketing &
 Engagements, Finance, Human Resources, or Sector Experts & Advisors), add a portrait photo, job
 title and LinkedIn link, then **Publish**. To remove someone without deleting them, untick
-**Show on website**.
+**Show on website**. *Display order* sets the order within a team (lower first).
 
 *Photos:* waist-up, 4:5 (ideally 1200 × 1500 px), on the same light studio background as the
-others, so the grid looks even. The Founding Team appears large at the top of the team section,
-with their **Short bio**; everyone else appears in a grid under their section.
+others, so the grid looks even. Portraits show in black & white until hovered on desktop.
 
-*Team photo:* the group photo above the team is under **Pages → About page**.
+*Founders:* the Founding Team appears large at the top of the team section, with their **Short
+bio** (3–4 lines) and up to 3 **Known for** points. Everyone else appears in a grid under their
+team, with a side index of the teams. "Executive Team (unsorted)" is only for older entries —
+move anyone listed there into their team.
+
 
 *Order:* each entry has a **Display order** number — lower numbers appear first. Use gaps
 (10, 20, 30…) so you can slot people in between later.

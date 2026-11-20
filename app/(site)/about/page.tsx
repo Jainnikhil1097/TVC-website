@@ -7,7 +7,7 @@ import { FundsSection } from "@/components/funds/FundsSection";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
-import { TeamSpotlight } from "@/components/about/TeamSpotlight";
+import { TeamSection } from "@/components/about/TeamSection";
 
 export const revalidate = 3600;
 
@@ -76,24 +76,17 @@ export default async function AboutPage() {
 
       <FundsSection funds={funds} />
 
-      {/* Team */}
-      <section className="border-t border-line bg-surface py-20 sm:py-28" aria-labelledby="team-heading">
+      {/* Team: everyone visible, team by team, as 3D depth cards */}
+      <section data-theme="dark" className="bg-black py-20 text-white sm:py-28" aria-labelledby="team-heading">
         <div className="container-site">
           <SectionHeading
+            tone="dark"
             eyebrow="The team"
             title={<span id="team-heading">The people behind the fund</span>}
             intro="Investors, operators and engineers who underwrite the technology as closely as the business."
           />
-          <div className="mt-14 space-y-8 sm:space-y-10">
-            {teamGroups.map((group) => (
-              <Reveal key={group.id}>
-                <TeamSpotlight
-                  label={group.label}
-                  people={group.people}
-                  fallbackTitle={group.id === "advisors" ? "Sector Expert & Advisor" : ""}
-                />
-              </Reveal>
-            ))}
+          <div className="mt-14">
+            <TeamSection groups={teamGroups} />
           </div>
         </div>
       </section>

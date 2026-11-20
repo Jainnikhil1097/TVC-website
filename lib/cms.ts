@@ -17,7 +17,7 @@ import type {
   Report,
   Video,
 } from "./types";
-import type { PageKey } from "./taxonomy";
+import { teamGroupOptions, type PageKey } from "./taxonomy";
 import { basePath, isStaticPreview } from "./base-path";
 import { siteIdentity } from "./site-config";
 import { getSubstackEssays, getYouTubeVideos } from "./feeds";
@@ -247,14 +247,11 @@ export const getTeamGroups = cache(async () => {
     linkedin: orUndefined(d.linkedin),
     photo: image(d.photo, "portrait")?.url,
     bio: orUndefined(d.bio),
+    highlights: d.highlights?.map((h) => h.text).filter(Boolean),
   });
-  const groups = [
-    { id: "founding", label: "Founding Team" },
-    { id: "executive", label: "Executive Team" },
-    { id: "advisors", label: "Sector Experts & Advisors" },
-  ] as const;
-  return groups
-    .map((g) => ({ ...g, people: docs.filter((d) => d.group === g.id).map(toPerson) }))
+  // Teams in display order (lib/taxonomy.ts); empty teams are skipped.
+  return teamGroupOptions
+    .map((g) => ({ id: g.value, label: g.label, people: docs.filter((d) => d.group === g.value).map(toPerson) }))
     .filter((g) => g.people.length > 0);
 });
 

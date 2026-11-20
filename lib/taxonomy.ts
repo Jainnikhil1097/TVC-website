@@ -31,10 +31,19 @@ export const fundStatuses = [
   { value: "closed", label: "Closed" },
 ] as const;
 
+// Teams on the About page, in display order (from the team sheet, Nov 2026).
+// "executive" is the old catch-all, kept so older entries stay valid until re-sorted.
 export const teamGroupOptions = [
   { value: "founding", label: "Founding Team" },
-  { value: "executive", label: "Executive Team" },
+  { value: "investments", label: "Investments" },
+  { value: "investor-relations", label: "Investor Relations" },
+  { value: "capital-formation", label: "Capital Formation" },
+  { value: "portfolio-investments", label: "Portfolio Investments" },
+  { value: "marketing", label: "Marketing & Engagements" },
+  { value: "finance", label: "Finance" },
+  { value: "hr", label: "Human Resources" },
   { value: "advisors", label: "Sector Experts & Advisors" },
+  { value: "executive", label: "Executive Team (unsorted)" },
 ] as const;
 
 export const pageKeys = [

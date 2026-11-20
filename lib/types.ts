@@ -27,6 +27,8 @@ export type Person = {
   /** Image URL. Falls back to initials. */
   photo?: string;
   bio?: string;
+  /** "Known for" points (founder cards). */
+  highlights?: string[];
 };
 
 export type PortfolioSectorId =

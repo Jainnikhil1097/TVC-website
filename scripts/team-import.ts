@@ -1,10 +1,15 @@
 // Shared by scripts/seed.ts (fresh databases) and scripts/import-team.ts (updating an
 // existing CMS). Brings the Team collection in line with scripts/seed-data/team.ts:
-//   - creates or updates each person by name (title, section, LinkedIn, order),
-//   - uploads their photo from seed-data/team-photos/<slug>.webp once, and attaches it,
+//   - creates or updates each person by name (title, team, LinkedIn, order),
+//   - fills in bios and "Known for" points where the CMS has none,
+//   - uploads their photo from seed-data/team-photos/<slug>.webp as <slug>-<hash>.webp
+//     (a new name whenever the photo changes, so caches never show an old crop), and
+//     attaches it, deleting the version it replaces,
 //   - hides (never deletes) anyone in the CMS who isn't in the list.
-// Bios and anything else edited in the CMS are left alone. Safe to run repeatedly.
-import { existsSync } from "node:fs";
+// Bios and points already in the CMS are left alone. Safe to run repeatedly.
+import { createHash } from "node:crypto";
+import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import type { Payload } from "payload";
 import { teamGroups } from "./seed-data/team";
@@ -13,19 +18,42 @@ import { personSlug } from "./seed-data/slug";
 const photoDir = path.join(process.cwd(), "scripts", "seed-data", "team-photos");
 const context = { disableRevalidate: true };
 
-/** Finds a previously uploaded photo by file name, or uploads it. */
-async function mediaFor(payload: Payload, file: string, alt: string): Promise<number | undefined> {
-  const filePath = path.join(photoDir, `${file}.webp`);
-  if (!existsSync(filePath)) return undefined;
-  const { docs } = await payload.find({
-    collection: "media",
-    where: { filename: { equals: `${file}.webp` } },
-    limit: 1,
-    depth: 0,
-  });
-  if (docs[0]) return docs[0].id;
-  const doc = await payload.create({ collection: "media", context, data: { alt }, filePath });
-  return doc.id;
+/**
+ * The media id for a person's portrait. Uploads are named <slug>-<content hash>.webp, so
+ * a re-cropped photo gets a new file name and URL: no browser, image cache or CDN can
+ * keep showing the old crop. Keeps the photo attached to the person if it's already this
+ * exact version; otherwise uploads the new one, and the old one is deleted once the person
+ * points at it (see below).
+ */
+async function mediaFor(
+  payload: Payload,
+  file: string,
+  alt: string,
+  current: number | { id: number; filename?: string | null } | null | undefined
+): Promise<{ id?: number; replaced?: number }> {
+  const source = path.join(photoDir, `${file}.webp`);
+  if (!existsSync(source)) return {};
+  const hash = createHash("sha1").update(readFileSync(source)).digest("hex").slice(0, 8);
+  const versioned = `${file}-${hash}.webp`;
+  const upload = async () => {
+    const dir = mkdtempSync(path.join(os.tmpdir(), "tvc-team-"));
+    const filePath = path.join(dir, versioned);
+    copyFileSync(source, filePath);
+    try {
+      return (await payload.create({ collection: "media", context, data: { alt }, filePath })).id;
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  };
+
+  if (current) {
+    const doc =
+      typeof current === "number" ? await payload.findByID({ collection: "media", id: current, depth: 0 }).catch(() => null) : current;
+    if (doc?.filename === versioned) return { id: doc.id };
+    return { id: await upload(), replaced: doc?.id };
+  }
+  const { docs } = await payload.find({ collection: "media", where: { filename: { equals: versioned } }, limit: 1, depth: 0 });
+  return { id: docs[0]?.id ?? (await upload()) };
 }
 
 export async function importTeam(payload: Payload, log: (msg: string) => void) {
@@ -37,7 +65,14 @@ export async function importTeam(payload: Payload, log: (msg: string) => void) {
   for (const group of teamGroups) {
     for (const [i, p] of group.people.entries()) {
       listed.add(p.name);
-      const photo = await mediaFor(payload, personSlug(p.name), `Portrait of ${p.name}`);
+      const { docs: found } = await payload.find({
+        collection: "team",
+        where: { name: { equals: p.name } },
+        limit: 1,
+        depth: 0,
+        draft: true,
+      });
+      const { id: photo, replaced } = await mediaFor(payload, personSlug(p.name), `Portrait of ${p.name}`, found[0]?.photo as number | undefined);
       if (photo) photos++;
       const data = {
         name: p.name,
@@ -49,18 +84,19 @@ export async function importTeam(payload: Payload, log: (msg: string) => void) {
         _status: "published" as const,
         ...(photo ? { photo } : {}),
       };
-      const { docs } = await payload.find({
-        collection: "team",
-        where: { name: { equals: p.name } },
-        limit: 1,
-        depth: 0,
-        draft: true,
-      });
-      if (docs[0]) {
-        await payload.update({ collection: "team", id: docs[0].id, context, data });
+      // Bios and "Known for" points only fill empty fields, so CMS edits always win.
+      const existing = found[0];
+      const extras = {
+        ...(p.bio && !existing?.bio ? { bio: p.bio } : {}),
+        ...(p.highlights?.length && !existing?.highlights?.length ? { highlights: p.highlights.map((text) => ({ text })) } : {}),
+      };
+      if (existing) {
+        await payload.update({ collection: "team", id: existing.id, context, data: { ...data, ...extras } });
         updated++;
+        // The old portrait is no longer used once the person points at the new one.
+        if (replaced && replaced !== photo) await payload.delete({ collection: "media", id: replaced, context }).catch(() => {});
       } else {
-        await payload.create({ collection: "team", context, data });
+        await payload.create({ collection: "team", context, data: { ...data, ...extras } });
         created++;
       }
     }

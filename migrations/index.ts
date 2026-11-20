@@ -5,6 +5,7 @@ import * as migration_20261115_021116_hero_photos from './20261115_021116_hero_p
 import * as migration_20261115_090414_one_pager from './20261115_090414_one_pager';
 import * as migration_20261115_100753_remove_hero_photos from './20261115_100753_remove_hero_photos';
 import * as migration_20261118_051153_home_order from './20261118_051153_home_order';
+import * as migration_20261118_164050_team_departments from './20261118_164050_team_departments';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261118_051153_home_order.up,
     down: migration_20261118_051153_home_order.down,
-    name: '20261118_051153_home_order'
+    name: '20261118_051153_home_order',
+  },
+  {
+    up: migration_20261118_164050_team_departments.up,
+    down: migration_20261118_164050_team_departments.down,
+    name: '20261118_164050_team_departments'
   },
 ];

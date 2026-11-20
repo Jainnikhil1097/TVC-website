@@ -1,7 +1,7 @@
 // Shapes of the original hand-written content, used only by scripts/seed.ts.
 export type Link = { label: string; href: string };
 export type Metric = { value: string; label: string; note?: string };
-export type Person = { name: string; title?: string; linkedin?: string };
+export type Person = { name: string; title?: string; linkedin?: string; bio?: string; highlights?: string[] };
 export type PortfolioSectorId =
   | "drone" | "industrial" | "platforms" | "utility-grid" | "renewables" | "hydrogen" | "mobility" | "data-centers";
 export type Stage = "Pre-Seed" | "Seed" | "Pre-Series A" | "Series A" | "TBD";

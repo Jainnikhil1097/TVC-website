@@ -332,13 +332,38 @@ export interface Team {
    * e.g. "VP - Investments". Leave blank for advisors.
    */
   title?: string | null;
-  group: 'founding' | 'executive' | 'advisors';
+  /**
+   * The team this person appears under on the About page.
+   */
+  group:
+    | 'founding'
+    | 'investments'
+    | 'investor-relations'
+    | 'capital-formation'
+    | 'portfolio-investments'
+    | 'marketing'
+    | 'finance'
+    | 'hr'
+    | 'advisors'
+    | 'executive';
   /**
    * Portrait, ideally at least 1200 × 1500 px. Initials are shown until a photo is added.
    */
   photo?: (number | null) | Media;
   linkedin?: string | null;
+  /**
+   * 3–4 lines. Shown on the founder cards on the About page.
+   */
   bio?: string | null;
+  /**
+   * Up to 3 short points, shown on the founder cards.
+   */
+  highlights?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Untick to hide this from the website without deleting it.
    */
@@ -661,6 +686,12 @@ export interface TeamSelect<T extends boolean = true> {
   photo?: T;
   linkedin?: T;
   bio?: T;
+  highlights?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
   showOnSite?: T;
   order?: T;
   updatedAt?: T;
