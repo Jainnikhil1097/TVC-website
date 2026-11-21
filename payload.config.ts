@@ -21,6 +21,9 @@ import {
   HomePage,
   HomeSectors,
   ImpactPage,
+  PortfolioPage,
+  AboutPage,
+  PerspectivesPage,
   PageSeo,
   SiteSettings,
 } from "./cms/globals";
@@ -108,7 +111,7 @@ export default buildConfig({
     Media,
     Users,
   ],
-  globals: [SiteSettings, Announcement, PageSeo, HomePage, HomeSectors, ImpactPage, GiftCityPage, FundMetrics],
+  globals: [SiteSettings, Announcement, PageSeo, HomePage, HomeSectors, PortfolioPage, AboutPage, PerspectivesPage, ImpactPage, GiftCityPage, FundMetrics],
   db: usingSqlite
     ? sqliteAdapter({ client: { url: databaseUrl }, push: true })
     : postgresAdapter({

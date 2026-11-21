@@ -4,8 +4,16 @@ import { urlField } from "../fields";
 import { revalidateGlobal } from "../hooks/revalidate";
 import { pageKeys, portfolioSectors } from "@/lib/taxonomy";
 import { pillarIcons } from "@/lib/pillar-icons";
+import { aboutPageDefaults, perspectivesPageDefaults, portfolioPageDefaults } from "@/lib/page-copy";
 
 const editable = { read: anyone, update: loggedIn };
+
+/** Empty, or one or more email addresses separated by commas. */
+const emailList = (value: unknown) => {
+  if (typeof value !== "string" || !value.trim()) return true;
+  const bad = value.split(",").map((v) => v.trim()).filter((v) => v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+  return bad.length ? `Not a valid email: ${bad.join(", ")}` : true;
+};
 const hooks = { afterChange: [revalidateGlobal] };
 
 export const SiteSettings: GlobalConfig = {
@@ -31,7 +39,7 @@ export const SiteSettings: GlobalConfig = {
               type: "row",
               fields: [
                 { name: "stage", label: "Stages we invest in", type: "text", required: true, admin: { placeholder: "Pre-Seed to Series A" } },
-                { name: "cheque", label: "Cheque size", type: "text", required: true, admin: { placeholder: "$0.5M – $5M" } },
+                { name: "cheque", label: "Cheque size", type: "text", required: true, admin: { placeholder: "₹20 Cr – ₹50 Cr" } },
               ],
             },
             { name: "footerHeadline", label: "Footer headline", type: "text", required: true },
@@ -41,15 +49,46 @@ export const SiteSettings: GlobalConfig = {
         {
           label: "Contact",
           fields: [
-            { name: "email", label: "Contact email", type: "email", required: true },
             {
-              name: "address",
-              label: "Office address",
-              type: "textarea",
+              name: "email",
+              label: "General enquiries email",
+              type: "email",
               required: true,
-              admin: { description: "One line per row, as it should appear on the site." },
+              admin: { description: 'Shown as "General Enquiries" on the Contact page and in the footer.' },
             },
-            urlField({ name: "mapUrl", label: "Google Maps link" }),
+            {
+              name: "offices",
+              label: "Offices",
+              type: "array",
+              minRows: 1,
+              labels: { singular: "Office", plural: "Offices" },
+              admin: { description: "Shown on the Contact page (with a map) and in the footer, in this order." },
+              fields: [
+                { name: "name", label: "Name", type: "text", required: true, admin: { placeholder: "Domlur" } },
+                {
+                  name: "address",
+                  label: "Address",
+                  type: "textarea",
+                  required: true,
+                  admin: { description: "One line per row, as it should appear on the site." },
+                },
+                urlField({ name: "mapUrl", label: "Google Maps link" }),
+              ],
+            },
+            {
+              name: "formRecipients",
+              label: "Who receives each contact form",
+              type: "group",
+              admin: {
+                description:
+                  "An email alert goes to these addresses for every new enquiry (separate several with commas). All enquiries are also kept under Enquiries.",
+              },
+              fields: [
+                { name: "startup", label: "Startups & Founders", type: "text", validate: emailList },
+                { name: "investor", label: "Investors", type: "text", validate: emailList },
+                { name: "partner", label: "Ecosystem Partners", type: "text", validate: emailList },
+              ],
+            },
           ],
         },
         {
@@ -177,7 +216,8 @@ export const FundMetrics: GlobalConfig = {
           label: "Show on home page",
           type: "checkbox",
           defaultValue: false,
-          admin: { description: "Pick 3–4 headline figures for the home page. All figures appear on Funds." },
+          // The home page no longer shows fund figures; kept (hidden) so existing data stays valid.
+          admin: { hidden: true },
         },
       ],
     },
@@ -311,7 +351,11 @@ export const GiftCityPage: GlobalConfig = {
 export const HomePage: GlobalConfig = {
   slug: "home-page",
   label: "Home page",
-  admin: { group: "Pages", description: "The positioning line, \"Why founders choose us\" and the founder FAQ.", preview: () => "/" },
+  admin: {
+    group: "Pages",
+    description: "The positioning line and \"Why founders choose us\" (home page), and the founder FAQ (shown on the Contact page).",
+    preview: () => "/",
+  },
   access: editable,
   hooks,
   versions: { max: 25 },
@@ -339,8 +383,8 @@ export const HomePage: GlobalConfig = {
               label: "Pillars",
               type: "array",
               labels: { singular: "Pillar", plural: "Pillars" },
-              maxRows: 6,
-              admin: { description: "4–5 works best. Keep each to one short sentence." },
+              maxRows: 8,
+              admin: { description: "Shown four to a row: 4 or 8 works best. Keep each to one short sentence." },
               fields: [
                 {
                   type: "row",
@@ -362,7 +406,7 @@ export const HomePage: GlobalConfig = {
           ],
         },
         {
-          label: "Founder FAQ",
+          label: "Founder FAQ (Contact page)",
           fields: [
             {
               name: "faq",
@@ -377,6 +421,122 @@ export const HomePage: GlobalConfig = {
             },
           ],
         },
+      ],
+    },
+  ],
+};
+
+// ─── Page wording (Portfolio, About, Perspectives) ───────────────────────────
+// Every field falls back to the default wording (lib/page-copy.ts) while empty.
+
+const text = (name: string, label: string, defaultValue: string, extra: Partial<Field> = {}): Field =>
+  ({ name, label, type: "text", defaultValue, ...extra }) as Field;
+const area = (name: string, label: string, defaultValue: string): Field => ({ name, label, type: "textarea", defaultValue });
+
+export const PortfolioPage: GlobalConfig = {
+  slug: "portfolio-page",
+  label: "Portfolio page",
+  admin: {
+    group: "Pages",
+    description: "The Portfolio page's heading, intro, button and figure labels. The companies themselves are under Content → Portfolio.",
+    preview: () => "/portfolio",
+  },
+  access: editable,
+  hooks,
+  fields: [
+    text("eyebrow", "Small heading", portfolioPageDefaults.eyebrow),
+    text("headline", "Headline", portfolioPageDefaults.headline),
+    area("intro", "Intro", portfolioPageDefaults.intro),
+    {
+      type: "row",
+      fields: [
+        text("ctaLabel", "Button text", portfolioPageDefaults.ctaLabel),
+        text("ctaHref", "Button link", portfolioPageDefaults.ctaHref),
+      ],
+    },
+    {
+      type: "row",
+      fields: [
+        text("activeLabel", 'Label under "number of companies"', portfolioPageDefaults.activeLabel),
+        text("sectorsLabel", 'Label under "number of sectors"', portfolioPageDefaults.sectorsLabel),
+        text("stagesLabel", "Label under the stages", portfolioPageDefaults.stagesLabel),
+      ],
+    },
+  ],
+};
+
+export const AboutPage: GlobalConfig = {
+  slug: "about-page",
+  label: "About page",
+  admin: {
+    group: "Pages",
+    description:
+      "The About page's headings and closing cards. The intro, approach quote, thesis, stage and cheque size are in Settings → Site settings; people are under Team; funds under Funds.",
+    preview: () => "/about",
+  },
+  access: editable,
+  hooks,
+  fields: [
+    text("eyebrow", "Small heading", aboutPageDefaults.eyebrow),
+    text("headline", "Headline", aboutPageDefaults.headline),
+    text("approachEyebrow", '"Our approach" heading', aboutPageDefaults.approachEyebrow),
+    {
+      type: "row",
+      fields: [
+        text("teamEyebrow", "Team: small heading", aboutPageDefaults.teamEyebrow),
+        text("teamHeading", "Team: heading", aboutPageDefaults.teamHeading),
+      ],
+    },
+    {
+      name: "nextSteps",
+      label: "Closing cards",
+      type: "array",
+      maxRows: 3,
+      labels: { singular: "Card", plural: "Cards" },
+      defaultValue: aboutPageDefaults.nextSteps,
+      admin: { description: "The three link cards at the bottom of the page." },
+      fields: [
+        {
+          type: "row",
+          fields: [
+            { name: "eyebrow", label: "Small heading", type: "text", required: true },
+            { name: "title", label: "Title", type: "text", required: true },
+          ],
+        },
+        { name: "body", label: "Text", type: "textarea", required: true },
+        { name: "href", label: "Link", type: "text", required: true, admin: { placeholder: "/contact" } },
+      ],
+    },
+  ],
+};
+
+export const PerspectivesPage: GlobalConfig = {
+  slug: "perspectives-page",
+  label: "Perspectives page",
+  admin: {
+    group: "Pages",
+    description:
+      "The Perspectives page's heading, intro and buttons. Essays and videos load from Substack and YouTube automatically; news, events and reports are under Content.",
+    preview: () => "/perspectives",
+  },
+  access: editable,
+  hooks,
+  fields: [
+    text("eyebrow", "Small heading", perspectivesPageDefaults.eyebrow),
+    text("headline", "Headline", perspectivesPageDefaults.headline),
+    area("intro", "Intro", perspectivesPageDefaults.intro),
+    {
+      type: "row",
+      fields: [
+        text("substackLabel", "Substack button text", perspectivesPageDefaults.substackLabel),
+        text("youtubeLabel", "YouTube button text", perspectivesPageDefaults.youtubeLabel),
+      ],
+    },
+    {
+      type: "row",
+      fields: [
+        text("indexEyebrow", "Index: small heading", perspectivesPageDefaults.indexEyebrow),
+        text("indexHeading", "Index: heading", perspectivesPageDefaults.indexHeading),
       ],
     },
   ],

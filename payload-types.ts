@@ -107,6 +107,9 @@ export interface Config {
     'page-seo': PageSeo;
     'home-page': HomePage;
     'home-sectors': HomeSector;
+    'portfolio-page': PortfolioPage;
+    'about-page': AboutPage;
+    'perspectives-page': PerspectivesPage;
     'impact-page': ImpactPage;
     'gift-city-page': GiftCityPage;
     'fund-metrics': FundMetric;
@@ -117,6 +120,9 @@ export interface Config {
     'page-seo': PageSeoSelect<false> | PageSeoSelect<true>;
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
     'home-sectors': HomeSectorsSelect<false> | HomeSectorsSelect<true>;
+    'portfolio-page': PortfolioPageSelect<false> | PortfolioPageSelect<true>;
+    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
+    'perspectives-page': PerspectivesPageSelect<false> | PerspectivesPageSelect<true>;
     'impact-page': ImpactPageSelect<false> | ImpactPageSelect<true>;
     'gift-city-page': GiftCityPageSelect<false> | GiftCityPageSelect<true>;
     'fund-metrics': FundMetricsSelect<false> | FundMetricsSelect<true>;
@@ -165,6 +171,10 @@ export interface Company {
   sector:
     'drone' | 'industrial' | 'platforms' | 'utility-grid' | 'renewables' | 'hydrogen' | 'mobility' | 'data-centers';
   stage: 'Pre-Seed' | 'Seed' | 'Pre-Series A' | 'Series A' | 'TBD';
+  /**
+   * Shown on the company card and used by the Portfolio page's fund filter.
+   */
+  fund: 'fund-1' | 'fund-2';
   yearInvested: number;
   website: string;
   /**
@@ -237,7 +247,6 @@ export interface Company {
       }[]
     | null;
   marketOpportunity?: string | null;
-  founderTrackRecord?: string | null;
   whyTheyWin?: string | null;
   /**
    * Exited and acquired companies get a badge and aren't counted as active.
@@ -339,7 +348,6 @@ export interface Team {
     | 'founding'
     | 'investments'
     | 'investor-relations'
-    | 'capital-formation'
     | 'portfolio-investments'
     | 'marketing'
     | 'finance'
@@ -445,6 +453,9 @@ export interface Fund {
   size?: string | null;
   status: 'raising' | 'investing' | 'deployed' | 'closed';
   description?: string | null;
+  /**
+   * About lists every fund.
+   */
   showOnHome?: boolean | null;
   sebiCategory: string;
   sebiRegistration: string;
@@ -622,6 +633,7 @@ export interface CompaniesSelect<T extends boolean = true> {
   summary?: T;
   sector?: T;
   stage?: T;
+  fund?: T;
   yearInvested?: T;
   website?: T;
   logo?: T;
@@ -661,7 +673,6 @@ export interface CompaniesSelect<T extends boolean = true> {
         id?: T;
       };
   marketOpportunity?: T;
-  founderTrackRecord?: T;
   whyTheyWin?: T;
   status?: T;
   exitYear?: T;
@@ -917,12 +928,32 @@ export interface Site {
   cheque: string;
   footerHeadline: string;
   newsletterBlurb: string;
+  /**
+   * Shown as "General Enquiries" on the Contact page and in the footer.
+   */
   email: string;
   /**
-   * One line per row, as it should appear on the site.
+   * Shown on the Contact page (with a map) and in the footer, in this order.
    */
-  address: string;
-  mapUrl?: string | null;
+  offices?:
+    | {
+        name: string;
+        /**
+         * One line per row, as it should appear on the site.
+         */
+        address: string;
+        mapUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * An email alert goes to these addresses for every new enquiry (separate several with commas). All enquiries are also kept under Enquiries.
+   */
+  formRecipients?: {
+    startup?: string | null;
+    investor?: string | null;
+    partner?: string | null;
+  };
   /**
    * Where the Investor Login button goes. If empty, it opens the investor enquiry form.
    */
@@ -1006,11 +1037,6 @@ export interface PageSeo {
     description?: string | null;
     image?: (number | null) | Media;
   };
-  funds?: {
-    title?: string | null;
-    description?: string | null;
-    image?: (number | null) | Media;
-  };
   contact?: {
     title?: string | null;
     description?: string | null;
@@ -1020,7 +1046,7 @@ export interface PageSeo {
   createdAt?: string | null;
 }
 /**
- * The positioning line, "Why founders choose us" and the founder FAQ.
+ * The positioning line and "Why founders choose us" (home page), and the founder FAQ (shown on the Contact page).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-page".
@@ -1032,7 +1058,7 @@ export interface HomePage {
    */
   positioning: string;
   /**
-   * 4–5 works best. Keep each to one short sentence.
+   * Shown four to a row: 4 or 8 works best. Keep each to one short sentence.
    */
   pillars?:
     | {
@@ -1049,7 +1075,11 @@ export interface HomePage {
           | 'industry'
           | 'energy'
           | 'growth'
-          | 'focus';
+          | 'focus'
+          | 'talent'
+          | 'grants'
+          | 'communications'
+          | 'events';
         text: string;
         id?: string | null;
       }[]
@@ -1097,6 +1127,71 @@ export interface HomeSector {
         id?: string | null;
       }[]
     | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The Portfolio page's heading, intro, button and figure labels. The companies themselves are under Content → Portfolio.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio-page".
+ */
+export interface PortfolioPage {
+  id: number;
+  eyebrow?: string | null;
+  headline?: string | null;
+  intro?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  activeLabel?: string | null;
+  sectorsLabel?: string | null;
+  stagesLabel?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The About page's headings and closing cards. The intro, approach quote, thesis, stage and cheque size are in Settings → Site settings; people are under Team; funds under Funds.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page".
+ */
+export interface AboutPage {
+  id: number;
+  eyebrow?: string | null;
+  headline?: string | null;
+  approachEyebrow?: string | null;
+  teamEyebrow?: string | null;
+  teamHeading?: string | null;
+  /**
+   * The three link cards at the bottom of the page.
+   */
+  nextSteps?:
+    | {
+        eyebrow: string;
+        title: string;
+        body: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The Perspectives page's heading, intro and buttons. Essays and videos load from Substack and YouTube automatically; news, events and reports are under Content.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "perspectives-page".
+ */
+export interface PerspectivesPage {
+  id: number;
+  eyebrow?: string | null;
+  headline?: string | null;
+  intro?: string | null;
+  substackLabel?: string | null;
+  youtubeLabel?: string | null;
+  indexEyebrow?: string | null;
+  indexHeading?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1161,9 +1256,6 @@ export interface FundMetric {
         value: string;
         label: string;
         note?: string | null;
-        /**
-         * Pick 3–4 headline figures for the home page. All figures appear on Funds.
-         */
         showOnHome?: boolean | null;
         id?: string | null;
       }[]
@@ -1188,8 +1280,21 @@ export interface SiteSelect<T extends boolean = true> {
   footerHeadline?: T;
   newsletterBlurb?: T;
   email?: T;
-  address?: T;
-  mapUrl?: T;
+  offices?:
+    | T
+    | {
+        name?: T;
+        address?: T;
+        mapUrl?: T;
+        id?: T;
+      };
+  formRecipients?:
+    | T
+    | {
+        startup?: T;
+        investor?: T;
+        partner?: T;
+      };
   investorLoginUrl?: T;
   socials?:
     | T
@@ -1275,13 +1380,6 @@ export interface PageSeoSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  funds?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   contact?:
     | T
     | {
@@ -1331,6 +1429,62 @@ export interface HomeSectorsSelect<T extends boolean = true> {
         portfolioSector?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio-page_select".
+ */
+export interface PortfolioPageSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  intro?: T;
+  ctaLabel?: T;
+  ctaHref?: T;
+  activeLabel?: T;
+  sectorsLabel?: T;
+  stagesLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  approachEyebrow?: T;
+  teamEyebrow?: T;
+  teamHeading?: T;
+  nextSteps?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        body?: T;
+        href?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "perspectives-page_select".
+ */
+export interface PerspectivesPageSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  intro?: T;
+  substackLabel?: T;
+  youtubeLabel?: T;
+  indexEyebrow?: T;
+  indexHeading?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

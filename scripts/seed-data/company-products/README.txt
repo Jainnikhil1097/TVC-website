@@ -1,3 +1,8 @@
+The current files are interim crops from the Fund I one-pager page images (low
+resolution, with the one-pager's labels baked in). Replace them with clean renders when
+available, either here or directly in the CMS (Portfolio → company → One-pager tab →
+Product image).
+
 Clean product renders for the home page product spotlight and company profiles,
 named <slug>-product.<ext>, e.g. matel-motion-product.png, emo-energy-product.png,
 suind-product.webp (the slug is the last part of the company's web address).

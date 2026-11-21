@@ -2,26 +2,27 @@
 
 import { ArrowUpRight } from "lucide-react";
 import type { Company } from "@/lib/types";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { hostname } from "@/lib/utils";
 import { CompanyLogo, StatusBadge } from "./CompanyLogo";
 import { statusLabel } from "./status";
 
 type CompanyCardProps = {
   company: Company;
-  number: string;
   onOpen: (slug: string) => void;
 };
 
-export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
+export function CompanyCard({ company, onOpen }: CompanyCardProps) {
   const status = statusLabel(company);
   return (
     <article className="group relative flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(0_0_0/0.06)] sm:p-7">
       <div className="flex items-center justify-between gap-4">
-        <p className="hud text-muted">
-          <span className="text-teal-ink">{number}</span> · {portfolioSectorName(company.sector)}
-        </p>
-        {status ? <StatusBadge label={status} /> : <p className="hud text-muted">{company.yearInvested}</p>}
+        <p className="hud text-teal-ink">{portfolioSectorName(company.sector)}</p>
+        {status ? (
+          <StatusBadge label={status} />
+        ) : (
+          <span className="hud rounded-full border border-line px-2.5 py-1 text-muted">{portfolioFundName(company.fund)}</span>
+        )}
       </div>
 
       <CompanyLogo company={company} className="mt-6" />

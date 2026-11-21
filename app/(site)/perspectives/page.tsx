@@ -6,6 +6,7 @@ import {
   getNews,
   getPortfolio,
   getReports,
+  getPerspectivesPage,
   getSite,
   getVideos,
 } from "@/lib/cms";
@@ -38,7 +39,7 @@ function eventDates(e: EventItem) {
 }
 
 export default async function PerspectivesPage() {
-  const [site, essays, videos, news, events, reports, portfolio] = await Promise.all([
+  const [site, essays, videos, news, events, reports, portfolio, page] = await Promise.all([
     getSite(),
     getEssays(),
     getVideos(),
@@ -46,6 +47,7 @@ export default async function PerspectivesPage() {
     getEvents(),
     getReports(),
     getPortfolio(),
+    getPerspectivesPage(),
   ]);
 
   const nameOf = (slug?: string) => (slug ? companyName(portfolio, slug) : undefined);
@@ -191,17 +193,17 @@ export default async function PerspectivesPage() {
       {/* Dark hero, then the formats carousel on its own light band */}
       <PageHero
         art="writing"
-        eyebrow="Perspectives"
-        title="Ideas behind the investments"
-        intro={<>Perspectives on India&rsquo;s energy transition, straight from our newsletter.</>}
+        eyebrow={page.eyebrow}
+        title={page.headline}
+        intro={page.intro}
       >
         <div className="mt-10 flex flex-wrap gap-3">
           <ButtonLink href={site.substackUrl} variant="solid">
-            Subscribe on Substack
+            {page.substackLabel}
           </ButtonLink>
           {site.youtubeUrl && (
             <ButtonLink href={site.youtubeUrl} variant="outline">
-              Watch on YouTube
+              {page.youtubeLabel}
             </ButtonLink>
           )}
         </div>
@@ -217,7 +219,7 @@ export default async function PerspectivesPage() {
       {/* Full index — scannable and crawlable */}
       <section className="py-20 sm:py-28" aria-labelledby="index-heading">
         <div className="container-site">
-          <SectionHeading eyebrow="Index" title={<span id="index-heading">Everything we&rsquo;ve published</span>} />
+          <SectionHeading eyebrow={page.indexEyebrow} title={<span id="index-heading">{page.indexHeading}</span>} />
 
           <div className="mt-14 grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
             <Reveal>

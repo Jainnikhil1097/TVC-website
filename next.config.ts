@@ -13,7 +13,11 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: process.cwd(),
   // Careers was removed; send old links somewhere useful instead of a 404.
   async redirects() {
-    return [{ source: "/careers", destination: "/contact", permanent: true }];
+    return [
+      { source: "/careers", destination: "/contact", permanent: true },
+      // The Funds page was folded into About (every fund is listed there).
+      { source: "/funds", destination: "/about#funds", permanent: true },
+    ];
   },
   images: {
     formats: ["image/avif", "image/webp"],

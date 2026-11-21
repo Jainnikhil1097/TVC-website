@@ -4,14 +4,13 @@ import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, ArrowUpRight, X } from "lucide-react";
 import type { Company } from "@/lib/types";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { hostname } from "@/lib/utils";
 import { CompanyLogo, StatusBadge } from "./CompanyLogo";
 import { statusLabel, type CompanyEssay } from "./status";
 
 type Props = {
   company: Company;
-  number: string;
   essay?: CompanyEssay;
   /** Where the company's label sits, as fractions (0–1) of the map's width and height. */
   anchor: { fx: number; fy: number };
@@ -32,7 +31,7 @@ const EDGE = 16;
  * right, or to the left when there isn't room on the right — aligned to the label's
  * top in the upper half of the map and to its bottom in the lower half.
  */
-export function MapPopover({ company, number, essay, anchor, onClose, onOpenProfile }: Props) {
+export function MapPopover({ company, essay, anchor, onClose, onOpenProfile }: Props) {
   const card = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number; openLeft: boolean } | null>(null);
   const openDown = anchor.fy < 0.5;
@@ -48,9 +47,9 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       const l = label.getBoundingClientRect();
       const w = el.offsetWidth;
       const h = el.offsetHeight;
-      // The map frame gives ~1.5rem of room either side of this box, ~5rem above and below.
-      const minLeft = -EDGE;
-      const maxLeft = box.width + EDGE - w;
+      // Positioned within the map frame (outside its tilting 3D stage), kept inside it.
+      const minLeft = EDGE;
+      const maxLeft = box.width - EDGE - w;
       const spaceRight = maxLeft - (l.right - box.left + GAP);
       const spaceLeft = l.left - box.left - GAP - w - minLeft;
       // Open towards whichever side has room (right by default); then keep it inside.
@@ -59,7 +58,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       const rawTop = openDown ? l.top - box.top : l.bottom - box.top - h;
       setPos({
         left: Math.min(Math.max(rawLeft, minLeft), maxLeft),
-        top: Math.min(Math.max(rawTop, -64), box.height - h + 64),
+        top: Math.min(Math.max(rawTop, EDGE), box.height - h - EDGE),
         openLeft,
       });
     };
@@ -141,7 +140,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       </div>
 
       <p className="hud mt-4 text-teal-ink">
-        {number} · {portfolioSectorName(company.sector)}
+        {portfolioSectorName(company.sector)}
       </p>
       <h3 id="map-popover-title" className="mt-1.5 font-display font-bold text-2xl leading-tight text-ink">
         {company.name}
@@ -155,8 +154,8 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
           <dd className="mt-0.5 font-normal text-ink">{company.stage}</dd>
         </div>
         <div>
-          <dt className="text-xs text-muted">Invested</dt>
-          <dd className="mt-0.5 font-normal text-ink">{company.yearInvested}</dd>
+          <dt className="text-xs text-muted">Fund</dt>
+          <dd className="mt-0.5 font-normal text-ink">{portfolioFundName(company.fund)}</dd>
         </div>
         <div className="min-w-0">
           <dt className="text-xs text-muted">Website</dt>

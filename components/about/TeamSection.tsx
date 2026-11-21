@@ -5,16 +5,19 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Person } from "@/lib/types";
 import { Reveal } from "@/components/motion/Reveal";
 import { cn } from "@/lib/utils";
-import { DepthCard } from "./DepthCard";
+import { PortraitTile, TILE_COLOURS } from "./PortraitTile";
 
 type Group = { id: string; label: string; people: Person[] };
 
 const anchor = (id: string) => `team-${id}`;
 
+/** Colour for the n-th person on the page, so neighbours (and rows) never repeat. */
+const colourAt = (n: number) => TILE_COLOURS[n % TILE_COLOURS.length];
+
 /**
- * The About page's people, all visible, no clicking: the founders first (large depth
- * cards with a short bio and "Known for"), then every team in order, each as one row of
- * cards the visitor can scroll (TeamRow). Rows flip up into view as you reach them. On
+ * The About page's people, all visible, no clicking: the founders first (large portrait
+ * tiles with a short bio and "Known for"), then every team in order, each as one row of
+ * tiles the visitor can scroll (TeamRow). Rows flip up into view as you reach them. On
  * desktop a sticky index lists the teams (names only), highlights the one in view and jumps to any;
  * on phones it becomes a row of chips.
  */
@@ -22,6 +25,11 @@ export function TeamSection({ groups }: { groups: Group[] }) {
   const founders = groups.find((g) => g.id === "founding");
   const teams = useMemo(() => groups.filter((g) => g.id !== "founding"), [groups]);
   const [active, setActive] = useState(teams[0]?.id);
+  // Where each team's colours start, continuing on from the founders and earlier teams.
+  const offsets = useMemo(() => {
+    const first = founders?.people.length ?? 0;
+    return teams.map((_, i) => first + teams.slice(0, i).reduce((sum, t) => sum + t.people.length, 0));
+  }, [founders, teams]);
 
   // Scroll-spy: the team whose heading area sits in the middle band of the screen.
   useEffect(() => {
@@ -42,10 +50,10 @@ export function TeamSection({ groups }: { groups: Group[] }) {
       {founders && (
         <div>
           <h3 className="eyebrow text-teal">{founders.label}</h3>
-          <Reveal as="ul" stagger={0.12} className="mt-8 grid gap-8 md:grid-cols-3 lg:gap-10">
-            {founders.people.map((p) => (
+          <Reveal as="ul" stagger={0.12} className="mt-10 grid gap-12 sm:grid-cols-2 md:grid-cols-3 md:gap-8 lg:gap-10">
+            {founders.people.map((p, i) => (
               <li key={p.name} data-reveal className="flip-in flex flex-col">
-                <DepthCard person={p} size="lg" />
+                <PortraitTile person={p} colour={colourAt(i)} size="lg" priority={i === 0} />
                 {p.bio && <p className="mt-6 text-[0.95rem] leading-relaxed text-ink-200">{p.bio}</p>}
                 {p.highlights && p.highlights.length > 0 && (
                   <div className="mt-6 border-t border-white/10 pt-5">
@@ -95,12 +103,13 @@ export function TeamSection({ groups }: { groups: Group[] }) {
 
           {/* min-w-0 / minmax(0,1fr): wide rows scroll inside their column instead of widening the page. */}
           <div className="min-w-0 space-y-16 sm:space-y-20">
-            {teams.map((t) => (
+            {teams.map((t, ti) => (
               <section key={t.id} id={anchor(t.id)} aria-labelledby={`${anchor(t.id)}-title`} className="scroll-mt-28">
                 <TeamRow
                   titleId={`${anchor(t.id)}-title`}
                   label={t.label}
                   people={t.people}
+                  colourStart={offsets[ti]}
                   fallbackTitle={t.id === "advisors" ? "Sector Expert & Advisor" : ""}
                 />
               </section>
@@ -118,7 +127,19 @@ export function TeamSection({ groups }: { groups: Group[] }) {
  * appear when the team is wider than the row). Cards snap into place, and the edge fade
  * shows only on a side that has more cards. A team that fits simply sits left-aligned.
  */
-function TeamRow({ titleId, label, people, fallbackTitle }: { titleId: string; label: string; people: Person[]; fallbackTitle: string }) {
+function TeamRow({
+  titleId,
+  label,
+  people,
+  colourStart,
+  fallbackTitle,
+}: {
+  titleId: string;
+  label: string;
+  people: Person[];
+  colourStart: number;
+  fallbackTitle: string;
+}) {
   const row = useRef<HTMLUListElement>(null);
   const [edges, setEdges] = useState({ overflow: false, start: true, end: true });
 
@@ -173,17 +194,17 @@ function TeamRow({ titleId, label, people, fallbackTitle }: { titleId: string; l
           </div>
         )}
       </div>
-      {/* Vertical padding inside the row leaves room for the cards' 3D tilt. */}
-      <Reveal className="flip-in mt-8">
+      {/* A little top padding inside the row leaves room for heads growing on hover. */}
+      <Reveal className="flip-in mt-6">
         <ul
           ref={row}
           data-lenis-prevent-wheel
-          className="no-scrollbar -mx-5 -my-4 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto scroll-smooth px-5 py-4 sm:gap-6 lg:mx-0 lg:scroll-px-0 lg:px-0"
+          className="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto scroll-smooth px-5 pt-4 pb-1 sm:gap-6 lg:mx-0 lg:scroll-px-0 lg:px-0"
           style={fade ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
         >
-          {people.map((p) => (
+          {people.map((p, i) => (
             <li key={p.name} className="w-40 shrink-0 snap-start sm:w-48 lg:w-52">
-              <DepthCard person={p} fallbackTitle={fallbackTitle} />
+              <PortraitTile person={p} colour={colourAt(colourStart + i)} fallbackTitle={fallbackTitle} />
             </li>
           ))}
         </ul>

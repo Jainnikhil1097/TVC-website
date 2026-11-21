@@ -6,7 +6,9 @@ import { pitchHref } from "@/lib/site-config";
 type Faq = { question: string; answer: string };
 
 /**
- * Founder FAQ (edited in CMS → Home page). Native <details> so it works without
+ * Founder FAQ on the Contact page, below the forms (edited in CMS → Home page →
+ * Founder FAQ). "Pitch to us" jumps to the form above with the startup tab selected.
+ * Native <details> so it works without
  * JavaScript and is fully keyboard accessible; FAQPage structured data lets
  * search engines show the answers directly.
  */
@@ -33,7 +35,7 @@ export function FounderFaq({ faq, email }: { faq: Faq[]; email: string }) {
             intro="Building in energy? Here's what to expect when you pitch to us."
           />
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <ButtonLink href={pitchHref}>Pitch to us</ButtonLink>
+            <ButtonLink href={`${pitchHref}#send-message`}>Pitch to us</ButtonLink>
             {email && (
               <a href={`mailto:${email}`} className="text-sm font-normal text-muted underline underline-offset-4 hover:text-teal-ink">
                 {email}

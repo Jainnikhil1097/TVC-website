@@ -12,8 +12,13 @@ delete process.env.BLOB_READ_WRITE_TOKEN; // exercise local storage
 delete process.env.SUBMISSIONS_NOTIFY_EMAIL;
 
 const { default: config } = await import("../payload.config");
-const { handleIntake, readAttachment, submissionEndpoints } = await import("../cms/endpoints/submissions");
+const { handleIntake, readAttachment, recipientsFor, submissionEndpoints } = await import("../cms/endpoints/submissions");
 const payload = await getPayload({ config });
+// Never send real email from tests (the CMS may list real team addresses): record instead.
+const sent: { to: unknown }[] = [];
+payload.sendEmail = (async (message: { to: unknown }) => {
+  sent.push({ to: message.to });
+}) as typeof payload.sendEmail;
 
 const MARK = `test-${Date.now()}@example.com`;
 const form = (fields: Record<string, string | File>) => {
@@ -24,6 +29,20 @@ const form = (fields: Record<string, string | File>) => {
 const count = async () =>
   (await payload.count({ collection: "submissions", where: { email: { equals: MARK } }, overrideAccess: true })).totalDocs;
 const fileOf = (mb: number, name: string) => new File([new Uint8Array(Math.round(mb * 1024 * 1024))], name, { type: "application/pdf" });
+
+// 0. Each form's alert goes to its own team; otherwise the fallback address.
+{
+  const routing = {
+    startup: "Bhoomika@transitionventurecapital.com",
+    investor: "stenson@transitionventurecapital.com, krishna@transitionventurecapital.com",
+    partner: "navi@transitionventurecapital.com",
+  };
+  assert.deepEqual(recipientsFor("startup", routing, "info@x.com"), ["Bhoomika@transitionventurecapital.com"]);
+  assert.deepEqual(recipientsFor("investor", routing), ["stenson@transitionventurecapital.com", "krishna@transitionventurecapital.com"]);
+  assert.deepEqual(recipientsFor("partner", routing), ["navi@transitionventurecapital.com"]);
+  assert.deepEqual(recipientsFor("partner", { partner: "" }, "info@x.com"), ["info@x.com"]);
+  assert.deepEqual(recipientsFor("startup", null), []);
+}
 
 try {
   // 1. Valid investor enquiry is saved.

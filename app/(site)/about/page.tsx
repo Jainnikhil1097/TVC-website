@@ -1,7 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { getFunds, getInvestmentSectors, getMetrics, getSite, getTeamGroups } from "@/lib/cms";
-import { pitchHref } from "@/lib/site-config";
+import { getAboutPage, getFunds, getSite, getTeamGroups } from "@/lib/cms";
 import { pageMetadata } from "@/lib/seo";
 import { FundsSection } from "@/components/funds/FundsSection";
 import { PageHero } from "@/components/layout/PageHero";
@@ -20,25 +19,17 @@ export function generateMetadata() {
 }
 
 export default async function AboutPage() {
-  const [site, metrics, investmentSectors, teamGroups, funds] = await Promise.all([
-    getSite(),
-    getMetrics(),
-    getInvestmentSectors(),
-    getTeamGroups(),
-    getFunds(),
-  ]);
+  const [site, page, teamGroups, funds] = await Promise.all([getSite(), getAboutPage(), getTeamGroups(), getFunds()]);
 
-  const fundFigure = metrics.items.find((m) => /^fund i\b/i.test(m.label)) ?? metrics.items[0];
   const facts = [
     { label: "Stage", value: site.investmentCriteria.stage },
     { label: "Cheque size", value: site.investmentCriteria.cheque },
-    ...(fundFigure ? [{ label: fundFigure.label, value: fundFigure.value }] : []),
   ].filter((f) => f.value);
 
   return (
     <>
-      <PageHero art="paths" eyebrow="About us" title="India's first energy-transition venture fund" intro={site.about}>
-        <dl className="mt-12 grid max-w-3xl grid-cols-1 border-y border-white/15 sm:grid-cols-3">
+      <PageHero art="paths" eyebrow={page.eyebrow} title={page.headline} intro={site.about}>
+        <dl className="mt-12 grid max-w-2xl grid-cols-1 border-y border-white/15 sm:grid-cols-2">
           {facts.map((f, i) => (
             <div
               key={f.label}
@@ -55,35 +46,26 @@ export default async function AboutPage() {
       <section className="py-20 sm:py-28">
         <div className="container-site grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <Reveal>
-            <p className="eyebrow text-teal-ink">Our approach</p>
+            <p className="eyebrow text-teal-ink">{page.approachEyebrow}</p>
             <blockquote className="display mt-6 text-3xl leading-tight text-ink sm:text-4xl lg:text-[2.75rem]">
               &ldquo;{site.approach}&rdquo;
             </blockquote>
           </Reveal>
           <Reveal className="lg:pt-12">
             <p className="text-base leading-relaxed text-muted sm:text-lg">{site.thesis}</p>
-            <h3 className="mt-10 text-sm font-bold text-ink">Sectors we invest in</h3>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {investmentSectors.map((s) => (
-                <li key={s.id} className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm text-ink">
-                  {s.name}
-                </li>
-              ))}
-            </ul>
           </Reveal>
         </div>
       </section>
 
-      <FundsSection funds={funds} />
+      <FundsSection funds={funds} showAll />
 
-      {/* Team: everyone visible, team by team, as 3D depth cards */}
+      {/* Team: everyone visible, team by team */}
       <section data-theme="dark" className="bg-black py-20 text-white sm:py-28" aria-labelledby="team-heading">
         <div className="container-site">
           <SectionHeading
             tone="dark"
-            eyebrow="The team"
-            title={<span id="team-heading">The people behind the fund</span>}
-            intro="Investors, operators and engineers who underwrite the technology as closely as the business."
+            eyebrow={page.teamEyebrow}
+            title={<span id="team-heading">{page.teamHeading}</span>}
           />
           <div className="mt-14">
             <TeamSection groups={teamGroups} />
@@ -94,13 +76,9 @@ export default async function AboutPage() {
       {/* Next steps */}
       <section className="border-t border-line py-16 sm:py-20">
         <div className="container-site grid gap-4 md:grid-cols-3">
-          {[
-            { href: pitchHref, eyebrow: "Founders", title: "Pitch to us", body: "Building in energy? Share your deck — we read every one." },
-            { href: "/impact", eyebrow: "Impact", title: "Our impact", body: "How our portfolio is decarbonising industry, mobility and the grid." },
-            { href: "/contact", eyebrow: "Contact", title: "Get in touch", body: "Investors, partners and press — we'd like to hear from you." },
-          ].map((c) => (
+          {page.nextSteps.map((c) => (
             <Link
-              key={c.href}
+              key={`${c.href}-${c.title}`}
               href={c.href}
               className="group flex min-h-44 flex-col justify-between rounded-2xl border border-line bg-white p-7 transition-colors hover:border-teal-ink sm:p-8"
             >

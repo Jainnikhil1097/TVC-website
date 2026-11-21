@@ -1,16 +1,16 @@
 "use client";
 
 import { Suspense, useCallback, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { LayoutGrid, Map as MapIcon } from "lucide-react";
-import { portfolioSectorName, portfolioSectors } from "@/lib/taxonomy";
-import type { Company, PortfolioSectorId } from "@/lib/types";
+import { portfolioFundName, portfolioFunds, portfolioSectorName, portfolioSectors } from "@/lib/taxonomy";
+import type { Company, FundId, PortfolioSectorId } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { SectorFilter } from "./SectorFilter";
+import { FundFilter, SectorFilter } from "./SectorFilter";
 import { PortfolioMap } from "./PortfolioMap";
 import { CompanyCard } from "./CompanyCard";
-import { buildLayout, companyNumbers } from "./geometry";
+import { buildLayout } from "./geometry";
 import type { CompanyEssay } from "./status";
 
 // The profile panel (and GSAP with it) loads only when a company is first opened.
@@ -18,6 +18,7 @@ const CompanyPanel = dynamic(() => import("./CompanyPanel").then((m) => m.Compan
 
 const isSector = (s: string | null): s is PortfolioSectorId =>
   s !== null && portfolioSectors.some((p) => p.id === s);
+const isFund = (s: string | null): s is FundId => s !== null && portfolioFunds.some((f) => f.id === s);
 
 type DataProps = {
   /** Every visible company, active and exited, in display order. */
@@ -28,9 +29,12 @@ type DataProps = {
 
 type ViewProps = DataProps & {
   sector: PortfolioSectorId | null;
+  /** Fund filter (from ?fund=). */
+  fund?: FundId | null;
   /** Company whose profile is open (from ?company=). */
   company?: string | null;
   onSectorChange?: (sector: PortfolioSectorId | null) => void;
+  onFundChange?: (fund: FundId | null) => void;
   onCompanyChange?: (slug: string | null) => void;
 };
 
@@ -44,8 +48,10 @@ function ExplorerView({
   companies,
   essays,
   sector,
+  fund = null,
   company: companyParam = null,
   onSectorChange,
+  onFundChange,
   onCompanyChange,
 }: ViewProps) {
   const [view, setView] = useState<"map" | "list">("map");
@@ -71,6 +77,19 @@ function ExplorerView({
     setLocalSector(sector);
   }
 
+  const [localFund, setLocalFund] = useState(fund);
+  const [lastFund, setLastFund] = useState(fund);
+  if (fund !== lastFund) {
+    setLastFund(fund);
+    setLocalFund(fund);
+  }
+  const changeFund = (f: FundId | null) => {
+    setLocalFund(f);
+    onFundChange?.(f);
+    const open = popover ? companies.find((c) => c.slug === popover) : undefined;
+    if (open && f && open.fund !== f) setPopover(null);
+  };
+
   const changeSector = (s: PortfolioSectorId | null) => {
     setLocalSector(s);
     onSectorChange?.(s);
@@ -88,12 +107,13 @@ function ExplorerView({
     onCompanyChange?.(null);
   }, [onCompanyChange]);
 
-  const numbers = useMemo(() => companyNumbers(companies), [companies]);
-  const pool = useMemo(
+  // Exits, then fund: what's in play. The sector filter dims within it (map) or narrows it (list).
+  const byStatus = useMemo(
     () => (showExits ? companies : companies.filter((c) => c.status === "active")),
     [companies, showExits]
   );
-  const layout = useMemo(() => buildLayout(pool, numbers), [pool, numbers]);
+  const pool = useMemo(() => (localFund ? byStatus.filter((c) => c.fund === localFund) : byStatus), [byStatus, localFund]);
+  const layout = useMemo(() => buildLayout(pool), [pool]);
 
   const visible = localSector ? pool.filter((c) => c.sector === localSector) : pool;
   const company = selected ? companies.find((c) => c.slug === selected) : undefined;
@@ -101,7 +121,9 @@ function ExplorerView({
 
   return (
     <>
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+      <FundFilter companies={byStatus} value={localFund} onChange={changeFund} />
+
+      <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <SectorFilter companies={pool} value={localSector} onChange={changeSector} />
         <div className="flex shrink-0 items-center gap-3">
           {hasExits && (
@@ -146,7 +168,8 @@ function ExplorerView({
       </div>
 
       <p className="hud mt-6 text-muted" aria-live="polite">
-        Showing {visible.length} of {pool.length} {showExits ? "companies" : "active companies"}
+        Showing {visible.length} of {byStatus.length} {showExits ? "companies" : "active companies"}
+        {localFund ? ` · ${portfolioFundName(localFund)}` : ""}
         {localSector ? ` · ${portfolioSectorName(localSector)}` : ""}
       </p>
 
@@ -170,7 +193,7 @@ function ExplorerView({
       >
         {visible.map((c) => (
           <li key={c.slug}>
-            <CompanyCard company={c} number={numbers[c.slug]} onOpen={openPanel} />
+            <CompanyCard company={c} onOpen={openPanel} />
           </li>
         ))}
       </ul>
@@ -179,7 +202,6 @@ function ExplorerView({
         <CompanyPanel
           key={company.slug}
           company={company}
-          number={numbers[company.slug]}
           essay={essays[company.slug]}
           onClose={closePanel}
         />
@@ -190,34 +212,39 @@ function ExplorerView({
 
 function ExplorerWithParams(data: DataProps) {
   const params = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const rawSector = params.get("sector");
   const sector = isSector(rawSector) ? rawSector : null;
+  const rawFund = params.get("fund");
+  const fund = isFund(rawFund) ? rawFund : null;
   // Unknown slugs are ignored.
   const rawCompany = params.get("company");
   const company = rawCompany && data.companies.some((c) => c.slug === rawCompany) ? rawCompany : null;
 
   const setParam = useCallback(
-    (key: "sector" | "company", value: string | null) => {
+    (key: "sector" | "fund" | "company", value: string | null) => {
       // Read the live URL so concurrent updates (e.g. sector + company) never clobber each other.
       const next = new URLSearchParams(window.location.search);
       if (value) next.set(key, value);
       else next.delete(key);
       const qs = next.toString();
-      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      // The browser's own history API: Next keeps useSearchParams in sync, with no server
+      // round trip (and so no full reload if one fails). location.pathname includes any base path.
+      window.history.replaceState(null, "", qs ? `${window.location.pathname}?${qs}` : window.location.pathname);
     },
-    [pathname, router]
+    []
   );
   const onSectorChange = useCallback((s: PortfolioSectorId | null) => setParam("sector", s), [setParam]);
+  const onFundChange = useCallback((f: FundId | null) => setParam("fund", f), [setParam]);
   const onCompanyChange = useCallback((slug: string | null) => setParam("company", slug), [setParam]);
 
   return (
     <ExplorerView
       {...data}
       sector={sector}
+      fund={fund}
       company={company}
       onSectorChange={onSectorChange}
+      onFundChange={onFundChange}
       onCompanyChange={onCompanyChange}
     />
   );

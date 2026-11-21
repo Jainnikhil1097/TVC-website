@@ -2,14 +2,14 @@ import type { CollectionConfig } from "payload";
 import { loggedIn, publishedOrLoggedIn } from "../access";
 import { orderField, showOnSiteField, slugify, urlField } from "../fields";
 import { revalidateHooks } from "../hooks/revalidate";
-import { companyStatuses, portfolioSectors, stages } from "@/lib/taxonomy";
+import { companyStatuses, portfolioFunds, portfolioSectors, stages } from "@/lib/taxonomy";
 
 export const PortfolioCompanies: CollectionConfig = {
   slug: "companies",
   labels: { singular: "Portfolio company", plural: "Portfolio" },
   admin: {
     useAsTitle: "name",
-    defaultColumns: ["name", "sector", "stage", "status", "featured", "updatedAt"],
+    defaultColumns: ["name", "sector", "fund", "stage", "status", "featured", "updatedAt"],
     group: "Content",
     description:
       "Companies shown on the Portfolio page, the home page strip and the map. New sectors need a developer.",
@@ -60,6 +60,15 @@ export const PortfolioCompanies: CollectionConfig = {
                   type: "select",
                   required: true,
                   options: stages.map((s) => ({ label: s, value: s })),
+                },
+                {
+                  name: "fund",
+                  label: "Fund",
+                  type: "select",
+                  required: true,
+                  defaultValue: "fund-1",
+                  options: portfolioFunds.map((f) => ({ label: f.name, value: f.id })),
+                  admin: { description: "Shown on the company card and used by the Portfolio page's fund filter." },
                 },
                 {
                   name: "yearInvested",
@@ -220,7 +229,6 @@ export const PortfolioCompanies: CollectionConfig = {
               fields: [{ name: "point", label: "Point", type: "text", required: true, maxLength: 200 }],
             },
             { name: "marketOpportunity", label: "Market opportunity", type: "textarea", maxLength: 500 },
-            { name: "founderTrackRecord", label: "Founder track record", type: "textarea", maxLength: 500 },
             { name: "whyTheyWin", label: "Why they win", type: "textarea", maxLength: 500 },
           ],
         },

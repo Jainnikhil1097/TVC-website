@@ -6,6 +6,12 @@ import * as migration_20261115_090414_one_pager from './20261115_090414_one_page
 import * as migration_20261115_100753_remove_hero_photos from './20261115_100753_remove_hero_photos';
 import * as migration_20261118_051153_home_order from './20261118_051153_home_order';
 import * as migration_20261118_164050_team_departments from './20261118_164050_team_departments';
+import * as migration_20261120_070035_client_feedback from './20261120_070035_client_feedback';
+import * as migration_20261120_114545_home_content from './20261120_114545_home_content';
+import * as migration_20261120_114630_home_content_data from './20261120_114630_home_content_data';
+import * as migration_20261121_113533_new_companies from './20261121_113533_new_companies';
+import * as migration_20261121_114440_remove_pre_fund from './20261121_114440_remove_pre_fund';
+import * as migration_20261121_120638_featured_greentech from './20261121_120638_featured_greentech';
 
 export const migrations = [
   {
@@ -46,6 +52,36 @@ export const migrations = [
   {
     up: migration_20261118_164050_team_departments.up,
     down: migration_20261118_164050_team_departments.down,
-    name: '20261118_164050_team_departments'
+    name: '20261118_164050_team_departments',
+  },
+  {
+    up: migration_20261120_070035_client_feedback.up,
+    down: migration_20261120_070035_client_feedback.down,
+    name: '20261120_070035_client_feedback',
+  },
+  {
+    up: migration_20261120_114545_home_content.up,
+    down: migration_20261120_114545_home_content.down,
+    name: '20261120_114545_home_content',
+  },
+  {
+    up: migration_20261120_114630_home_content_data.up,
+    down: migration_20261120_114630_home_content_data.down,
+    name: '20261120_114630_home_content_data',
+  },
+  {
+    up: migration_20261121_113533_new_companies.up,
+    down: migration_20261121_113533_new_companies.down,
+    name: '20261121_113533_new_companies',
+  },
+  {
+    up: migration_20261121_114440_remove_pre_fund.up,
+    down: migration_20261121_114440_remove_pre_fund.down,
+    name: '20261121_114440_remove_pre_fund',
+  },
+  {
+    up: migration_20261121_120638_featured_greentech.up,
+    down: migration_20261121_120638_featured_greentech.down,
+    name: '20261121_120638_featured_greentech'
   },
 ];

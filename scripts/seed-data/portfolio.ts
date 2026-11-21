@@ -2,6 +2,43 @@ import type { Company } from "./types";
 
 // Ordered newest investment first, as on the current site.
 export const portfolio: Company[] = [
+  // Added 21 Nov 2026 from the team's company list ("Website Ideas and Link" PDF).
+  {
+    slug: "earthen",
+    name: "EarthEn",
+    summary:
+      "CO₂-based thermal batteries for long-duration energy storage and clean industrial heat.",
+    sector: "utility-grid",
+    stage: "Seed",
+    yearInvested: 2026,
+    website: "https://www.earthen.energy/",
+    founders: [{ name: "Manas Pathak" }],
+    fund: "fund-1",
+  },
+  {
+    slug: "perovskia-solar",
+    name: "Perovskia Solar",
+    summary:
+      "Inkjet-printed, custom-shaped perovskite solar cells that let electronics and IoT devices run on indoor light instead of batteries.",
+    sector: "renewables",
+    stage: "Pre-Series A",
+    yearInvested: 2026,
+    website: "https://perovskia.solar/",
+    founders: [{ name: "Toby Meyer" }, { name: "Anand Verma" }],
+    fund: "fund-2",
+  },
+  {
+    slug: "two-point-o",
+    name: "Two Point O",
+    summary:
+      "Opex-as-a-Service for clean-energy infrastructure: it selects, funds and owns the equipment, and leases it to businesses with a performance warranty.",
+    sector: "platforms",
+    stage: "Series A",
+    yearInvested: 2026,
+    website: "https://twopointo.capital/",
+    founders: [{ name: "Manya Ranjan" }, { name: "Karan Bhutani" }, { name: "Archit Mehrotra" }, { name: "Shashidhar Reddy" }],
+    fund: "fund-2",
+  },
   {
     slug: "suind",
     name: "SUIND",

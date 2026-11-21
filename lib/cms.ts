@@ -18,6 +18,7 @@ import type {
   Video,
 } from "./types";
 import { teamGroupOptions, type PageKey } from "./taxonomy";
+import { aboutPageDefaults, perspectivesPageDefaults, portfolioPageDefaults } from "./page-copy";
 import { basePath, isStaticPreview } from "./base-path";
 import { siteIdentity } from "./site-config";
 import { getSubstackEssays, getYouTubeVideos } from "./feeds";
@@ -80,6 +81,7 @@ function mapCompany(doc: CmsCompany): Company {
     sector: doc.sector,
     stage: doc.stage,
     yearInvested: doc.yearInvested,
+    fund: doc.fund ?? "fund-1",
     website: doc.website,
     status: doc.status,
     exitYear: orUndefined(doc.exitYear),
@@ -106,7 +108,6 @@ function mapCompany(doc: CmsCompany): Company {
     breakthrough: orUndefined(doc.breakthrough),
     traction: doc.traction?.map((t) => t.point).filter(Boolean),
     marketOpportunity: orUndefined(doc.marketOpportunity),
-    founderTrackRecord: orUndefined(doc.founderTrackRecord),
     whyTheyWin: orUndefined(doc.whyTheyWin),
   };
 }
@@ -128,8 +129,13 @@ export const getSite = cache(async () => {
     investmentCriteria: { stage: doc.stage ?? "", cheque: doc.cheque ?? "" },
     contact: {
       email: doc.email ?? "",
-      address: (doc.address ?? "").split("\n").map((l) => l.trim()).filter(Boolean),
-      mapUrl: doc.mapUrl ?? "",
+      offices: (doc.offices ?? [])
+        .map((o) => ({
+          name: o.name,
+          address: (o.address ?? "").split("\n").map((l) => l.trim()).filter(Boolean),
+          mapUrl: o.mapUrl ?? "",
+        }))
+        .filter((o) => o.address.length > 0),
     },
     investorLoginUrl: doc.investorLoginUrl ?? "",
     socials,
@@ -229,6 +235,37 @@ export const getGiftCity = cache(async () => {
     highlights: (doc.highlights ?? []).map((h) => ({ title: h.title, body: h.body })),
     cta: { label: doc.ctaLabel || "Investor enquiries", href: doc.ctaHref || "/contact?type=investor" },
   };
+});
+
+/** Empty CMS fields fall back to the default wording. */
+function withDefaults<T extends Record<string, unknown>>(defaults: T, doc: Record<string, unknown>): T {
+  const out = { ...defaults };
+  for (const key of Object.keys(defaults) as (keyof T)[]) {
+    const v = doc[key as string];
+    if (typeof v === "string" && v.trim()) out[key] = v as T[keyof T];
+  }
+  return out;
+}
+
+export const getPortfolioPage = cache(async () => {
+  const doc = await (await payload()).findGlobal({ slug: "portfolio-page" });
+  return withDefaults(portfolioPageDefaults, doc as unknown as Record<string, unknown>);
+});
+
+export const getAboutPage = cache(async () => {
+  const doc = await (await payload()).findGlobal({ slug: "about-page" });
+  const { eyebrow, headline, approachEyebrow, teamEyebrow, teamHeading } = aboutPageDefaults;
+  const text = { eyebrow, headline, approachEyebrow, teamEyebrow, teamHeading };
+  const nextSteps = (doc.nextSteps ?? []).map((c) => ({ eyebrow: c.eyebrow, title: c.title, body: c.body, href: c.href }));
+  return {
+    ...withDefaults(text, doc as unknown as Record<string, unknown>),
+    nextSteps: nextSteps.length ? nextSteps : aboutPageDefaults.nextSteps,
+  };
+});
+
+export const getPerspectivesPage = cache(async () => {
+  const doc = await (await payload()).findGlobal({ slug: "perspectives-page" });
+  return withDefaults(perspectivesPageDefaults, doc as unknown as Record<string, unknown>);
 });
 
 // ─── Collections ─────────────────────────────────────────────────────────────

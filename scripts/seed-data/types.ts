@@ -8,6 +8,8 @@ export type Stage = "Pre-Seed" | "Seed" | "Pre-Series A" | "Series A" | "TBD";
 export type Company = {
   slug: string; name: string; summary: string; sector: PortfolioSectorId; stage: Stage;
   yearInvested: number; website: string; founders?: Person[]; essay?: string;
+  /** Defaults to Fund I. */
+  fund?: "fund-1" | "fund-2";
 };
 export type Fund = { name: string; category: string; sebiRegistration: string; manager: string };
 export type Essay = { slug: string; title: string; teaser: string; url?: string; company?: string };

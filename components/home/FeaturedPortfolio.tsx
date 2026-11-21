@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRef, useState, type KeyboardEvent } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Company } from "@/lib/types";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { cn, hostname } from "@/lib/utils";
 
 type Props = {
@@ -15,7 +15,10 @@ type Props = {
   totalActive: number;
 };
 
-/** Cover image, or a quiet blueprint panel with the company's wordmark. */
+/**
+ * Fills the panel: the cover photo if there is one, else the company's logo, large, on a
+ * white panel edge to edge (logos are made for white), else the company name.
+ */
 function Cover({ company, priority }: { company: Company; priority?: boolean }) {
   if (company.coverImage) {
     return (
@@ -29,27 +32,19 @@ function Cover({ company, priority }: { company: Company; priority?: boolean }) 
       />
     );
   }
+  if (company.logo) {
+    return (
+      <div aria-hidden className="absolute inset-0 grid place-items-center bg-white">
+        {/* Large, but never wider than the file itself, so a small logo isn't blown up and blurred. */}
+        <div className="relative h-[64%] w-[76%]" style={company.logo.width ? { maxWidth: company.logo.width } : undefined}>
+          <Image src={company.logo.url} alt="" fill priority={priority} sizes="(min-width: 1024px) 40vw, 80vw" className="object-contain" />
+        </div>
+      </div>
+    );
+  }
   return (
-    <div
-      aria-hidden
-      className="absolute inset-0 grid place-items-center"
-      style={{
-        backgroundColor: "#161616",
-        backgroundImage:
-          "linear-gradient(rgb(14 213 194 / 0.08) 1px, transparent 1px), linear-gradient(90deg, rgb(14 213 194 / 0.08) 1px, transparent 1px)",
-        backgroundSize: "32px 32px",
-      }}
-    >
-      {company.logo ? (
-        // In its own colours on a white card: works for any logo, including boxed ones.
-        <span className="rounded-2xl bg-white px-8 py-6 shadow-[0_20px_60px_rgb(0_0_0/0.45)]">
-          <span className="relative block h-16 w-56">
-            <Image src={company.logo.url} alt="" fill sizes="224px" className="object-contain" />
-          </span>
-        </span>
-      ) : (
-        <span className="font-display text-4xl text-white/85">{company.name}</span>
-      )}
+    <div aria-hidden className="absolute inset-0 grid place-items-center bg-[#161616]">
+      <span className="font-display text-4xl text-white/85">{company.name}</span>
     </div>
   );
 }
@@ -59,7 +54,7 @@ function Details({ company, note }: { company: Company; note?: string }) {
   return (
     <div className="flex flex-col">
       <p className="hud text-teal">
-        {portfolioSectorName(company.sector)} · {company.stage} · {company.yearInvested}
+        {portfolioSectorName(company.sector)} · {company.stage} · {portfolioFundName(company.fund)}
       </p>
       <h3 className="display mt-4 text-3xl text-white sm:text-4xl">{company.name}</h3>
       <p className="mt-4 max-w-lg leading-relaxed text-ink-200">{company.summary}</p>

@@ -16,7 +16,6 @@ export type OnePager = {
   breakthrough?: string;
   traction?: string[];
   marketOpportunity?: string;
-  founderTrackRecord?: string;
   whyTheyWin?: string;
 };
 
@@ -43,8 +42,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "A $79Bn addressable market across mobility and battery energy storage by 2030 — last-mile 2W, commercial trucks, light mobility and C&I storage.",
-    founderTrackRecord:
-      "Founders Sheetanshu and Rahul were part of the battery pack teams at Ola Electric, Sun Mobility, Rivian, Alta Motors, Ather and General Motors.",
     whyTheyWin:
       "One of few Indian battery companies owning the full stack — pack, BMS, thermal management and software. Its immersion-cooled architecture is built for Indian duty cycles, with AIS-156 compliance and deep OEM and fleet integration.",
   },
@@ -68,8 +65,6 @@ export const onePagers: Record<string, OnePager> = {
       "Multiple in-house machines for manufacturing and testing",
     ],
     marketOpportunity: "A $2.5Bn market for EV powertrains and $0.9Bn for energy-efficient industrial motors.",
-    founderTrackRecord:
-      "Founded by Sunil Patel and Netaji C Patro, with over 20 years of experience at companies like Bajaj and Cummins, and strong OEM networks.",
     whyTheyWin:
       "Competitors build either the motor or the controller. Matel integrates the full drivetrain plus data and telemetry, delivering higher efficiency, faster iteration and OEM-grade serviceability — while reducing rare-earth dependence.",
   },
@@ -87,8 +82,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "Long-duration backup in North America is a ~$6Bn market; telecom tower backup and diesel-generator replacement add $3–3.2Bn.",
-    founderTrackRecord:
-      "David Devries brings 28 years of fuel cell expertise, from pioneering work on the world's first air-cooled fuel cell in 1996 to founding a methanol reforming startup and serving as CTO of Altergy Systems.",
     whyTheyWin:
       "Proprietary processes for low-cost bipolar plate coatings and catalyst ink, combined with the founder's domain depth, let Protonas build fuel cells at competitive cost.",
   },
@@ -113,8 +106,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "On-board EV chargers growing from $369M to $1.6Bn, rooftop solar inverters from $750M to $3Bn, and public charging stations from $33M to $140M.",
-    founderTrackRecord:
-      "Founded by IIT Bombay M.Tech graduates Teja Kumar (hardware & R&D) and Rajesh Sura (controls & NPD), who previously ran a power-electronics design firm serving IFB, Mitsubishi, BHEL and Cummins.",
     whyTheyWin:
       "Proprietary control software makes products clone-resistant and modular, with asset-light scaling, and eases the move to next-generation GaN and SiC semiconductors.",
   },
@@ -135,8 +126,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "India's low-grade heat recovery market is estimated at ~$9Bn, within a ~$198Bn global industrial heat opportunity.",
-    founderTrackRecord:
-      "Founded by IIT Bombay alumni Ashwin and Rajat (both ex-BCG), combining engineering rigour with scaled deployments in industrial heat recovery.",
     whyTheyWin:
       "Fast design-to-deployment, IoT-backed performance and ESCO alignment make the solutions bankable, with payback typically under 24 months.",
   },
@@ -157,8 +146,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "Scope 3 accounts for 70–90% of corporate emissions, with transport over 60%. Logistics decarbonisation alone is a ~$10Bn opportunity in India.",
-    founderTrackRecord:
-      "Led by Anand (ex-Motherson/TVS Supply Chain), Vikas (ex-Hero/Yamaha), Sunil (ex-TVS Supply Chain/Mahindra Logistics) and Akshay (ex-Airtel/1mg).",
     whyTheyWin:
       "While most ESG SaaS players stop at monitoring, Fitsol's vertical integration of logistics operations and software delivers verifiable emission cuts and cost savings.",
   },
@@ -175,8 +162,6 @@ export const onePagers: Record<string, OnePager> = {
       "Samsung manufacturing partner status",
     ],
     marketOpportunity: "India's cloud and data-centre spend is projected at ~$99Bn by 2030, with AI driving exponential compute demand.",
-    founderTrackRecord:
-      "Rajiv Ganth (Founder & CEO), ex-Managing Director at CloudSimple (acquired by Google Cloud), has 26+ years in data-centre architecture and is the primary inventor on the CIMware patent.",
     whyTheyWin:
       "Hardware-path composability at the top of rack pools resources with lower latency and fewer moving parts than network-layer disaggregation, and more convergence than PCIe-only peers.",
   },
@@ -200,8 +185,6 @@ export const onePagers: Record<string, OnePager> = {
       "International expansion underway across Brazil, ASEAN, Africa and Japan",
     ],
     marketOpportunity: "India targets 250 million smart meters under RDSS — a ~$5Bn opportunity across AMI hardware, communications and services.",
-    founderTrackRecord:
-      "Co-founded by Amarjeet (Wi-SUN expertise) and Vikas (ex-CyanConnode). The team is active in standards bodies including IEC, IEEE and BIS.",
     whyTheyWin:
       "Unlike SIM-only or protocol-only offers, Comminent owns the stack — hardware, firmware and head-end — giving utilities performance, cost control and vendor neutrality across mixed meter fleets.",
   },
@@ -220,8 +203,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "A ~$5Bn opportunity by 2030 substituting grey hydrogen across chemicals, pharmaceuticals, diamond manufacturing and food processing.",
-    founderTrackRecord:
-      "Dr. Krishna Kumar (Co-founder & COO), PhD in Physics and ex-Senior Scientist at IMRE; Dr. Goutam Kumar (Co-founder & CTO), PhD in Physics and ex-Scientist at A*STAR-IMRE, with 17 years in materials science and hydrogen generation.",
     whyTheyWin:
       "Materials-science depth in membranes and coatings removes iridium dependence and improves part-load behaviour, while local, modular stacks shorten lead times and lower total cost of ownership.",
   },
@@ -238,8 +219,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "Compliance-driven ESG software is scaling as BFSI operationalises cross-jurisdiction reporting, accelerated by BRSR and CBAM — a ~$2Bn global market for financial institutions.",
-    founderTrackRecord:
-      "Barun Chandran (CEO): two-time founder with one exit, angel investor, and 15+ years at NetApp, Oracle, SAP and Dell building regulated technology platforms.",
     whyTheyWin:
       "30% cheaper and 2x faster than named peers, with \"load-once, comply-many\" templates and domain-tuned AI that embed into BFSI risk workflows.",
   },
@@ -260,8 +239,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "India's wind O&M market is ~$424M by 2030 (~30 GW addressable), within a ~$12Bn global opportunity across Europe, MENA and South-East Asia.",
-    founderTrackRecord:
-      "Daniel Raj (Co-founder & CEO) held senior roles at Suzlon Energy and Enel Green Power. P. Mohanraj (Co-founder & COO) brings 15+ years in wind turbine technology at Vestas RRB and Suzlon.",
     whyTheyWin:
       "Craneless repair techniques cut major repair costs by up to 80%, and blade imaging plus predictive analytics raise uptime — as global OEMs leave India, owners need a reliable multi-brand operator.",
   },
@@ -280,8 +257,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "A ~$20Bn global opportunity by 2030 in carbon-utilisation biochemicals — proteins, pigments, lipids and carbohydrates from captured CO₂.",
-    founderTrackRecord:
-      "Shreyansh Jain brings bio-manufacturing and process engineering from global biopharma, including Takeda. Sanjay Jain adds 30+ years of EPC and project execution across 100+ projects for clients like NTPC and L&T.",
     whyTheyWin:
       "Photobioreactor-based carbon capture outperforms amine and fermentation approaches with a ~4-year payback, overcoming the contamination and capex problems of legacy algae systems.",
   },
@@ -303,8 +278,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "A ~$25Bn serviceable market across 100 investor-owned utilities, plus a ~$99Bn industrial heat opportunity — medium-temperature heat is about 75% of industrial emissions.",
-    founderTrackRecord:
-      "Dr. Manas Pathak (CEO): PhD ChemE, ex-Intel, MBA. Dr. Palash Panja (CTO): PhD ChemE, Professor at Utah, with deep expertise in sCO₂ cycles and turbomachinery.",
     whyTheyWin:
       "A patented sCO₂ thermodynamic cycle with a 30-year life and no degradation — and unlike batteries, cost per storage hour falls as duration grows.",
   },
@@ -323,8 +296,6 @@ export const onePagers: Record<string, OnePager> = {
       "Global partnerships with Itron, Honeywell and Landis+Gyr",
     ],
     marketOpportunity: "Global smart-meter software is a ~$11Bn annual market across workforce management, operations centres, analytics and AI.",
-    founderTrackRecord:
-      "The founding team blends analytics, enterprise SaaS and large-scale data engineering, with a strong record of partner-led deployments across utilities.",
     whyTheyWin:
       "A hardware-agnostic overlay that integrates with existing systems instead of replacing them — deployed in weeks through no-code configuration rather than multi-year rollouts.",
   },
@@ -346,8 +317,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "The voluntary carbon market is projected at ~$8Bn by 2030; India's regenerative farmland alone represents a large soil-carbon opportunity.",
-    founderTrackRecord:
-      "The team combines carbon-market expertise, farmer aggregation and FPO partnerships, and has built an in-house digital MRV stack for registry-ready credits.",
     whyTheyWin:
       "It builds credible carbon supply rather than trading credits — its digital MRV lowers cost and improves issuance certainty, while FPO-anchored aggregation turns smallholders into long-term contracted assets.",
   },
@@ -368,8 +337,6 @@ export const onePagers: Record<string, OnePager> = {
       "Hobby-to-enterprise variants outperforming Chinese alternatives on reliability",
     ],
     marketOpportunity: "Drone sub-components are a ~$1Bn global market and ~$109M in India.",
-    founderTrackRecord:
-      "The team brings 8+ years in UAVs and avionics, 25+ years in PCB and electronics design, and 13+ years in IT and management.",
     whyTheyWin:
       "Cost-effective, robust components fill the gap between expensive global and non-secure imports — plug-and-play solderless integration, better size-weight-power, and 5-year lifecycle support.",
   },
@@ -388,8 +355,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "India's industrial dehumidification installed base is ~$2Bn across pharma, textiles, chemicals and food, with a ~$489M annual replacement and retrofit market.",
-    founderTrackRecord:
-      "The founding team combines engineering depth in thermodynamics and HVAC systems, with a record of turning complex R&D into working pilots with measurable results.",
     whyTheyWin:
       "It resolves a trade-off that has stalled industrial dehumidification for decades — high performance at far lower energy intensity, with non-corrosive chemistry that cuts material cost and risk.",
   },
@@ -410,10 +375,53 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "India's substrate market is ~$127M a year across residential, industrial, public-infrastructure and automotive LED lighting, with expansion into EV chargers, motor controllers and GaN/SiC power electronics.",
-    founderTrackRecord:
-      "Co-founded by Tarun Jha (CEO; 12+ years in LED systems and thermal substrates; MS, University of Florida) and Ramkumar Balakrishna (CTO; 14+ years in chemical manufacturing across the US, China and Europe).",
     whyTheyWin:
       "Owning the dielectric — the system's biggest thermal bottleneck — gives tunable chemistry and thickness, delivering high thermal performance at mass-market cost as a domestic supplier.",
+  },
+  // From the Fund I one-pager's former pipeline pages (public since Nov 2026). Left out:
+  // rounds, revenue and revenue targets, qualified-pipeline values, deal volumes and returns.
+  "perovskia-solar": {
+    callouts: [
+      { label: "Internet of Things", detail: "Powers connected devices using ambient light", x: 14, y: 30 },
+      { label: "Consumer electronics", detail: "Extends battery life using ambient light", x: 62, y: 22 },
+      { label: "Tracking sensor", detail: "Battery-free tracking and sensing devices", x: 48, y: 78 },
+    ],
+    deployment: "First recurring production contract, with Totem (USA)",
+    customers: "Totem (USA); proofs of concept with Tata Motors, Logitech, Essilor, Honeywell, Dormakaba and Last Lock",
+    marketGap:
+      "Silicon solar is built for direct sunlight, not the billions of low-power devices that operate indoors. Its rigid form factor and weak diffuse-light performance leave wearables, sensors, smart locks and trackers dependent on batteries.",
+    breakthrough:
+      "Digitally printed \"designer\" PV cells harvest indoor and ambient light and are custom-shaped to each device, tuned to its exact current, voltage and power needs, with encapsulation targeting a 10+ year life.",
+    traction: [
+      "First recurring production contract signed with Totem (USA)",
+      "Active or approved proofs of concept with Tata Motors, Logitech, Essilor, Honeywell, Dormakaba and Last Lock",
+      "40+ companies sampling its cells, with 6 active proofs of concept",
+    ],
+    marketOpportunity:
+      "Battery replacement is the near-term wedge: wearables and wireless sensors are the largest pools in a ~$7Bn core market, growing to ~$17Bn by 2031 across consumer electronics, IoT, automotive and the built environment.",
+    whyTheyWin:
+      "Up to ~3.2× the output of traditional silicon at 1,000 lux. Proprietary inks, digital printing and 35+ trade secrets form the manufacturing moat, and custom design-ins embed the cell directly into customers' products.",
+  },
+  "two-point-o": {
+    callouts: [
+      { label: "Flexible financing", detail: "Tailored financing for C&I customers adopting clean energy", x: 14, y: 14 },
+      { label: "Asset categories", detail: "Solar, heat pumps, chillers, energy storage, wastewater", x: 82, y: 20 },
+      { label: "End-to-end delivery", detail: "Equipment selection, EPC, commissioning and deployment", x: 14, y: 74 },
+      { label: "Asset performance", detail: "Monitoring and maintenance across the asset's life", x: 82, y: 74 },
+    ],
+    customers: "Phoenix Mills, Premier Energies, Wipro, JK Tyre, Morepen, Alok, Bosch",
+    marketGap:
+      "C&I climate assets sit in a financing blind spot: banks underwrite the customer's credit but not unfamiliar equipment, while EPCs understand the asset but rarely fund or monitor it over its life. Viable solar, efficiency and wastewater projects stall as a result.",
+    breakthrough:
+      "Bundles the three underwritings a deal needs (customer credit, asset performance and long-term monitoring), then funds and owns the equipment under 5–8 year operating leases and manages EPC/OEM execution.",
+    traction: [
+      "Customers include Phoenix Mills, Premier Energies, Wipro, JK Tyre, Morepen and Alok",
+      "200+ EPC, ESCO and OEM partners supporting deal origination",
+    ],
+    marketOpportunity:
+      "India needs over $100Bn a year for C&I decarbonisation, yet distributed mid-ticket assets remain under-financed: an initial market of ~$30Bn, where solar, efficiency and wastewater assets offer 2–4 year paybacks.",
+    whyTheyWin:
+      "No direct competitor in wholesale, asset-neutral financing of long-life energy-efficient equipment for investment-grade C&I customers. Multi-OEM neutrality, demand aggregation and in-house technology-risk underwriting, with single-point accountability for performance.",
   },
   suind: {
     callouts: [
@@ -433,8 +441,6 @@ export const onePagers: Record<string, OnePager> = {
     ],
     marketOpportunity:
       "India's dense, uneven-terrain crops — sugarcane, rubber, tea, orchards and arecanut — span ~43M acres needing ~5.7 sprays a year, a ~$1Bn recurring opportunity.",
-    founderTrackRecord:
-      "Kunal Shrivastava (CEO): IIT Roorkee, MSc Robotics ETH Zurich, ex-Rio Tinto. Kevin Kleber (CTO): MSc Robotics ETH Zurich, specialist in drone control and computer vision. They spun SUIND out of the UZH Robotics & Perception Group.",
     whyTheyWin:
       "No direct competitor in dense, pilotless, complex-terrain flight. The camera-based stack enables precise spot-spraying without GPS, and 2,000+ flight hours with zero incidents build a compounding data moat.",
   },

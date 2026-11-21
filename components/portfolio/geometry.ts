@@ -37,14 +37,12 @@ export const stageLegend: Stage[] = ["Pre-Seed", "Seed", "Pre-Series A", "Series
 export type Zone = {
   id: PortfolioSectorId;
   name: string;
-  number: string;
   u: number;
   v: number;
 };
 
 export type Pin = {
   company: Company;
-  number: string;
   zone: PortfolioSectorId;
   u: number;
   v: number;
@@ -53,17 +51,9 @@ export type Pin = {
   leader: number;
 };
 
-const pad = (n: number) => String(n).padStart(2, "0");
-
-/** Stable two-digit numbers ("01", "02"…) from the full display-ordered list. */
-export function companyNumbers(companies: Company[]): Record<string, string> {
-  return Object.fromEntries(companies.map((c, i) => [c.slug, pad(i + 1)]));
-}
-
 const zones: Zone[] = portfolioSectors.map((s, i) => ({
   id: s.id,
   name: s.name,
-  number: pad(i + 1),
   u: (i % COLS) * (PLOT + GAP),
   v: Math.floor(i / COLS) * (PLOT + GAP),
 }));
@@ -110,8 +100,11 @@ export type MapLayout = {
   viewBox: ViewBox;
 };
 
-/** Lay out the given companies on the 8 sector plots. `numbers` keeps numbering stable across filters. */
-export function buildLayout(companies: Company[], numbers: Record<string, string>): MapLayout {
+/**
+ * Lay out the given companies on the 8 sector plots. Companies are deliberately not
+ * numbered anywhere: every portfolio company is presented as an equal.
+ */
+export function buildLayout(companies: Company[]): MapLayout {
   const pins: Pin[] = zones.flatMap((zone) => {
     const inZone = companies.filter((c) => c.sector === zone.id);
     if (!inZone.length) return [];
@@ -123,7 +116,6 @@ export function buildLayout(companies: Company[], numbers: Record<string, string
       const h = stageHeight[company.stage];
       return {
         company,
-        number: numbers[company.slug] ?? pad(i + 1),
         zone: zone.id,
         u: zone.u + offsets[i].u,
         v: zone.v + offsets[i].v,

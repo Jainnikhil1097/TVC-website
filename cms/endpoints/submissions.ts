@@ -121,6 +121,27 @@ const text = (form: FormData, key: string) => {
   return typeof v === "string" ? v : undefined;
 };
 
+/** Splits "a@x.com, b@y.com" into addresses, ignoring blanks. */
+export function parseEmails(value?: string | null): string[] {
+  return (value ?? "")
+    .split(/[,;\s]+/)
+    .map((v) => v.trim())
+    .filter((v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+}
+
+/**
+ * Who gets the email alert for a new enquiry: that form's recipients from Site settings
+ * → Contact ("Who receives each contact form"), or else SUBMISSIONS_NOTIFY_EMAIL.
+ */
+export function recipientsFor(
+  kind: FormKind,
+  configured: Partial<Record<FormKind, string | null>> | null | undefined,
+  fallback?: string
+): string[] {
+  const own = parseEmails(configured?.[kind]);
+  return own.length ? own : parseEmails(fallback);
+}
+
 export async function handleIntake(payload: Payload, form: FormData, ip: string): Promise<IntakeResult> {
   // Bots fill in the hidden field: pretend success, save nothing.
   if (text(form, honeypotField)) return { status: 200, body: { ok: true } };
@@ -174,9 +195,16 @@ export async function handleIntake(payload: Payload, form: FormData, ip: string)
     },
   });
 
-  // Optional alert. Never let an email failure lose a submission.
-  const notify = process.env.SUBMISSIONS_NOTIFY_EMAIL;
-  if (notify) {
+  // Email alert to whoever handles this kind of enquiry. Never let an email failure lose a submission.
+  let notify: string[] = [];
+  try {
+    const site = await payload.findGlobal({ slug: "site", depth: 0 });
+    notify = recipientsFor(kind, site.formRecipients, process.env.SUBMISSIONS_NOTIFY_EMAIL);
+  } catch (error) {
+    payload.logger.error({ err: error, msg: "Could not read enquiry recipients" });
+    notify = recipientsFor(kind, null, process.env.SUBMISSIONS_NOTIFY_EMAIL);
+  }
+  if (notify.length) {
     try {
       await payload.sendEmail({
         to: notify,

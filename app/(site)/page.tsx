@@ -4,7 +4,6 @@ import { FounderPillars } from "@/components/home/FounderPillars";
 import { SectorGrid } from "@/components/home/SectorGrid";
 import { FeaturedPortfolio } from "@/components/home/FeaturedPortfolio";
 import { PerspectivesTeaser } from "@/components/home/HomeSections";
-import { FounderFaq } from "@/components/home/FounderFaq";
 import { FundsSection } from "@/components/funds/FundsSection";
 import {
   getEssays,
@@ -12,7 +11,6 @@ import {
   getFunds,
   getHomePage,
   getInvestmentSectors,
-  getMetrics,
   getNews,
   getPortfolio,
   getSite,
@@ -28,10 +26,9 @@ export function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const [site, home, metrics, sectors, companies, funds, essays, news, events] = await Promise.all([
+  const [site, home, sectors, companies, funds, essays, news, events] = await Promise.all([
     getSite(),
     getHomePage(),
-    getMetrics(),
     getInvestmentSectors(),
     getPortfolio(),
     getFunds(),
@@ -52,7 +49,6 @@ export default async function HomePage() {
   const notes = Object.fromEntries(
     showcase.map((c) => [c.slug, essays.find((e) => sameUrl(e.url, c.essayUrl))?.url ?? c.essayUrl])
   );
-  const headlineFigures = metrics.items.filter((m) => m.showOnHome);
   return (
     <>
       <HomeHero tagline={site.tagline} intro={site.hero} />
@@ -65,16 +61,12 @@ export default async function HomePage() {
         <PositioningBand
           positioning={home.positioning || site.tagline}
           about={site.about}
-          figures={headlineFigures.length ? headlineFigures : metrics.items.slice(0, 4)}
-          asOf={metrics.asOf}
-          disclaimer={metrics.disclaimer}
         />
         <SectorGrid sectors={sectors} companies={companies} />
         <FounderPillars pillars={home.pillars} />
         <FeaturedPortfolio companies={showcase} notes={notes} totalActive={active.length} />
         <FundsSection funds={funds} />
         <PerspectivesTeaser essays={essays} news={news} nextEvent={events.upcoming[0]} substackUrl={site.substackUrl} />
-        <FounderFaq faq={home.faq} email={site.contact.email} />
       </div>
     </>
   );

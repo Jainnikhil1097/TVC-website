@@ -16,7 +16,7 @@ import {
   type MapLayout,
   type Pin,
 } from "./geometry";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { statusLabel, type CompanyEssay } from "./status";
 import { CompanyLogo } from "./CompanyLogo";
 import { MAP_POPOVER_ID, MapPopover, mapLabelId } from "./MapPopover";
@@ -149,6 +149,18 @@ export function PortfolioMap({
   const { zones, pinsByDepth, ground, viewBox } = layout;
   const stageRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<string | null>(null);
+  // Set by the parallax effect: holds the map flat (and still) while an info card is open,
+  // so the card stays lined up with its company's label.
+  const freezeTilt = useRef<(frozen: boolean) => void>(() => {});
+  const openPopover = (slug: string | null) => {
+    freezeTilt.current(slug !== null);
+    onPopoverChange(slug);
+  };
+
+  // However the card closes (filters, opening the profile…), let the map tilt again.
+  useEffect(() => {
+    if (popover === null) freezeTilt.current(false);
+  }, [popover]);
 
   // Gentle pointer parallax — a few degrees at most; off for touch and reduced motion.
   useEffect(() => {
@@ -164,6 +176,16 @@ export function PortfolioMap({
     let ty = 0;
     let cx = 0;
     let cy = 0;
+    let frozen = false;
+    freezeTilt.current = (on) => {
+      frozen = on;
+      if (on) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        tx = ty = cx = cy = 0;
+        stage.style.transform = "";
+      }
+    };
     const loop = () => {
       cx += (tx - cx) * 0.08;
       cy += (ty - cy) * 0.08;
@@ -174,6 +196,7 @@ export function PortfolioMap({
       if (!raf) raf = requestAnimationFrame(loop);
     };
     const onMove = (e: PointerEvent) => {
+      if (frozen) return;
       const r = frame.getBoundingClientRect();
       tx = (e.clientX - r.left) / r.width - 0.5;
       ty = (e.clientY - r.top) / r.height - 0.5;
@@ -188,6 +211,7 @@ export function PortfolioMap({
     frame.addEventListener("pointerleave", onLeave);
     return () => {
       cancelAnimationFrame(raf);
+      freezeTilt.current = () => {};
       frame.removeEventListener("pointermove", onMove);
       frame.removeEventListener("pointerleave", onLeave);
     };
@@ -304,7 +328,7 @@ export function PortfolioMap({
                       fill={on ? ACCENT : "#8fa3b8"}
                       style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 700, letterSpacing: 2.5 }}
                     >
-                      {`${z.number} — ${z.name.toUpperCase()}`}
+                      {z.name.toUpperCase()}
                     </text>
                   </g>
                 </g>
@@ -334,7 +358,7 @@ export function PortfolioMap({
                   state={dim ? "dim" : active ? "active" : "idle"}
                   onEnter={() => setHovered(slug)}
                   onLeave={() => setHovered((h) => (h === slug ? null : h))}
-                  onActivate={() => onPopoverChange(popover === slug ? null : slug)}
+                  onActivate={() => openPopover(popover === slug ? null : slug)}
                 />
               );
             })}
@@ -357,7 +381,7 @@ export function PortfolioMap({
                 id={mapLabelId(slug)}
                 type="button"
                 data-map-label
-                onClick={() => onPopoverChange(popover === slug ? null : slug)}
+                onClick={() => openPopover(popover === slug ? null : slug)}
                 onPointerEnter={() => setHovered(slug)}
                 onPointerLeave={() => setHovered((h) => (h === slug ? null : h))}
                 onFocus={() => setHovered(slug)}
@@ -366,7 +390,7 @@ export function PortfolioMap({
                 aria-hidden={dim || undefined}
                 aria-expanded={popover === slug}
                 aria-controls={popover === slug ? MAP_POPOVER_ID : undefined}
-                aria-label={`${company.name} — ${portfolioSectorName(company.sector)}, ${company.stage}, invested ${company.yearInvested}${status ? `, ${status}` : ""}. Show details`}
+                aria-label={`${company.name} — ${portfolioSectorName(company.sector)}, ${company.stage}, ${portfolioFundName(company.fund)}${status ? `, ${status}` : ""}. Show details`}
                 data-active={active || undefined}
                 className={cn(
                   "group absolute -translate-y-full origin-bottom-left rounded-lg border px-2.5 py-1.5 text-left whitespace-nowrap",
@@ -394,20 +418,23 @@ export function PortfolioMap({
                   </span>
                 </span>
                 <span className="flex items-baseline gap-2">
-                  <span className="hud text-teal">{pin.number}</span>
                   <span className={cn("text-[0.75rem] font-bold text-white", !company.logo && "group-data-[active]:hidden")}>
                     {company.name}
                   </span>
                   {status && <span className="hud text-ink-300">· {status}</span>}
                 </span>
                 <span className="hud hidden pt-1 text-ink-300 group-data-[active]:block">
-                  {portfolioSectorName(company.sector)} · {company.stage} · {company.yearInvested}
+                  {portfolioSectorName(company.sector)} · {company.stage} · {portfolioFundName(company.fund)}
                 </span>
               </button>
             );
           })}
 
-          {/* Info card beside the clicked company */}
+        </div>
+      </div>
+
+      {/* Info card beside the clicked company. Rendered outside the tilting 3D stage, as a
+          flat layer over the map, so nothing in the 3D scene can take its clicks. */}
           {(() => {
             const pin = popover ? pinsByDepth.find((p) => p.company.slug === popover) : undefined;
             if (!pin || (activeSector !== null && activeSector !== pin.zone)) return null;
@@ -416,16 +443,13 @@ export function PortfolioMap({
               <MapPopover
                 key={pin.company.slug}
                 company={pin.company}
-                number={pin.number}
                 essay={essays[pin.company.slug]}
                 anchor={{ fx: (a.x - viewBox.x) / viewBox.w, fy: (a.y - viewBox.y) / viewBox.h }}
-                onClose={() => onPopoverChange(null)}
+                onClose={() => openPopover(null)}
                 onOpenProfile={onOpenProfile}
               />
             );
           })()}
-        </div>
-      </div>
 
       {/* Legend: tower height encodes stage */}
       <div className="pointer-events-none absolute bottom-8 left-9 z-20 flex items-end gap-4">

@@ -21,7 +21,6 @@ const TEXT_FIELDS = [
   "marketGap",
   "breakthrough",
   "marketOpportunity",
-  "founderTrackRecord",
   "whyTheyWin",
 ] as const satisfies readonly (keyof OnePager)[];
 

@@ -7,7 +7,7 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ArrowUpRight, X } from "lucide-react";
 import type { Company } from "@/lib/types";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { AccentRule } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
@@ -20,7 +20,6 @@ gsap.registerPlugin(useGSAP);
 
 type CompanyPanelProps = {
   company: Company;
-  number: string;
   /** Related Substack essay, if the company links to one. */
   essay?: CompanyEssay;
   onClose: () => void;
@@ -35,7 +34,7 @@ const isDesktop = () => window.matchMedia("(min-width: 64rem)").matches;
  * Focus moves to the close button on open, is trapped inside, and returns to
  * the triggering element on close.
  */
-export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelProps) {
+export function CompanyPanel({ company, essay, onClose }: CompanyPanelProps) {
   const root = useRef<HTMLDivElement>(null);
   const sheet = useRef<HTMLDivElement>(null);
   const backdrop = useRef<HTMLDivElement>(null);
@@ -111,7 +110,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
   const facts = [
     { label: "Stage", value: company.stage === "TBD" ? "Undisclosed" : company.stage },
     { label: "Focus sector", value: portfolioSectorName(company.sector) },
-    { label: "Year invested", value: String(company.yearInvested) },
+    { label: "Fund", value: portfolioFundName(company.fund) },
   ];
   const snapshot = [
     { label: "Deployment", value: company.deployment },
@@ -139,7 +138,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
         {/* Grab handle (mobile) + header */}
         <div className="flex items-center justify-between gap-4 px-6 pt-4 pb-2 sm:px-8 lg:pt-6">
           <span aria-hidden className="absolute top-2 left-1/2 h-1 w-10 -translate-x-1/2 rounded-full bg-ink/15 lg:hidden" />
-          <p className="hud pt-2 text-muted">Company profile <span className="text-teal-ink">· {number}</span></p>
+          <p className="hud pt-2 text-muted">Company profile</p>
           <button
             ref={closeBtn}
             type="button"
@@ -243,10 +242,9 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             </section>
           )}
 
-          {((company.founders && company.founders.length > 0) || company.founderTrackRecord) && (
+          {company.founders && company.founders.length > 0 && (
             <section className="mt-8">
               <h3 className="eyebrow text-muted">Founders</h3>
-              {company.founderTrackRecord && <p className="mt-3 leading-relaxed text-ink/80">{company.founderTrackRecord}</p>}
               <ul className="mt-4 space-y-3">
                 {company.founders?.map((f) => (
                   <li key={f.name} className="flex items-center gap-4">

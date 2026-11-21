@@ -1,6 +1,6 @@
 // Fixed lists shared by the CMS (dropdown options) and the site. Changing these is
 // a developer task: the portfolio map is laid out around these 8 sectors.
-import type { PortfolioSectorId, Stage } from "./types";
+import type { FundId, PortfolioSectorId, Stage } from "./types";
 
 export const portfolioSectors: { id: PortfolioSectorId; name: string }[] = [
   { id: "drone", name: "Drone" },
@@ -15,6 +15,14 @@ export const portfolioSectors: { id: PortfolioSectorId; name: string }[] = [
 
 export const portfolioSectorName = (id: PortfolioSectorId) =>
   portfolioSectors.find((s) => s.id === id)?.name ?? id;
+
+/** Which of our funds a portfolio company was backed from (the Portfolio page's fund filter). */
+export const portfolioFunds: { id: FundId; name: string }[] = [
+  { id: "fund-1", name: "Fund I" },
+  { id: "fund-2", name: "Fund II" },
+];
+
+export const portfolioFundName = (id: FundId) => portfolioFunds.find((f) => f.id === id)?.name ?? id;
 
 export const stages: Stage[] = ["Pre-Seed", "Seed", "Pre-Series A", "Series A", "TBD"];
 
@@ -32,12 +40,12 @@ export const fundStatuses = [
 ] as const;
 
 // Teams on the About page, in display order (from the team sheet, Nov 2026).
+// Capital Formation sits within Investor Relations (their titles say so).
 // "executive" is the old catch-all, kept so older entries stay valid until re-sorted.
 export const teamGroupOptions = [
   { value: "founding", label: "Founding Team" },
   { value: "investments", label: "Investments" },
   { value: "investor-relations", label: "Investor Relations" },
-  { value: "capital-formation", label: "Capital Formation" },
   { value: "portfolio-investments", label: "Portfolio Investments" },
   { value: "marketing", label: "Marketing & Engagements" },
   { value: "finance", label: "Finance" },
@@ -53,7 +61,6 @@ export const pageKeys = [
   { key: "perspectives", label: "Perspectives", path: "/perspectives" },
   { key: "impact", label: "Impact", path: "/impact" },
   { key: "giftCity", label: "GIFT City", path: "/gift-city" },
-  { key: "funds", label: "Funds", path: "/funds" },
   { key: "contact", label: "Contact", path: "/contact" },
 ] as const;
 

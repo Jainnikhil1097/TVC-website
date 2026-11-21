@@ -9,7 +9,7 @@ export const site = {
   description:
     "Investing early, catalytic capital in the future of energy for India. India's first energy-transition focused venture capital fund.",
   url: "https://www.transitionventurecapital.com",
-  tagline: "Engineering Future of Energy",
+  tagline: "Engineering the Future of Energy",
   hero: "Investing early, catalytic capital in the future of energy for India.",
   about:
     "India's first energy-transition focused venture capital fund. We back engineering-led startups building across storage, mobility, industrial decarbonisation and alternate fuels — because climate-aligned companies win, on impact and returns.",
@@ -25,14 +25,29 @@ export const site = {
 
   contact: {
     email: "info@transitionventurecapital.com",
-    address: ["117, 1st B Cross Rd, Domlur", "Bengaluru, Karnataka 560071"],
-    mapUrl: "https://www.google.com/maps/search/?api=1&query=117+1st+B+Cross+Rd+Domlur+Bengaluru+560071",
+    offices: [
+      {
+        name: "Domlur",
+        address: ["117, 1st B Cross Rd, Domlur", "Bengaluru, Karnataka 560071"],
+        mapUrl: "https://www.google.com/maps/search/?api=1&query=117+1st+B+Cross+Rd+Domlur+Bengaluru+560071",
+      },
+      {
+        name: "Indiranagar",
+        address: ["Aishwarya Ambassador, Defence Colony, Indiranagar", "Bengaluru, Karnataka 560038"],
+        mapUrl: "https://www.google.com/maps/search/?api=1&query=Aishwarya+Ambassador+Defence+Colony+Indiranagar+Bengaluru+560038",
+      },
+    ],
+    /** Who gets the email alert for each contact form. */
+    formRecipients: {
+      startup: "Bhoomika@transitionventurecapital.com",
+      investor: "stenson@transitionventurecapital.com, krishna@transitionventurecapital.com",
+      partner: "navi@transitionventurecapital.com",
+    },
   },
 
   socials: [
     { label: "LinkedIn", href: "https://www.linkedin.com/company/transition-vc/" },
     { label: "YouTube", href: "https://www.youtube.com/@TransitionVentureCapital" },
-    { label: "Instagram", href: "https://www.instagram.com/transition_vc/" },
     { label: "Substack", href: "https://transitionventurecapital.substack.com" },
   ] satisfies Link[],
 
@@ -65,7 +80,7 @@ export const metrics: Metric[] = [
 
 export const investmentCriteria = {
   stage: "Pre-Seed to Series A",
-  cheque: "$0.5M – $5M",
+  cheque: "₹20 Cr – ₹50 Cr",
 };
 
 export const funds: Fund[] = [

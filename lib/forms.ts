@@ -17,16 +17,17 @@ export const enquiryTypes = [
 
 export type EnquiryType = (typeof enquiryTypes)[number]["id"];
 
+/** Matches the home page's "Where we invest" sectors, plus "Other" for anything new. */
 export const startupSectors = [
   "Mobility",
-  "Industry",
-  "Buildings",
+  "Industrial",
+  "Built environment",
+  "Semiconductors",
+  "Power electronics",
   "Renewable tech",
-  "Alternative fuels",
-  "Semiconductor",
   "Energy storage",
-  "Materials",
-  "Sustainability",
+  "Alternative fuels",
+  "Other",
 ];
 
 export const maxUploadMb = 10;

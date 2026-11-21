@@ -40,7 +40,7 @@ async function isEmpty(collection: Slug) {
 
 // ─── Portfolio ───────────────────────────────────────────────────────────────
 // The home page's Featured portfolio tabs, in this order (editors can change this in the CMS).
-const FEATURED = ["matel-motion", "emo-energy", "fitsol", "comminent"];
+const FEATURED = ["matel-motion", "greentech-mw", "fitsol", "comminent"];
 
 const companyIds = new Map<string, number>();
 if (await isEmpty("companies")) {
@@ -55,6 +55,7 @@ if (await isEmpty("companies")) {
         sector: c.sector,
         stage: c.stage,
         yearInvested: c.yearInvested,
+        fund: c.fund ?? "fund-1",
         website: c.website,
         status: "active",
         featured: FEATURED.includes(c.slug),
@@ -157,8 +158,8 @@ await fillGlobal("site", emptyText("tagline"), {
   footerHeadline: site.footerHeadline,
   newsletterBlurb: site.newsletterBlurb,
   email: site.contact.email,
-  address: site.contact.address.join("\n"),
-  mapUrl: site.contact.mapUrl,
+  offices: site.contact.offices.map((o) => ({ name: o.name, address: o.address.join("\n"), mapUrl: o.mapUrl })),
+  formRecipients: site.contact.formRecipients,
   investorLoginUrl: site.investorLoginUrl || undefined,
   socials: site.socials.filter((s) => s.label !== "Substack").map((s) => ({ label: s.label, url: s.href })),
   substackUrl,
@@ -196,14 +197,29 @@ await fillGlobal("home-page", emptyText("positioning"), {
       text: "We back products and cost structures designed for India's energy transition.",
     },
     {
-      title: "Energy is all we do",
-      icon: "energy",
-      text: "Mobility, industry, storage, alternate fuels and more — one focus, deep context.",
+      title: "Talent & technical hiring",
+      icon: "talent",
+      text: "Help hiring niche engineers and senior leaders, from specialised technical roles to CXOs, to build and scale your team.",
     },
     {
-      title: "Beyond subsidies",
-      icon: "growth",
-      text: "We look for economics that work without relying on subsidies or regulatory timing.",
+      title: "Grants & non-dilutive funding",
+      icon: "grants",
+      text: "Help finding and applying for government grants, incentives and programmes that fund R&D, manufacturing and technology.",
+    },
+    {
+      title: "Brand, PR & business development",
+      icon: "communications",
+      text: "Communications that build credibility, and introductions to corporates, customers and our LP network to open new markets.",
+    },
+    {
+      title: "Events & ecosystem access",
+      icon: "events",
+      text: "Curated LP mixers, showcases and conferences that put you in front of customers, investors and industry leaders.",
+    },
+    {
+      title: "Portfolio synergies, founder-first",
+      icon: "partnership",
+      text: "A portfolio built to compound, not compete: companies become each other's customers and partners, with us alongside.",
     },
   ],
   faq: [
@@ -212,7 +228,7 @@ await fillGlobal("home-page", emptyText("positioning"), {
     {
       question: "Which sectors do you invest in?",
       answer:
-        "Mobility, Industrial, Buildings, Renewable Tech, Alternative Fuels, Power Electronics, Energy Storage and Sustainability.",
+        "Mobility, Industrial, Built Environment, Semiconductors, Power Electronics, Renewable Tech, Energy Storage and Alternative Fuels.",
     },
     {
       question: "What do you look for?",
@@ -227,7 +243,7 @@ await fillGlobal("home-page", emptyText("positioning"), {
     {
       question: "How do I pitch to you?",
       answer:
-        "Send your deck through the Startups & Founders form on our Contact page (PDF or PowerPoint, up to 10 MB). We read every deck.",
+        "Send your deck through the Startups & Founders form on this page (PDF or PowerPoint, up to 10 MB). We read every deck.",
     },
   ],
 });

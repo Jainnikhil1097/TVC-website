@@ -41,6 +41,8 @@ export type PortfolioSectorId =
   | "mobility"
   | "data-centers";
 
+export type FundId = "fund-1" | "fund-2";
+
 export type Stage = "Pre-Seed" | "Seed" | "Pre-Series A" | "Series A" | "TBD";
 
 export type CompanyStatus = "active" | "exited" | "acquired";
@@ -52,6 +54,8 @@ export type Company = {
   sector: PortfolioSectorId;
   stage: Stage;
   yearInvested: number;
+  /** The fund it was backed from. */
+  fund: FundId;
   website: string;
   status: CompanyStatus;
   exitYear?: number;
@@ -80,7 +84,6 @@ export type Company = {
   breakthrough?: string;
   traction?: string[];
   marketOpportunity?: string;
-  founderTrackRecord?: string;
   whyTheyWin?: string;
 };
 

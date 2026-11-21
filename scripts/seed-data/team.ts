@@ -55,8 +55,7 @@ const investments: Person[] = [
 const investorRelations: Person[] = [
   { name: "Stenson Sajee", title: "Director Investor Relations", linkedin: li("stenson-sajee") },
   { name: "Dristi Kedia", title: "Investor Relations Analyst", linkedin: li("dristi-kedia") },
-];
-const capitalFormation: Person[] = [
+  // Capital Formation sits within Investor Relations.
   { name: "Venkata Krishna", title: "VP Capital Formation", linkedin: li("venkatankrishna") },
   { name: "Leelesh Gholkar", title: "Capital Formation Analyst", linkedin: li("leelesh-gholkar-ab7237264") },
 ];
@@ -97,7 +96,6 @@ export const teamGroups = [
   { id: "founding", people: founding },
   { id: "investments", people: investments },
   { id: "investor-relations", people: investorRelations },
-  { id: "capital-formation", people: capitalFormation },
   { id: "portfolio-investments", people: portfolioInvestments },
   { id: "marketing", people: marketing },
   { id: "finance", people: finance },

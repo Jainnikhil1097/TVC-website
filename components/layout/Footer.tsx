@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Site } from "@/lib/cms";
 import { getFunds } from "@/lib/cms";
-import { footerLinks, nav, pitchHref } from "@/lib/site-config";
+import { footerLinks, nav } from "@/lib/site-config";
 import { NewsletterForm } from "./NewsletterForm";
 import { FooterWave } from "./FooterWave";
 import { Logo } from "@/components/ui/Logo";
@@ -26,12 +26,6 @@ export async function Footer({ site }: { site: Site }) {
         </div>
         <div className="md:justify-self-end">
           <NewsletterForm substackUrl={site.substackUrl} />
-          <p className="mt-3 text-xs text-ink-400">
-            Opens Substack to confirm. Building in energy?{" "}
-            <Link href={pitchHref} className="text-white underline decoration-white/30 underline-offset-4 hover:decoration-teal">
-              Pitch to us
-            </Link>
-          </p>
         </div>
       </Reveal>
 
@@ -58,20 +52,27 @@ export async function Footer({ site }: { site: Site }) {
         </div>
 
         <div>
-          <h3 className="eyebrow text-ink-400">Our office</h3>
-          <address className="mt-4 text-sm leading-relaxed text-ink-200 not-italic">
-            {site.contact.address.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
+          <h3 className="eyebrow text-ink-400">{site.contact.offices.length > 1 ? "Our offices" : "Our office"}</h3>
+          <div className="mt-4 space-y-4 text-sm leading-relaxed text-ink-200">
+            {site.contact.offices.map((office) => (
+              <address key={office.name} className="not-italic">
+                {office.address.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </address>
             ))}
-            <a
-              href={`mailto:${site.contact.email}`}
-              className="mt-3 block text-white underline decoration-white/25 underline-offset-4 hover:decoration-teal"
-            >
-              {site.contact.email}
-            </a>
-          </address>
+            <p>
+              <span className="block text-ink-400">General Enquiries</span>
+              <a
+                href={`mailto:${site.contact.email}`}
+                className="text-white underline decoration-white/25 underline-offset-4 hover:decoration-teal"
+              >
+                {site.contact.email}
+              </a>
+            </p>
+          </div>
         </div>
 
         <div>

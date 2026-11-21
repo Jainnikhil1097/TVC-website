@@ -22,6 +22,26 @@ type Props = {
 };
 
 /**
+ * Splits the headline into two lines of near-equal length (by characters, at a word
+ * break), so they read as a pair, e.g. "Engineering the / Future of Energy". Short
+ * headlines (one or two words) stay on one line.
+ */
+export function headlineLines(text: string): string[] {
+  const words = text.trim().split(/\s+/);
+  if (words.length < 3) return [words.join(" ")];
+  let best = 1;
+  let bestDiff = Infinity;
+  for (let i = 1; i < words.length; i++) {
+    const diff = Math.abs(words.slice(0, i).join(" ").length - words.slice(i).join(" ").length);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      best = i;
+    }
+  }
+  return [words.slice(0, best).join(" "), words.slice(best).join(" ")];
+}
+
+/**
  * Home hero: the same black band as the inner pages (PageHero), with the fund's
  * headline set in the site column and an abstract "energy flow" (EnergyFlow)
  * streaming in behind it. About the fund only — no companies. On scroll the panel
@@ -125,18 +145,25 @@ export function HomeHero({ tagline, intro, background, backgroundFull = false }:
 
             <div className="container-site flex h-full w-full flex-col pt-24 pb-10 sm:pb-14 lg:pt-28">
               <div className="flex flex-1 flex-col justify-end pb-10 lg:justify-center lg:pb-0">
-                <div className="hero-intro max-w-[42rem]">
-                  {/* Brand Book tagline: Baron caps (Montserrat stand-in), Mint on dark. */}
-                  <p className="tagline text-base text-teal-soft sm:text-lg lg:text-xl">
+                {/* One measure for the block: the headline's longer line sets the width; the
+                  intro wraps to it (w-0 min-w-full), and the tag sits inside it. */}
+                <div className="hero-intro w-fit max-w-full">
+                  {/* Brand Book tagline (Baron caps, Montserrat stand-in), Mint, as a small tag. */}
+                  <p className="tagline inline-block rounded-[10px] border border-teal-soft/30 bg-black/40 px-3 py-1.5 text-[0.625rem] text-teal-soft backdrop-blur-sm sm:text-[0.8rem]">
                     India&rsquo;s first energy-transition venture fund
                   </p>
-                  <h1 className="mt-5 font-display text-[2.6rem] leading-[1.05] font-bold tracking-[-0.035em] text-balance text-white sm:text-6xl lg:text-[3.75rem] lg:leading-[1.2]">
-                    {tagline}
+                  <h1 className="mt-6 font-display text-[2.6rem] leading-[1.08] font-bold tracking-[-0.035em] text-white sm:text-6xl lg:text-[3.75rem] lg:leading-[1.2]">
+                    {headlineLines(tagline).map((line, i) => (
+                      <span key={line} className="block">
+                        {i > 0 && " "}
+                        {line}
+                      </span>
+                    ))}
                   </h1>
-                  <p className="mt-5 max-w-lg text-base leading-relaxed text-ink-200 sm:mt-7 sm:text-lg">
+                  <p className="mt-6 w-0 min-w-full text-base leading-relaxed text-pretty text-ink-200 sm:text-lg">
                     {intro}
                   </p>
-                  <div className="mt-7 flex flex-wrap gap-3 sm:mt-9">
+                  <div className="mt-8 flex flex-wrap gap-3">
                     <ButtonLink href={pitchHref} variant="solid">
                       Pitch to us
                     </ButtonLink>

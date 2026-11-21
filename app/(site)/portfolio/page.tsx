@@ -4,7 +4,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
 import { PortfolioExplorer } from "@/components/portfolio/PortfolioExplorer";
 import type { CompanyEssay } from "@/components/portfolio/status";
-import { getEssays, getPortfolio, getSite, isActive, sameUrl } from "@/lib/cms";
+import { getEssays, getPortfolio, getPortfolioPage, getSite, isActive, sameUrl } from "@/lib/cms";
 import { portfolioSectors } from "@/lib/taxonomy";
 import { pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ export const generateMetadata = () =>
   });
 
 export default async function PortfolioPage() {
-  const [companies, essays, site] = await Promise.all([getPortfolio(), getEssays(), getSite()]);
+  const [companies, essays, site, page] = await Promise.all([getPortfolio(), getEssays(), getSite(), getPortfolioPage()]);
 
   // Match each company to its Substack essay here, on the server, so the client
   // components only receive what they display.
@@ -31,22 +31,22 @@ export default async function PortfolioPage() {
   }
 
   const stats = [
-    { value: String(companies.filter(isActive).length), label: "Active companies" },
-    { value: String(portfolioSectors.length), label: "Sectors" },
-    { value: site.investmentCriteria.stage.replace(" to ", "–"), label: "Stages" },
+    { value: String(companies.filter(isActive).length), label: page.activeLabel },
+    { value: String(portfolioSectors.length), label: page.sectorsLabel },
+    { value: site.investmentCriteria.stage.replace(" to ", "–"), label: page.stagesLabel },
   ];
 
   return (
     <>
       <PageHero
         background={<PortfolioHeaderSketches />}
-        eyebrow="Portfolio"
-        title="The companies engineering India's energy future"
-        intro="Engineering-led companies we back across India's energy transition. Building in energy? We'd like to hear from you."
+        eyebrow={page.eyebrow}
+        title={page.headline}
+        intro={page.intro}
       >
         <div className="mt-10 flex flex-col gap-10 sm:flex-row sm:items-end sm:justify-between">
-          <ButtonLink href="/contact?type=startup" variant="solid">
-            Pitch to us
+          <ButtonLink href={page.ctaHref} variant="solid">
+            {page.ctaLabel}
           </ButtonLink>
           {/* Phones: two columns, with the long "Stages" value on its own row */}
           <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 sm:gap-10">

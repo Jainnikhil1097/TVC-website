@@ -6,8 +6,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
 
 /**
- * All investment sectors at a glance (replaces the carousel, which showed one at
- * a time). Each tile links to the portfolio filtered to that sector.
+ * All investment sectors at a glance, four to a row on desktop. Each tile links to
+ * the portfolio (filtered to that sector when one maps cleanly).
  */
 export function SectorGrid({ sectors, companies }: { sectors: InvestmentSector[]; companies: Company[] }) {
   if (!sectors.length) return null;

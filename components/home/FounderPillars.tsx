@@ -1,15 +1,19 @@
 import {
+  CalendarDays,
   Cog,
   Coins,
   Factory,
   Handshake,
   Hourglass,
+  Landmark,
   MapPin,
+  Megaphone,
   Microscope,
   Network,
   PlugZap,
   Sprout,
   Target,
+  Users,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -30,6 +34,10 @@ const ICONS: Record<PillarIcon, LucideIcon> = {
   energy: PlugZap,
   growth: Sprout,
   focus: Target,
+  talent: Users,
+  grants: Landmark,
+  communications: Megaphone,
+  events: CalendarDays,
 };
 
 type Pillar = { title: string; text: string; icon: PillarIcon };
@@ -44,7 +52,7 @@ export function FounderPillars({ pillars }: { pillars: Pillar[] }) {
         <Reveal
           as="ul"
           stagger={0.07}
-          className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5"
+          className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4"
         >
           {pillars.map((p) => {
             const Icon = ICONS[p.icon] ?? Cog;
