@@ -19,6 +19,7 @@ import type {
 } from "./types";
 import { teamGroupOptions, type PageKey } from "./taxonomy";
 import { aboutPageDefaults, perspectivesPageDefaults, portfolioPageDefaults } from "./page-copy";
+import { sectorIconFor } from "./sector-icons";
 import { basePath, isStaticPreview } from "./base-path";
 import { siteIdentity } from "./site-config";
 import { getSubstackEssays, getYouTubeVideos } from "./feeds";
@@ -203,6 +204,7 @@ export const getInvestmentSectors = cache(async () => {
     id: s.id ?? String(i),
     name: s.name,
     line: s.line,
+    icon: sectorIconFor(s.name, s.icon),
     portfolioSector: orUndefined(s.portfolioSector) as PortfolioSectorId | undefined,
   }));
 });
@@ -227,8 +229,53 @@ export const getImpact = cache(async () => {
 });
 
 export const getGiftCity = cache(async () => {
-  const doc = await (await payload()).findGlobal({ slug: "gift-city-page" });
+  const doc = await (await payload()).findGlobal({ slug: "gift-city-page", depth: 1 });
+  const d = doc.disclosures;
+  const t = (v?: string | null) => (v ?? "").trim();
+  // IFSCA disclosures (Annexure 1), unless switched off in the CMS.
+  const disclosures =
+    d && d.show !== false && t(d.fme?.name)
+      ? {
+          asOf: orUndefined(d.asOf),
+          fme: {
+            name: t(d.fme?.name),
+            legalForm: t(d.fme?.legalForm),
+            category: t(d.fme?.category),
+            registrationNumber: t(d.fme?.registrationNumber),
+            registrationDate: t(d.fme?.registrationDate),
+          },
+          contact: {
+            registeredOffice: t(d.contact?.registeredOffice),
+            correspondence: t(d.contact?.correspondence),
+            telephone: t(d.contact?.telephone),
+            email: t(d.contact?.email),
+          },
+          funds: (d.funds ?? []).map((f) => ({ name: f.name, registrationNumber: t(f.registrationNumber), category: t(f.category) })),
+          serviceProviders: (d.serviceProviders ?? []).map((p) => ({
+            role: p.role,
+            name: t(p.name),
+            address: t(p.address),
+            telephone: t(p.telephone),
+          })),
+          grievance: {
+            text: t(d.grievance?.text),
+            policyUrl: image(d.grievance?.policy)?.url,
+            complaints: (d.grievance?.complaints ?? []).map((c) => ({
+              quarterEnded: c.quarterEnded,
+              pendingStart: t(c.pendingStart),
+              received: t(c.received),
+              disposed: t(c.disposed),
+              pendingEnd: t(c.pendingEnd),
+            })),
+            complaintsNote: t(d.grievance?.complaintsNote) || "Not applicable",
+          },
+          officers: (d.officers ?? []).map((o) => ({ designation: o.designation, name: o.name, email: t(o.email), telephone: t(o.telephone) })),
+          actions: { action: t(d.actions?.action), status: t(d.actions?.status) },
+          disclaimer: t(d.disclaimer),
+        }
+      : undefined;
   return {
+    disclosures,
     eyebrow: doc.eyebrow ?? "",
     headline: doc.headline ?? "",
     intro: doc.intro ?? "",

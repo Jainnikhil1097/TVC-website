@@ -1110,6 +1110,22 @@ export interface HomeSector {
         name: string;
         line: string;
         /**
+         * Leave empty to choose one automatically from the sector's name.
+         */
+        icon?:
+          | (
+              | 'mobility'
+              | 'industrial'
+              | 'built'
+              | 'semiconductors'
+              | 'electronics'
+              | 'renewables'
+              | 'storage'
+              | 'fuels'
+              | 'general'
+            )
+          | null;
+        /**
          * Leave empty to link to the full portfolio.
          */
         portfolioSector?:
@@ -1240,6 +1256,75 @@ export interface GiftCityPage {
     | null;
   ctaLabel?: string | null;
   ctaHref?: string | null;
+  disclosures?: {
+    show?: boolean | null;
+    asOf?: string | null;
+    fme?: {
+      name?: string | null;
+      legalForm?: string | null;
+      category?: string | null;
+      registrationNumber?: string | null;
+      registrationDate?: string | null;
+    };
+    contact?: {
+      registeredOffice?: string | null;
+      correspondence?: string | null;
+      telephone?: string | null;
+      email?: string | null;
+    };
+    funds?:
+      | {
+          name: string;
+          registrationNumber?: string | null;
+          category?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    serviceProviders?:
+      | {
+          role: string;
+          name?: string | null;
+          address?: string | null;
+          telephone?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    grievance?: {
+      text?: string | null;
+      /**
+       * Linked from the text above once uploaded.
+       */
+      policy?: (number | null) | Media;
+      /**
+       * Most recent quarter first. Leave empty to show the note below.
+       */
+      complaints?:
+        | {
+            quarterEnded: string;
+            pendingStart?: string | null;
+            received?: string | null;
+            disposed?: string | null;
+            pendingEnd?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+      complaintsNote?: string | null;
+    };
+    officers?:
+      | {
+          designation: string;
+          name: string;
+          email?: string | null;
+          telephone?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    actions?: {
+      action?: string | null;
+      status?: string | null;
+    };
+    disclaimer?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1426,6 +1511,7 @@ export interface HomeSectorsSelect<T extends boolean = true> {
     | {
         name?: T;
         line?: T;
+        icon?: T;
         portfolioSector?: T;
         id?: T;
       };
@@ -1533,6 +1619,79 @@ export interface GiftCityPageSelect<T extends boolean = true> {
       };
   ctaLabel?: T;
   ctaHref?: T;
+  disclosures?:
+    | T
+    | {
+        show?: T;
+        asOf?: T;
+        fme?:
+          | T
+          | {
+              name?: T;
+              legalForm?: T;
+              category?: T;
+              registrationNumber?: T;
+              registrationDate?: T;
+            };
+        contact?:
+          | T
+          | {
+              registeredOffice?: T;
+              correspondence?: T;
+              telephone?: T;
+              email?: T;
+            };
+        funds?:
+          | T
+          | {
+              name?: T;
+              registrationNumber?: T;
+              category?: T;
+              id?: T;
+            };
+        serviceProviders?:
+          | T
+          | {
+              role?: T;
+              name?: T;
+              address?: T;
+              telephone?: T;
+              id?: T;
+            };
+        grievance?:
+          | T
+          | {
+              text?: T;
+              policy?: T;
+              complaints?:
+                | T
+                | {
+                    quarterEnded?: T;
+                    pendingStart?: T;
+                    received?: T;
+                    disposed?: T;
+                    pendingEnd?: T;
+                    id?: T;
+                  };
+              complaintsNote?: T;
+            };
+        officers?:
+          | T
+          | {
+              designation?: T;
+              name?: T;
+              email?: T;
+              telephone?: T;
+              id?: T;
+            };
+        actions?:
+          | T
+          | {
+              action?: T;
+              status?: T;
+            };
+        disclaimer?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

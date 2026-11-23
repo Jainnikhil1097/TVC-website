@@ -57,6 +57,9 @@ const COMPANIES: NewCompany[] = [
 /** Creates the companies that don't exist yet (shared with the local one-off script). */
 export async function addNewCompanies(payload: Payload, req?: PayloadRequest) {
   const created: string[] = []
+  // A brand-new, empty database is filled by the seed (npm run seed), which already includes
+  // these companies; adding them here first would make the seed skip all the others.
+  if ((await payload.count({ collection: 'companies', req })).totalDocs === 0) return created
   for (const [i, c] of COMPANIES.entries()) {
     const { totalDocs } = await payload.count({ collection: 'companies', where: { slug: { equals: c.slug } }, req })
     if (totalDocs > 0) continue

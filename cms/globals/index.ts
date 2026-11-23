@@ -4,6 +4,7 @@ import { urlField } from "../fields";
 import { revalidateGlobal } from "../hooks/revalidate";
 import { pageKeys, portfolioSectors } from "@/lib/taxonomy";
 import { pillarIcons } from "@/lib/pillar-icons";
+import { sectorIcons } from "@/lib/sector-icons";
 import { aboutPageDefaults, perspectivesPageDefaults, portfolioPageDefaults } from "@/lib/page-copy";
 
 const editable = { read: anyone, update: loggedIn };
@@ -271,6 +272,13 @@ export const HomeSectors: GlobalConfig = {
         { name: "name", label: "Name", type: "text", required: true },
         { name: "line", label: "One-line description", type: "textarea", required: true, maxLength: 200 },
         {
+          name: "icon",
+          label: "Icon",
+          type: "select",
+          options: sectorIcons.map(({ value, label }) => ({ value, label })),
+          admin: { description: "Leave empty to choose one automatically from the sector's name." },
+        },
+        {
           name: "portfolioSector",
           label: '"View companies" goes to',
           type: "select",
@@ -319,6 +327,9 @@ export const ImpactPage: GlobalConfig = {
   ],
 };
 
+// One row of a two-column disclosure table.
+const row = (name: string, label: string, extra: Partial<Field> = {}): Field => ({ name, label, type: "text", ...extra }) as Field;
+
 export const GiftCityPage: GlobalConfig = {
   slug: "gift-city-page",
   label: "GIFT City page",
@@ -326,23 +337,145 @@ export const GiftCityPage: GlobalConfig = {
   access: editable,
   hooks,
   fields: [
-    { name: "eyebrow", label: "Small heading", type: "text", required: true },
-    { name: "headline", label: "Headline", type: "text", required: true },
-    { name: "intro", label: "Intro", type: "textarea", required: true },
     {
-      name: "highlights",
-      label: "Highlights",
-      type: "array",
-      fields: [
-        { name: "title", label: "Title", type: "text", required: true },
-        { name: "body", label: "Text", type: "textarea", required: true },
-      ],
-    },
-    {
-      type: "row",
-      fields: [
-        { name: "ctaLabel", label: "Button text", type: "text", defaultValue: "Investor enquiries" },
-        { name: "ctaHref", label: "Button link", type: "text", defaultValue: "/contact?type=investor" },
+      type: "tabs",
+      tabs: [
+        {
+          label: "Page",
+          fields: [
+            { name: "eyebrow", label: "Small heading", type: "text", required: true },
+            { name: "headline", label: "Headline", type: "text", required: true },
+            { name: "intro", label: "Intro", type: "textarea", required: true },
+            {
+              name: "highlights",
+              label: "Highlights",
+              type: "array",
+              fields: [
+                { name: "title", label: "Title", type: "text", required: true },
+                { name: "body", label: "Text", type: "textarea", required: true },
+              ],
+            },
+            {
+              type: "row",
+              fields: [
+                { name: "ctaLabel", label: "Button text", type: "text", defaultValue: "Investor enquiries" },
+                { name: "ctaHref", label: "Button link", type: "text", defaultValue: "/contact?type=investor" },
+              ],
+            },
+          ],
+        },
+        {
+          label: "IFSCA disclosures",
+          description:
+            "The regulatory disclosures for the GIFT City fund manager (Annexure 1), shown at the bottom of the GIFT City page. Update the complaints table every quarter.",
+          fields: [
+            {
+              name: "disclosures",
+              label: false,
+              type: "group",
+              fields: [
+                { name: "show", label: "Show the disclosures on the GIFT City page", type: "checkbox", defaultValue: true },
+                { name: "asOf", label: "Last updated", type: "date", admin: { date: { pickerAppearance: "dayOnly" } } },
+                {
+                  name: "fme",
+                  label: "1. FME profile",
+                  type: "group",
+                  fields: [
+                    row("name", "Name of the FME"),
+                    { type: "row", fields: [row("legalForm", "Legal form"), row("category", "Category of registration")] },
+                    { type: "row", fields: [row("registrationNumber", "IFSCA registration number"), row("registrationDate", "Date of registration")] },
+                  ],
+                },
+                {
+                  name: "contact",
+                  label: "2. Contact details",
+                  type: "group",
+                  fields: [
+                    { name: "registeredOffice", label: "Registered office address in the IFSC", type: "textarea" },
+                    { name: "correspondence", label: "Correspondence address", type: "textarea" },
+                    { type: "row", fields: [row("telephone", "Telephone number"), row("email", "Email address")] },
+                  ],
+                },
+                {
+                  name: "funds",
+                  label: "3. Funds managed from the IFSC",
+                  type: "array",
+                  labels: { singular: "Fund", plural: "Funds" },
+                  fields: [
+                    row("name", "Name of the fund", { required: true }),
+                    { type: "row", fields: [row("registrationNumber", "IFSCA registration number"), row("category", "Category / type")] },
+                  ],
+                },
+                {
+                  name: "serviceProviders",
+                  label: "4. Service providers",
+                  type: "array",
+                  labels: { singular: "Service provider", plural: "Service providers" },
+                  fields: [
+                    { type: "row", fields: [row("role", "Role", { required: true, admin: { placeholder: "Trustee" } }), row("name", "Name")] },
+                    { name: "address", label: "Address / email", type: "textarea" },
+                    row("telephone", "Telephone"),
+                  ],
+                },
+                {
+                  name: "grievance",
+                  label: "5. Investor grievance redressal",
+                  type: "group",
+                  fields: [
+                    { name: "text", label: "Text", type: "textarea" },
+                    {
+                      name: "policy",
+                      label: "Policy on Complaint Handling and Grievance Redressal (PDF)",
+                      type: "upload",
+                      relationTo: "media",
+                      filterOptions: { mimeType: { equals: "application/pdf" } },
+                      admin: { description: "Linked from the text above once uploaded." },
+                    },
+                    {
+                      name: "complaints",
+                      label: "5.1 Status of investor complaints (update quarterly)",
+                      type: "array",
+                      labels: { singular: "Quarter", plural: "Quarters" },
+                      admin: { description: "Most recent quarter first. Leave empty to show the note below." },
+                      fields: [
+                        row("quarterEnded", "Quarter ended", { required: true, admin: { placeholder: "31-12-2026" } }),
+                        {
+                          type: "row",
+                          fields: [
+                            row("pendingStart", "Pending at start"),
+                            row("received", "Received"),
+                            row("disposed", "Disposed of"),
+                            row("pendingEnd", "Pending at end"),
+                          ],
+                        },
+                      ],
+                    },
+                    row("complaintsNote", "Shown when there are no quarters yet", { defaultValue: "Not applicable" }),
+                  ],
+                },
+                {
+                  name: "officers",
+                  label: "6. Key personnel for IFSC operations",
+                  type: "array",
+                  labels: { singular: "Officer", plural: "Officers" },
+                  fields: [
+                    { type: "row", fields: [row("designation", "Designation", { required: true, admin: { placeholder: "Principal Officer" } }), row("name", "Name", { required: true })] },
+                    { type: "row", fields: [row("email", "Email"), row("telephone", "Telephone")] },
+                  ],
+                },
+                {
+                  name: "actions",
+                  label: "7. Material regulatory / enforcement actions in the preceding three years",
+                  type: "group",
+                  fields: [
+                    { type: "row", fields: [row("action", "Action against FME or KMPs in relation to IFSC operations"), row("status", "Current status")] },
+                  ],
+                },
+                { name: "disclaimer", label: "8. Disclaimer", type: "textarea" },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],

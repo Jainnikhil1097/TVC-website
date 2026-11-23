@@ -9,6 +9,7 @@ import { PauseOffscreen } from "@/components/motion/PauseOffscreen";
 import { spectrumCss } from "@/components/home/flow-geometry";
 import { LineArt, type LineArtVariant } from "@/components/light/LineArt";
 import { cn } from "@/lib/utils";
+import { IfscaDisclosures } from "@/components/gift-city/IfscaDisclosures";
 
 export const revalidate = 3600;
 
@@ -148,6 +149,8 @@ export default async function GiftCityPage() {
         </Reveal>
         </div>
       </section>
+
+      {giftCity.disclosures && <IfscaDisclosures d={giftCity.disclosures} />}
     </div>
   );
 }

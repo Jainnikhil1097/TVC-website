@@ -12,6 +12,9 @@ import * as migration_20261120_114630_home_content_data from './20261120_114630_
 import * as migration_20261121_113533_new_companies from './20261121_113533_new_companies';
 import * as migration_20261121_114440_remove_pre_fund from './20261121_114440_remove_pre_fund';
 import * as migration_20261121_120638_featured_greentech from './20261121_120638_featured_greentech';
+import * as migration_20261123_050340_gift_disclosures from './20261123_050340_gift_disclosures';
+import * as migration_20261123_050447_gift_disclosures_data from './20261123_050447_gift_disclosures_data';
+import * as migration_20261123_051931_home_sector_icons from './20261123_051931_home_sector_icons';
 
 export const migrations = [
   {
@@ -82,6 +85,21 @@ export const migrations = [
   {
     up: migration_20261121_120638_featured_greentech.up,
     down: migration_20261121_120638_featured_greentech.down,
-    name: '20261121_120638_featured_greentech'
+    name: '20261121_120638_featured_greentech',
+  },
+  {
+    up: migration_20261123_050340_gift_disclosures.up,
+    down: migration_20261123_050340_gift_disclosures.down,
+    name: '20261123_050340_gift_disclosures',
+  },
+  {
+    up: migration_20261123_050447_gift_disclosures_data.up,
+    down: migration_20261123_050447_gift_disclosures_data.down,
+    name: '20261123_050447_gift_disclosures_data',
+  },
+  {
+    up: migration_20261123_051931_home_sector_icons.up,
+    down: migration_20261123_051931_home_sector_icons.down,
+    name: '20261123_051931_home_sector_icons'
   },
 ];

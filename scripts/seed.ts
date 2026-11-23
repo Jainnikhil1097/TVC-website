@@ -19,7 +19,7 @@ const { importOnePagers } = await import("./one-pagers");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
 const { investmentSectors } = await import("./seed-data/sectors");
 const { impact } = await import("./seed-data/impact");
-const { giftCity } = await import("./seed-data/gift-city");
+const { giftCity, giftCityDisclosures } = await import("./seed-data/gift-city");
 
 const reset = process.argv.includes("--reset");
 const payload = await getPayload({ config });
@@ -267,6 +267,7 @@ await fillGlobal("gift-city-page", emptyText("headline"), {
   highlights: giftCity.highlights,
   ctaLabel: giftCity.cta.label,
   ctaHref: giftCity.cta.href,
+  disclosures: giftCityDisclosures,
 });
 
 log("done");

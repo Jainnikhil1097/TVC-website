@@ -113,6 +113,11 @@ export async function Footer({ site }: { site: Site }) {
           © {year} {site.legalName}. All rights reserved.
         </p>
         <ul className="flex flex-wrap gap-x-5">
+          <li>
+            <Link href="/gift-city#disclosures" className="inline-block py-1.5 hover:text-teal">
+              IFSCA disclosures
+            </Link>
+          </li>
           {site.policies.map((p) => (
             <li key={p.href}>
               <a href={p.href} className="inline-block py-1.5 hover:text-teal" target="_blank" rel="noopener noreferrer">
