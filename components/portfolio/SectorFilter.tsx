@@ -60,7 +60,7 @@ type FundFilterProps = {
   onChange: (fund: FundId | null) => void;
 };
 
-/** Fund I / Fund II, as a segmented control. Funds with no companies yet are shown but disabled. */
+/** Pre Fund / Fund I / Fund II, as a segmented control. Funds with no companies yet are shown but disabled. */
 export function FundFilter({ companies, value, onChange }: FundFilterProps) {
   const options: { id: FundId | null; name: string; count: number }[] = [
     { id: null, name: "All funds", count: companies.length },

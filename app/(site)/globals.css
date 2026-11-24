@@ -579,3 +579,90 @@ html.js-motion .hero-cover {
 .map-popover {
   animation: map-pop 0.22s var(--ease-out-quart) both;
 }
+
+/* Impact page: content that swaps in place (company view, essay ticker) fades in. */
+@keyframes impact-fade {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+.impact-fade {
+  animation: impact-fade 0.35s var(--ease-out-quart) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .impact-fade {
+    animation: none;
+  }
+}
+
+/* Home "Where we invest": the road draws itself in when its Reveal lifts in, then the stops pop up. */
+@keyframes sector-road-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes sector-road-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+.js-motion .sector-road .sector-road-band {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.js-motion .sector-road.is-visible .sector-road-band,
+.js-motion .sector-road[data-revealed] .sector-road-band {
+  animation: sector-road-draw 1.6s var(--ease-out-quart) forwards;
+}
+.sector-road-stop {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.js-motion .sector-road:not(.is-visible):not([data-revealed]) .sector-road-stop {
+  opacity: 0;
+}
+.js-motion .sector-road.is-visible .sector-road-stop,
+.js-motion .sector-road[data-revealed] .sector-road-stop {
+  animation: sector-road-pop 0.45s var(--ease-out-quart) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sector-road .sector-road-band {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+  .sector-road .sector-road-stop {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Home "Why founders choose us": a short streak of light running along the spiral's edges. */
+@keyframes spiral-flow {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.spiral-flow path {
+  stroke-dasharray: 9 91;
+  stroke-opacity: 0.8;
+  animation: spiral-flow 4.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spiral-flow {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sector-road-traffic {
+    display: none;
+  }
+}

@@ -46,5 +46,18 @@ for (const [slug, content] of Object.entries(onePagers)) {
   assert.ok(!FORBIDDEN.test(text), `one-pager for ${slug} mentions "${text.match(FORBIDDEN)?.[0]}"`);
 }
 
-console.log("seed: re-running the seed preserves edits; one-pagers are seeded and public-safe");
+// Impact content is public too, and also names no lenders or debt (the public-site rule).
+const { impact } = await import("./seed-data/impact");
+const { companyImpact, sdgGoals } = await import("./seed-data/impact-content");
+const IMPACT_FORBIDDEN = new RegExp(`${FORBIDDEN.source}|\\bdebt\\b|lender|\\bSBI\\b|ICICI|order pipeline|Article 8`, "i");
+for (const [name, content] of Object.entries({ page: impact, companies: companyImpact, sdgs: sdgGoals })) {
+  const text = JSON.stringify(content);
+  assert.ok(!IMPACT_FORBIDDEN.test(text), `impact ${name} content mentions "${text.match(IMPACT_FORBIDDEN)?.[0]}"`);
+}
+const impactPage = await payload.findGlobal({ slug: "impact-page" });
+assert.ok(impactPage.hero?.headline && (impactPage.sdgs?.goals ?? []).length >= 9, "impact page is seeded");
+const { totalDocs: withImpact } = await payload.count({ collection: "companies", where: { "impact.show": { equals: true } } });
+assert.equal(withImpact, Object.keys(companyImpact).length, "every company view is seeded");
+
+console.log("seed: re-running the seed preserves edits; one-pagers and impact content are seeded and public-safe");
 process.exit(0);

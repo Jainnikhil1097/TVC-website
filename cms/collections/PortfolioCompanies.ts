@@ -233,6 +233,58 @@ export const PortfolioCompanies: CollectionConfig = {
           ],
         },
         {
+          label: "Impact",
+          description: "This company's view on the Impact page: up to four measures, each with its evidence label. Leave a value empty for a measure not yet reported (it shows the unit and \"Reporting field\", never zero).",
+          fields: [
+            {
+              name: "impact",
+              type: "group",
+              label: false,
+              fields: [
+                {
+                  type: "row",
+                  fields: [
+                    { name: "show", label: "Show on the Impact page", type: "checkbox", defaultValue: false },
+                    { name: "featured", label: "Quick-select chip", type: "checkbox", defaultValue: false },
+                    { name: "order", label: "Order", type: "number", admin: { description: "Lower comes first." } },
+                  ],
+                },
+                {
+                  type: "row",
+                  fields: [
+                    { name: "sectorLabel", label: "Impact area", type: "text", admin: { placeholder: "Renewable asset productivity" } },
+                    { name: "stage", label: "Evidence stage", type: "text", admin: { placeholder: "Commercial deployments" } },
+                    { name: "period", label: "Period / source line", type: "text", admin: { placeholder: "FY2025-26 · Company reported" } },
+                  ],
+                },
+                { name: "tagline", label: "Tagline", type: "text" },
+                { name: "image", label: "Image", type: "upload", relationTo: "media", admin: { description: "Falls back to the logo." } },
+                {
+                  name: "metrics",
+                  label: "Measures",
+                  type: "array",
+                  maxRows: 4,
+                  labels: { singular: "Measure", plural: "Measures" },
+                  fields: [
+                    {
+                      type: "row",
+                      fields: [
+                        { name: "label", label: "Measure", type: "text", required: true },
+                        { name: "value", label: "Value", type: "text" },
+                        { name: "unit", label: "Unit", type: "text" },
+                      ],
+                    },
+                    { type: "row", fields: [{ name: "evidence", label: "Evidence label", type: "text" }, { name: "note", label: "Note", type: "text" }] },
+                  ],
+                },
+                { type: "row", fields: [{ name: "closerValue", label: "A closer look: figure", type: "text" }, { name: "closerText", label: "A closer look: text", type: "text" }] },
+                { name: "evidence", label: "Evidence & boundary", type: "textarea" },
+                { name: "sources", label: "Sources", type: "textarea" },
+              ],
+            },
+          ],
+        },
+        {
           label: "Status",
           fields: [
             {

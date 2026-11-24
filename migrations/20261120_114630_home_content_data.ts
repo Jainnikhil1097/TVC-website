@@ -62,10 +62,10 @@ export async function applyHomeContent(payload: Payload, req?: PayloadRequest) {
   const pillars = home.pillars ?? []
   const nextPillars = pillars.some((p) => REMOVED_PILLARS.includes(p.title))
     ? [
-        ...pillars.filter((p) => !REMOVED_PILLARS.includes(p.title)).map((p) => ({ title: p.title, icon: p.icon, text: rupees(p.text) })),
+        ...pillars.filter((p) => !REMOVED_PILLARS.includes(p.title)).map((p) => ({ title: p.title, icon: p.icon, text: rupees(p.text ?? "") })),
         ...NEW_PILLARS.map((p) => ({ ...p })),
       ]
-    : pillars.map((p) => ({ title: p.title, icon: p.icon, text: rupees(p.text) }))
+    : pillars.map((p) => ({ title: p.title, icon: p.icon, text: rupees(p.text ?? "") }))
   const faq = (home.faq ?? []).map((f) => {
     const replaced = Object.values(FAQ_ANSWERS).find(([from]) => from === f.answer)
     return { question: f.question, answer: replaced ? replaced[1] : rupees(f.answer) }

@@ -77,6 +77,19 @@ Pitch decks are uploaded straight from the browser to **private** Vercel Blob st
 6. Visit `/admin`, create the first (Admin) account, then invite editors.
 7. In **Site settings → Links**, add the YouTube channel ID so new videos appear automatically.
 
+## Impact page
+
+- **Content** is all in the CMS: Pages → Impact page (sections, SDG explorer, footprint countries)
+  and each company's **Impact** tab (its four measures, evidence labels, sources). A measure with
+  no value shows its unit and "Reporting field", never zero.
+- **Starting content** comes from the team's Impact handoff (`scripts/seed-data/impact.ts`,
+  `impact-content.ts`, photos in `impact-photos/`). The data migration fills the text on deploy;
+  then run `npm run impact:import` once against the database to add the photos. It never
+  overwrites what's already in the CMS.
+- **Maps:** `data/impact-geo.json` (world land plus highlightable country outlines, India from the
+  official boundary) is built by `node scripts/build-impact-geo.mjs`. Re-run it only to add a
+  country outline.
+
 ## Static preview on GitHub Pages
 
 A look-only copy of the site for sharing before launch: every page, the home energy-flow hero, the portfolio

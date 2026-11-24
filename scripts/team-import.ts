@@ -1,7 +1,8 @@
 // Shared by scripts/seed.ts (fresh databases) and scripts/import-team.ts (updating an
 // existing CMS). Brings the Team collection in line with scripts/seed-data/team.ts:
 //   - creates or updates each person by name (title, team, LinkedIn, order),
-//   - fills in bios and "Known for" points where the CMS has none,
+//   - fills in bios where the CMS has none (or still has the bio the seed replaces),
+//   - uploads founders' logo rows from seed-data/team-logos/ (versioned like photos),
 //   - uploads their photo from seed-data/team-photos/<slug>.webp as <slug>-<hash>.webp
 //     (a new name whenever the photo changes, so caches never show an old crop), and
 //     attaches it, deleting the version it replaces,
@@ -16,6 +17,29 @@ import { teamGroups } from "./seed-data/team";
 import { personSlug } from "./seed-data/slug";
 
 const photoDir = path.join(process.cwd(), "scripts", "seed-data", "team-photos");
+const logoDir = path.join(process.cwd(), "scripts", "seed-data", "team-logos");
+
+/** Uploads seed-data/team-logos/<file> once, as <name>-<content hash>.<ext>; returns its media id. */
+async function logoRowMedia(payload: Payload, file: string, alt: string) {
+  const source = path.join(logoDir, file);
+  if (!existsSync(source)) return undefined;
+  const ext = path.extname(file);
+  const hash = createHash("sha1").update(readFileSync(source)).digest("hex").slice(0, 8);
+  const versioned = `${path.basename(file, ext)}-${hash}${ext}`;
+  const { docs } = await payload.find({ collection: "media", where: { filename: { equals: versioned } }, limit: 1, depth: 0 });
+  if (docs[0]) return docs[0].id;
+  const dir = mkdtempSync(path.join(os.tmpdir(), "tvc-team-logos-"));
+  const filePath = path.join(dir, versioned);
+  copyFileSync(source, filePath);
+  try {
+    return (await payload.create({ collection: "media", context, data: { alt }, filePath })).id;
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+/** Media this folder produced: "<slug>-row-<n>-<hash>.png". */
+const fromLogoFolder = (filename?: string | null) => /-row-\d+-[0-9a-f]{8}\.(png|webp|jpe?g)$/i.test(filename ?? "");
 const context = { disableRevalidate: true };
 
 /**
@@ -84,17 +108,41 @@ export async function importTeam(payload: Payload, log: (msg: string) => void) {
         _status: "published" as const,
         ...(photo ? { photo } : {}),
       };
-      // Bios and "Known for" points only fill empty fields, so CMS edits always win.
+      // Bios only fill an empty field, or replace the exact bio the seed supersedes, so
+      // CMS edits always win.
       const existing = found[0];
-      const extras = {
-        ...(p.bio && !existing?.bio ? { bio: p.bio } : {}),
+      const extras: Record<string, unknown> = {
+        ...(p.bio && (!existing?.bio || existing.bio === p.previousBio) ? { bio: p.bio } : {}),
         ...(p.highlights?.length && !existing?.highlights?.length ? { highlights: p.highlights.map((text) => ({ text })) } : {}),
       };
+      // Logo rows: set when the person has none, or when every current row came from this
+      // folder (an earlier version). Rows an editor uploaded are left alone.
+      const retiredRows: number[] = [];
+      if (p.logoRows?.length) {
+        const current = existing?.logoRows ?? [];
+        const currentIds = current.map((r) => (typeof r.image === "number" ? r.image : r.image?.id)).filter((id): id is number => Boolean(id));
+        const currentMedia = currentIds.length
+          ? (await payload.find({ collection: "media", where: { id: { in: currentIds } }, limit: 20, depth: 0 })).docs
+          : [];
+        if (currentMedia.every((m) => fromLogoFolder(m.filename))) {
+          const rows: { heading: string; image: number }[] = [];
+          for (const r of p.logoRows) {
+            const image = await logoRowMedia(payload, r.file, `${p.name}: ${r.heading ?? "previous firms"} (logos)`);
+            if (image) rows.push({ heading: r.heading ?? "", image });
+          }
+          const same = rows.length === current.length && rows.every((r, k) => r.image === currentIds[k] && r.heading === (current[k]?.heading ?? ""));
+          if (!same) {
+            extras.logoRows = rows;
+            retiredRows.push(...currentIds.filter((id) => !rows.some((r) => r.image === id)));
+          }
+        }
+      }
       if (existing) {
         await payload.update({ collection: "team", id: existing.id, context, data: { ...data, ...extras } });
         updated++;
-        // The old portrait is no longer used once the person points at the new one.
+        // The old portrait (and old logo rows) are no longer used once the person points at the new ones.
         if (replaced && replaced !== photo) await payload.delete({ collection: "media", id: replaced, context }).catch(() => {});
+        for (const id of retiredRows) await payload.delete({ collection: "media", id, context }).catch(() => {});
       } else {
         await payload.create({ collection: "team", context, data: { ...data, ...extras } });
         created++;

@@ -39,6 +39,7 @@ const INK = "#e0e0e0"; // line colour
 const ACCENT = "#0ed5c2";
 const PAPER = "#000000"; // map background
 const TOP = "#1f1f1f"; // tower roofs: a lighter grey so towers read as solid volumes
+const AMBER = "#ffa24c"; // the warm, earlier end of the brand spectrum: the Pre Fund board
 
 // Scoped to the map SVG: hairline strokes at any scale, and a slow "current" along the transmission line.
 const mapCss = `
@@ -73,6 +74,9 @@ function Tower({ pin, state, onEnter, onLeave, onActivate }: TowerProps) {
   const active = state === "active";
   const top = iso(u, v, h);
   const tip = iso(u, v, h + pin.leader);
+  // Pre Fund towers take their board's amber; everything else the brand teal.
+  const tint = pin.zone === "pre-fund" ? AMBER : ACCENT;
+  const roof = pin.zone === "pre-fund" ? "#40311f" : "#14403f";
 
   return (
     <g
@@ -83,7 +87,7 @@ function Tower({ pin, state, onEnter, onLeave, onActivate }: TowerProps) {
         cursor: state === "dim" ? "default" : "pointer",
         pointerEvents: state === "dim" ? "none" : "auto",
       }}
-      stroke={active ? ACCENT : INK}
+      stroke={active ? tint : INK}
       strokeLinejoin="round"
       onPointerEnter={onEnter}
       onPointerLeave={onLeave}
@@ -101,21 +105,21 @@ function Tower({ pin, state, onEnter, onLeave, onActivate }: TowerProps) {
       {/* Left and right faces, then top */}
       <polygon
         points={poly([g(D), g(C), g(C, h), g(D, h)])}
-        fill={ACCENT}
+        fill={tint}
         fillOpacity={active ? 0.22 : 0.06}
         strokeOpacity={active ? 1 : 0.6}
         strokeWidth={1}
       />
       <polygon
         points={poly([g(C), g(B), g(B, h), g(C, h)])}
-        fill={ACCENT}
+        fill={tint}
         fillOpacity={active ? 0.38 : 0.14}
         strokeOpacity={active ? 1 : 0.6}
         strokeWidth={1}
       />
       <polygon
         points={poly([g(A, h), g(B, h), g(C, h), g(D, h)])}
-        fill={active ? "#14403f" : TOP}
+        fill={active ? roof : TOP}
         fillOpacity={1}
         strokeOpacity={active ? 1 : 0.75}
         strokeWidth={1}
@@ -127,12 +131,12 @@ function Tower({ pin, state, onEnter, onLeave, onActivate }: TowerProps) {
         y1={top.y}
         x2={tip.x}
         y2={tip.y}
-        stroke={active ? ACCENT : INK}
+        stroke={active ? tint : INK}
         strokeOpacity={active ? 0.9 : 0.35}
         strokeDasharray="2 3"
         strokeWidth={1}
       />
-      <circle cx={tip.x} cy={tip.y} r={2.5} fill={active ? ACCENT : INK} stroke="none" />
+      <circle cx={tip.x} cy={tip.y} r={2.5} fill={active ? tint : INK} stroke="none" />
     </g>
   );
 }
@@ -146,7 +150,7 @@ export function PortfolioMap({
   onOpenProfile,
   essays,
 }: PortfolioMapProps) {
-  const { zones, pinsByDepth, ground, viewBox } = layout;
+  const { zones, districts, pinsByDepth, ground, viewBox } = layout;
   const stageRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   // Set by the parallax effect: holds the map flat (and still) while an info card is open,
@@ -233,6 +237,9 @@ export function PortfolioMap({
     roads.push({ from: [u, -24], to: [u, ground.h + 24] });
   }
   roads.push({ from: [-24, PLOT + GAP / 2], to: [ground.w + 24, PLOT + GAP / 2] });
+  // Roads out to the fund boards: along the front-left edge, and across to the front-right plot.
+  roads.push({ from: [-24, ground.h + GAP / 2], to: [ground.w + GAP + PLOT + 24, ground.h + GAP / 2] });
+  roads.push({ from: [ground.w + GAP / 2, PLOT + GAP / 2], to: [ground.w + GAP / 2, ground.h + GAP + 24] });
 
   return (
     <div
@@ -335,6 +342,88 @@ export function PortfolioMap({
               );
             })}
 
+            {/* Fund boards beside the main site: Pre Fund (built) and Fund II (being built) */}
+            {districts.map((d) => {
+              const pre = d.id === "pre-fund";
+              const building = !pre && d.companies === 0;
+              const colour = pre ? AMBER : ACCENT;
+              const rect = (u: number, v: number, w: number, dd: number) => [iso(u, v), iso(u + w, v), iso(u + w, v + dd), iso(u, v + dd)];
+              const lotW = (d.w - (d.lots - 1) * GAP) / d.lots;
+              const lots = Array.from({ length: d.lots }, (_, i) => d.u + i * (lotW + GAP));
+              return (
+                <g key={d.id} className="transition-opacity duration-500" style={{ opacity: activeSector ? 0.35 : 1 }}>
+                  <polygon
+                    points={poly(rect(d.u, d.v, d.w, d.d))}
+                    fill={colour}
+                    fillOpacity={pre ? 0.05 : 0.02}
+                    stroke={INK}
+                    strokeOpacity={0.22}
+                    strokeDasharray={building ? "6 6" : undefined}
+                    strokeWidth={1}
+                  />
+                  {lots.map((u, i) => (
+                    <polygon
+                      key={i}
+                      points={poly(rect(u + 12, d.v + 12, lotW - 24, d.d - 24))}
+                      fill="none"
+                      stroke={colour}
+                      strokeOpacity={building ? 0.3 : 0.45}
+                      strokeDasharray="4 5"
+                      strokeWidth={1}
+                    />
+                  ))}
+                  {/* Under construction: ghost scaffolds in two lots and a tower crane in another */}
+                  {building && (
+                    <g stroke={INK} strokeOpacity={0.3} strokeDasharray="3 4" strokeWidth={1} fill="none">
+                      {[
+                        { u: lots[0] + lotW * 0.55, v: d.v + d.d * 0.5, h: 70 },
+                        { u: lots[2] + lotW * 0.4, v: d.v + d.d * 0.45, h: 46 },
+                      ].map((t, i) => {
+                        const S = 15;
+                        const c = [[t.u - S, t.v + S], [t.u + S, t.v + S], [t.u + S, t.v - S], [t.u - S, t.v - S]] as const;
+                        return (
+                          <g key={i}>
+                            <polygon points={poly(c.map(([a, b]) => iso(a, b, t.h)))} />
+                            {c.map(([a, b], k) => {
+                              const g0 = iso(a, b);
+                              const g1 = iso(a, b, t.h);
+                              return <line key={k} x1={g0.x} y1={g0.y} x2={g1.x} y2={g1.y} />;
+                            })}
+                          </g>
+                        );
+                      })}
+                      {(() => {
+                        const base = { u: lots[1] + lotW * 0.5, v: d.v + d.d * 0.5 };
+                        const foot = iso(base.u, base.v);
+                        const top = iso(base.u, base.v, 130);
+                        const jib = iso(base.u + 120, base.v - 40, 130);
+                        const tail = iso(base.u - 40, base.v + 14, 130);
+                        const hook = iso(base.u + 90, base.v - 30, 70);
+                        const hookTop = iso(base.u + 90, base.v - 30, 130);
+                        return (
+                          <g strokeDasharray="none" strokeOpacity={0.4}>
+                            <line x1={foot.x} y1={foot.y} x2={top.x} y2={top.y} />
+                            <line x1={tail.x} y1={tail.y} x2={jib.x} y2={jib.y} />
+                            <line x1={hookTop.x} y1={hookTop.y} x2={hook.x} y2={hook.y} strokeDasharray="2 3" />
+                          </g>
+                        );
+                      })()}
+                    </g>
+                  )}
+                  <g transform={GROUND_MATRIX}>
+                    <text
+                      x={d.u + 20}
+                      y={d.v + d.d - 22}
+                      fill={pre ? AMBER : "#8fa3b8"}
+                      style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 700, letterSpacing: 2.5 }}
+                    >
+                      {building ? `${d.name.toUpperCase()} · UNDER CONSTRUCTION` : d.name.toUpperCase()}
+                    </text>
+                  </g>
+                </g>
+              );
+            })}
+
             {/* Transmission line */}
             <polyline
               points={gridLine}
@@ -349,7 +438,7 @@ export function PortfolioMap({
             {/* Towers, back to front */}
             {pinsByDepth.map((pin) => {
               const slug = pin.company.slug;
-              const dim = activeSector !== null && activeSector !== pin.zone;
+              const dim = activeSector !== null && activeSector !== pin.company.sector;
               const active = !dim && (selected === slug || hovered === slug || popover === slug);
               return (
                 <Tower
@@ -369,7 +458,7 @@ export function PortfolioMap({
           {pinsByDepth.map((pin, depth) => {
             const { company } = pin;
             const slug = company.slug;
-            const dim = activeSector !== null && activeSector !== pin.zone;
+            const dim = activeSector !== null && activeSector !== pin.company.sector;
             const focus = hovered ?? popover;
             const active = !dim && (selected === slug || hovered === slug || popover === slug);
             const recede = !dim && focus !== null && focus !== slug && !active;
@@ -437,7 +526,7 @@ export function PortfolioMap({
           flat layer over the map, so nothing in the 3D scene can take its clicks. */}
           {(() => {
             const pin = popover ? pinsByDepth.find((p) => p.company.slug === popover) : undefined;
-            if (!pin || (activeSector !== null && activeSector !== pin.zone)) return null;
+            if (!pin || (activeSector !== null && activeSector !== pin.company.sector)) return null;
             const a = iso(pin.u, pin.v, pin.h + pin.leader);
             return (
               <MapPopover

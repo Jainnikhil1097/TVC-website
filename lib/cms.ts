@@ -110,6 +110,27 @@ function mapCompany(doc: CmsCompany): Company {
     traction: doc.traction?.map((t) => t.point).filter(Boolean),
     marketOpportunity: orUndefined(doc.marketOpportunity),
     whyTheyWin: orUndefined(doc.whyTheyWin),
+    impact: doc.impact?.show
+      ? {
+          featured: Boolean(doc.impact.featured),
+          order: doc.impact.order ?? 999,
+          sectorLabel: orUndefined(doc.impact.sectorLabel),
+          stage: orUndefined(doc.impact.stage),
+          period: orUndefined(doc.impact.period),
+          tagline: orUndefined(doc.impact.tagline),
+          image: image(doc.impact.image, "card"),
+          metrics: (doc.impact.metrics ?? []).map((m) => ({
+            label: m.label,
+            value: orUndefined(m.value) || undefined,
+            unit: orUndefined(m.unit),
+            evidence: orUndefined(m.evidence),
+            note: orUndefined(m.note),
+          })),
+          closer: doc.impact.closerValue ? { value: doc.impact.closerValue, text: orUndefined(doc.impact.closerText) } : undefined,
+          evidence: orUndefined(doc.impact.evidence),
+          sources: orUndefined(doc.impact.sources),
+        }
+      : undefined,
   };
 }
 
@@ -191,7 +212,12 @@ export const getHomePage = cache(async () => {
   const doc = await (await payload()).findGlobal({ slug: "home-page" });
   return {
     positioning: doc.positioning ?? "",
-    pillars: (doc.pillars ?? []).map((p) => ({ title: p.title, text: p.text, icon: p.icon })),
+    pillars: (doc.pillars ?? []).map((p) => ({
+      title: p.title,
+      text: p.text ?? "",
+      icon: p.icon,
+      points: (p.points ?? []).map((x) => x.text).filter(Boolean),
+    })),
     faq: (doc.faq ?? []).map((f) => ({ question: f.question, answer: f.answer })),
   };
 });
@@ -213,20 +239,98 @@ export type InvestmentSector = Awaited<ReturnType<typeof getInvestmentSectors>>[
 
 export const getImpact = cache(async () => {
   const doc = await (await payload()).findGlobal({ slug: "impact-page", depth: 1 });
+  const str = (v?: string | null) => (v ?? "").trim();
+  const slugs = (list?: (number | CmsCompany)[] | null) =>
+    (list ?? []).filter((c): c is CmsCompany => typeof c !== "number" && c.showOnSite !== false).map((c) => c.slug ?? String(c.id));
+  const slugOf = (c?: number | CmsCompany | null) => (c && typeof c !== "number" ? c.slug ?? String(c.id) : undefined);
+  const heading = (g?: { eyebrow?: string | null; headline?: string | null; intro?: string | null } | null) => ({
+    eyebrow: str(g?.eyebrow),
+    headline: str(g?.headline),
+    intro: str(g?.intro),
+  });
+  const h = doc.hero;
+  const o = doc.outcomes;
+  const f = doc.footprint;
+  const sd = doc.sdgs;
+  const c = doc.contribution;
+  const w = doc.women;
+  const m = doc.measurement;
   return {
-    eyebrow: doc.eyebrow ?? "",
-    headline: doc.headline ?? "",
-    intro: doc.intro ?? "",
-    stats: (doc.stats ?? []).map((s) => ({ value: s.value, label: s.label })),
-    themes: (doc.themes ?? []).map((t) => ({
-      title: t.title,
-      body: t.body,
-      companies: (t.companies ?? [])
-        .filter((c): c is CmsCompany => typeof c !== "number" && c._status === "published" && c.showOnSite !== false)
-        .map((c) => ({ slug: c.slug ?? String(c.id), name: c.name })),
-    })),
+    hero: {
+      eyebrow: str(h?.eyebrow),
+      headline: str(h?.headline),
+      statement: str(h?.statement),
+      intro: str(h?.intro),
+      primaryLabel: str(h?.primaryLabel) || "Explore portfolio progress",
+      secondaryLabel: str(h?.secondaryLabel) || "How we measure",
+      tiles: (h?.tiles ?? [])
+        .map((tile) => ({ image: image(tile.image, "card"), company: slugOf(tile.company), caption: str(tile.caption) }))
+        .filter((tile): tile is { image: Image; company: string | undefined; caption: string } => Boolean(tile.image)),
+    },
+    pathways: (doc.pathways ?? []).map((p) => ({ title: p.title, subtitle: str(p.subtitle), body: str(p.body), companies: slugs(p.companies) })),
+    outcomes: {
+      ...heading(o),
+      status: str(o?.status),
+      measures: (o?.measures ?? []).map((x) => ({ label: x.label, value: str(x.value), unit: str(x.unit), definition: str(x.definition) })),
+      coverageTitle: str(o?.coverageTitle),
+      coverageText: str(o?.coverageText),
+      coverageNote: str(o?.coverageNote),
+      footnote: str(o?.footnote),
+    },
+    footprint: {
+      ...heading(f),
+      cardText: str(f?.cardText),
+      footnote: str(f?.footnote),
+      countries: (f?.countries ?? []).map((x) => ({
+        name: x.name,
+        lat: x.lat,
+        lon: x.lon,
+        presence: (x.presence ?? []) as ("hq" | "manufacturing" | "deployments")[],
+        companies: slugs(x.companies),
+        value: str(x.value),
+        valueLabel: str(x.valueLabel),
+        detail: str(x.detail),
+        source: str(x.source),
+      })),
+    },
+    sdgs: {
+      ...heading(sd),
+      note: str(sd?.note),
+      goals: (sd?.goals ?? []).map((g) => ({
+        number: g.number,
+        title: g.title,
+        summary: str(g.summary),
+        entries: (g.entries ?? []).map((e) => ({ company: slugOf(e.company), label: str(e.label), connection: e.connection, measures: str(e.measures) })),
+      })),
+    },
+    carousel: { ...heading(doc.carousel), footnote: str(doc.carousel?.footnote) },
+    contribution: {
+      ...heading(c),
+      pillars: (c?.pillars ?? []).map((p) => ({ label: str(p.label), title: str(p.title), text: str(p.text) })),
+      caseLabel: str(c?.caseLabel),
+      caseTitle: str(c?.caseTitle),
+      casePoints: (c?.casePoints ?? []).map((p) => ({ title: str(p.title), text: str(p.text) })),
+      caseSource: str(c?.caseSource),
+      footnote: str(c?.footnote),
+    },
+    women: {
+      ...heading(w),
+      leaders: (w?.leaders ?? []).map((l) => ({ area: str(l.area), name: str(l.name), role: str(l.role) })),
+      functions: (w?.functions ?? []).map((x) => ({ title: str(x.title), text: str(x.text) })),
+      footnote: str(w?.footnote),
+    },
+    perspectives: { ...heading(doc.perspectives), footnote: str(doc.perspectives?.footnote) },
+    measurement: {
+      ...heading(m),
+      items: (m?.items ?? []).map((i) => ({ title: i.title, body: str(i.body) })),
+      reports: (m?.reports ?? []).map((r) => ({ title: r.title, status: str(r.status), href: image(r.file)?.url })),
+      processTitle: str(m?.processTitle),
+      process: (m?.process ?? []).map((p) => ({ step: str(p.step), text: str(p.text) })),
+    },
   };
 });
+
+export type ImpactContent = Awaited<ReturnType<typeof getImpact>>;
 
 export const getGiftCity = cache(async () => {
   const doc = await (await payload()).findGlobal({ slug: "gift-city-page", depth: 1 });
@@ -332,6 +436,9 @@ export const getTeamGroups = cache(async () => {
     photo: image(d.photo, "portrait")?.url,
     bio: orUndefined(d.bio),
     highlights: d.highlights?.map((h) => h.text).filter(Boolean),
+    logoRows: (d.logoRows ?? [])
+      .map((r) => ({ heading: orUndefined(r.heading) || undefined, image: image(r.image) }))
+      .filter((r): r is { heading: string | undefined; image: Image } => Boolean(r.image)),
   });
   // Teams in display order (lib/taxonomy.ts); empty teams are skipped.
   return teamGroupOptions

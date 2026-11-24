@@ -21,6 +21,7 @@
     "company:photos": "node --import tsx scripts/import-company-photos.ts",
     "company:onepagers": "node --import tsx scripts/import-one-pagers.ts",
     "company:logos": "node --import tsx scripts/import-company-logos.ts",
+    "impact:import": "node --import tsx scripts/import-impact.ts",
     "test": "node --import tsx scripts/test-feed-parse.ts && node --import tsx scripts/test-uploads.ts && node --import tsx scripts/test-submissions.ts && rm -rf .data/test.db .data/test-media && export DATABASE_URL=file:./.data/test.db MEDIA_DIR=.data/test-media && node --import tsx scripts/seed.ts > /dev/null && node --import tsx scripts/test-roles.ts && node --import tsx scripts/test-seed.ts && rm -rf .data/test.db .data/test-media",
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create"

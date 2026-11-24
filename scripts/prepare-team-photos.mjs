@@ -44,7 +44,7 @@ const outDir = path.join(process.cwd(), "scripts", "seed-data", "team-photos");
 mkdirSync(outDir, { recursive: true });
 
 /** Source file names that don't match the person's first name. */
-const ALIASES = { "Ashrita Ashwin": "Arshita", "Mohammed Shoeb Ali": "Shoeb" };
+const ALIASES = { "Ashrita Ashwin": "Arshita", "Mohammed Shoeb Ali": "Shoeb", "Dr Ingolf Gröning": "Ingolf", "Dr Arvind Parthasarathy": "Arvind" };
 
 const DEFAULT_CROP = { top: 0.05, width: 0.62, centre: 0.5 };
 const cropsFile = path.join(outDir, "crops.json");
@@ -85,6 +85,15 @@ for (const person of people) {
     }
     const { data: raw, info } = await sharp(cut).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
     const { pad, padded, area } = extract(info.width, info.height);
+    // A photo too short for the frame (a tight headshot) would end in a hard line inside
+    // the colour square: fade its last rows out instead.
+    if (pad.bottom > area.height * 0.02) {
+      const fade = Math.round(info.height * 0.14);
+      for (let y = info.height - fade; y < info.height; y++) {
+        const keep = (info.height - y) / fade;
+        for (let x = 0; x < info.width; x++) raw[(y * info.width + x) * 4 + 3] *= keep;
+      }
+    }
     const base = padded
       ? sharp(await sharp(raw, { raw: info }).extend({ ...pad, background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer())
       : sharp(raw, { raw: info });

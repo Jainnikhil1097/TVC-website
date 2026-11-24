@@ -1,8 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { getAboutPage, getFunds, getSite, getTeamGroups } from "@/lib/cms";
+import { getAboutPage, getSite, getTeamGroups } from "@/lib/cms";
 import { pageMetadata } from "@/lib/seo";
-import { FundsSection } from "@/components/funds/FundsSection";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
@@ -19,7 +18,7 @@ export function generateMetadata() {
 }
 
 export default async function AboutPage() {
-  const [site, page, teamGroups, funds] = await Promise.all([getSite(), getAboutPage(), getTeamGroups(), getFunds()]);
+  const [site, page, teamGroups] = await Promise.all([getSite(), getAboutPage(), getTeamGroups()]);
 
   const facts = [
     { label: "Stage", value: site.investmentCriteria.stage },
@@ -56,8 +55,6 @@ export default async function AboutPage() {
           </Reveal>
         </div>
       </section>
-
-      <FundsSection funds={funds} showAll />
 
       {/* Team: everyone visible, team by team */}
       <section data-theme="dark" className="bg-black py-20 text-white sm:py-28" aria-labelledby="team-heading">

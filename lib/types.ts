@@ -27,8 +27,10 @@ export type Person = {
   /** Image URL. Falls back to initials. */
   photo?: string;
   bio?: string;
-  /** "Known for" points (founder cards). */
+  /** "Known for" points (no longer shown). */
   highlights?: string[];
+  /** Founders: logo strips under the bio, each with an optional heading. */
+  logoRows?: { heading?: string; image: Image }[];
 };
 
 export type PortfolioSectorId =
@@ -41,7 +43,7 @@ export type PortfolioSectorId =
   | "mobility"
   | "data-centers";
 
-export type FundId = "fund-1" | "fund-2";
+export type FundId = "pre-fund" | "fund-1" | "fund-2";
 
 export type Stage = "Pre-Seed" | "Seed" | "Pre-Series A" | "Series A" | "TBD";
 
@@ -85,6 +87,24 @@ export type Company = {
   traction?: string[];
   marketOpportunity?: string;
   whyTheyWin?: string;
+  /** Impact page view (CMS → company → Impact tab), when shown there. */
+  impact?: CompanyImpact;
+};
+
+export type ImpactMetric = { label: string; value?: string; unit?: string; evidence?: string; note?: string };
+
+export type CompanyImpact = {
+  featured: boolean;
+  order: number;
+  sectorLabel?: string;
+  stage?: string;
+  period?: string;
+  tagline?: string;
+  image?: Image;
+  metrics: ImpactMetric[];
+  closer?: { value: string; text?: string };
+  evidence?: string;
+  sources?: string;
 };
 
 /** A label pointing at part of a product image; x/y are percentages of the image. */

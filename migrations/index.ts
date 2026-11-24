@@ -15,6 +15,12 @@ import * as migration_20261121_120638_featured_greentech from './20261121_120638
 import * as migration_20261123_050340_gift_disclosures from './20261123_050340_gift_disclosures';
 import * as migration_20261123_050447_gift_disclosures_data from './20261123_050447_gift_disclosures_data';
 import * as migration_20261123_051931_home_sector_icons from './20261123_051931_home_sector_icons';
+import * as migration_20261123_124801_team_rows_prefund from './20261123_124801_team_rows_prefund';
+import * as migration_20261123_124829_prefund_companies from './20261123_124829_prefund_companies';
+import * as migration_20261124_015323_impact_redesign from './20261124_015323_impact_redesign';
+import * as migration_20261124_015451_impact_content_data from './20261124_015451_impact_content_data';
+import * as migration_20261124_093917_pillar_points from './20261124_093917_pillar_points';
+import * as migration_20261124_093958_pillar_points_data from './20261124_093958_pillar_points_data';
 
 export const migrations = [
   {
@@ -100,6 +106,36 @@ export const migrations = [
   {
     up: migration_20261123_051931_home_sector_icons.up,
     down: migration_20261123_051931_home_sector_icons.down,
-    name: '20261123_051931_home_sector_icons'
+    name: '20261123_051931_home_sector_icons',
+  },
+  {
+    up: migration_20261123_124801_team_rows_prefund.up,
+    down: migration_20261123_124801_team_rows_prefund.down,
+    name: '20261123_124801_team_rows_prefund',
+  },
+  {
+    up: migration_20261123_124829_prefund_companies.up,
+    down: migration_20261123_124829_prefund_companies.down,
+    name: '20261123_124829_prefund_companies',
+  },
+  {
+    up: migration_20261124_015323_impact_redesign.up,
+    down: migration_20261124_015323_impact_redesign.down,
+    name: '20261124_015323_impact_redesign',
+  },
+  {
+    up: migration_20261124_015451_impact_content_data.up,
+    down: migration_20261124_015451_impact_content_data.down,
+    name: '20261124_015451_impact_content_data',
+  },
+  {
+    up: migration_20261124_093917_pillar_points.up,
+    down: migration_20261124_093917_pillar_points.down,
+    name: '20261124_093917_pillar_points',
+  },
+  {
+    up: migration_20261124_093958_pillar_points_data.up,
+    down: migration_20261124_093958_pillar_points_data.down,
+    name: '20261124_093958_pillar_points_data'
   },
 ];

@@ -16,9 +16,10 @@ const { importTeam } = await import("./team-import");
 const { importCompanyPhotos } = await import("./company-photos");
 const { importCompanyLogos } = await import("./company-logos");
 const { importOnePagers } = await import("./one-pagers");
+const { importImpact } = await import("./impact-import");
+const { founderPillars } = await import("./seed-data/founder-pillars");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
 const { investmentSectors } = await import("./seed-data/sectors");
-const { impact } = await import("./seed-data/impact");
 const { giftCity, giftCityDisclosures } = await import("./seed-data/gift-city");
 
 const reset = process.argv.includes("--reset");
@@ -130,7 +131,6 @@ type GlobalSlug =
   | "fund-metrics"
   | "home-sectors"
   | "home-page"
-  | "impact-page"
   | "gift-city-page"
   | "announcement";
 
@@ -180,48 +180,7 @@ await fillGlobal("home-sectors", emptyArray("sectors"), {
 // Draft copy drawn from the fund's published thesis — for Transition VC to review in the CMS.
 await fillGlobal("home-page", emptyText("positioning"), {
   positioning: "India's first energy-transition venture fund",
-  pillars: [
-    {
-      title: "Engineering-first",
-      icon: "engineering",
-      text: "We underwrite the technology itself, and back teams solving hard physical bottlenecks.",
-    },
-    {
-      title: "Early, catalytic capital",
-      icon: "capital",
-      text: `${investmentCriteria.stage} cheques of ${investmentCriteria.cheque}, when conviction matters most.`,
-    },
-    {
-      title: "Built for India",
-      icon: "india",
-      text: "We back products and cost structures designed for India's energy transition.",
-    },
-    {
-      title: "Talent & technical hiring",
-      icon: "talent",
-      text: "Help hiring niche engineers and senior leaders, from specialised technical roles to CXOs, to build and scale your team.",
-    },
-    {
-      title: "Grants & non-dilutive funding",
-      icon: "grants",
-      text: "Help finding and applying for government grants, incentives and programmes that fund R&D, manufacturing and technology.",
-    },
-    {
-      title: "Brand, PR & business development",
-      icon: "communications",
-      text: "Communications that build credibility, and introductions to corporates, customers and our LP network to open new markets.",
-    },
-    {
-      title: "Events & ecosystem access",
-      icon: "events",
-      text: "Curated LP mixers, showcases and conferences that put you in front of customers, investors and industry leaders.",
-    },
-    {
-      title: "Portfolio synergies, founder-first",
-      icon: "partnership",
-      text: "A portfolio built to compound, not compete: companies become each other's customers and partners, with us alongside.",
-    },
-  ],
+  pillars: founderPillars.map((p) => ({ title: p.title, icon: p.icon, points: p.points.map((text) => ({ text })) })),
   faq: [
     { question: "What stage do you invest at?", answer: `${investmentCriteria.stage}.` },
     { question: "How much do you invest?", answer: `Typically ${investmentCriteria.cheque} per company.` },
@@ -248,17 +207,7 @@ await fillGlobal("home-page", emptyText("positioning"), {
   ],
 });
 
-await fillGlobal("impact-page", emptyText("headline"), {
-  eyebrow: impact.eyebrow,
-  headline: impact.headline,
-  intro: impact.intro,
-  stats: impact.stats,
-  themes: impact.themes.map((t) => ({
-    title: t.title,
-    body: t.body,
-    companies: t.companies.map((slug) => companyIds.get(slug)).filter((id): id is number => id !== undefined),
-  })),
-});
+await importImpact(payload, log);
 
 await fillGlobal("gift-city-page", emptyText("headline"), {
   eyebrow: giftCity.eyebrow,

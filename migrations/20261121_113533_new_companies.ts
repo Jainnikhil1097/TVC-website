@@ -2,8 +2,8 @@ import type { MigrateDownArgs, MigrateUpArgs } from '@payloadcms/db-postgres'
 import type { Payload, PayloadRequest } from 'payload'
 
 // Three portfolio companies added on 21 Nov 2026 from the team's company list
-// ("Website Ideas and Link" PDF): EarthEn (Fund I), Perovskia Solar and Two Point O
-// (Fund II; both were withheld as pipeline deals until the team confirmed them).
+// ("Website Ideas and Link" PDF): EarthEn, Perovskia Solar and Two Point O, all Fund I
+// (the last two were withheld as pipeline deals until the team confirmed them).
 // Creates each one only if no company with that slug exists, published and visible,
 // listed first. Logos, product images and one-pager details are files and longer text:
 // run  npm run company:logos  and  npm run company:onepagers  against the database too.
@@ -37,7 +37,7 @@ const COMPANIES: NewCompany[] = [
       'Inkjet-printed, custom-shaped perovskite solar cells that let electronics and IoT devices run on indoor light instead of batteries.',
     sector: 'renewables',
     stage: 'Pre-Series A',
-    fund: 'fund-2',
+    fund: 'fund-1',
     website: 'https://perovskia.solar/',
     founders: ['Toby Meyer', 'Anand Verma'],
   },
@@ -48,7 +48,7 @@ const COMPANIES: NewCompany[] = [
       'Opex-as-a-Service for clean-energy infrastructure: it selects, funds and owns the equipment, and leases it to businesses with a performance warranty.',
     sector: 'platforms',
     stage: 'Series A',
-    fund: 'fund-2',
+    fund: 'fund-1',
     website: 'https://twopointo.capital/',
     founders: ['Manya Ranjan', 'Karan Bhutani', 'Archit Mehrotra', 'Shashidhar Reddy'],
   },

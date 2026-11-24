@@ -2,7 +2,8 @@ import type { Company } from "./types";
 
 // Ordered newest investment first, as on the current site.
 export const portfolio: Company[] = [
-  // Added 21 Nov 2026 from the team's company list ("Website Ideas and Link" PDF).
+  // Added 21 Nov 2026 from the team's company list ("Website Ideas and Link" PDF). All Fund I
+  // (the team, 23 Nov 2026: "everything we have now is Fund 1"; Fund II is still being finalised).
   {
     slug: "earthen",
     name: "EarthEn",
@@ -25,7 +26,7 @@ export const portfolio: Company[] = [
     yearInvested: 2026,
     website: "https://perovskia.solar/",
     founders: [{ name: "Toby Meyer" }, { name: "Anand Verma" }],
-    fund: "fund-2",
+    fund: "fund-1",
   },
   {
     slug: "two-point-o",
@@ -37,7 +38,7 @@ export const portfolio: Company[] = [
     yearInvested: 2026,
     website: "https://twopointo.capital/",
     founders: [{ name: "Manya Ranjan" }, { name: "Karan Bhutani" }, { name: "Archit Mehrotra" }, { name: "Shashidhar Reddy" }],
-    fund: "fund-2",
+    fund: "fund-1",
   },
   {
     slug: "suind",
@@ -223,5 +224,48 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2023,
     website: "https://www.emoenergy.in/",
+  },
+  // Pre Fund: the partners' investments from before Fund I (2021), on the map's Pre Fund board.
+  // Draft descriptions from public information, for the team to check in the CMS. Their
+  // multiples are never shown on the site.
+  {
+    slug: "ethereal-machines",
+    name: "Ethereal Machines",
+    summary: "Five-axis CNC machines and advanced manufacturing systems, designed and built in India.",
+    sector: "industrial",
+    stage: "TBD",
+    yearInvested: 2021,
+    website: "https://etherealmachines.com/",
+    fund: "pre-fund",
+  },
+  {
+    slug: "exponent-energy",
+    name: "Exponent Energy",
+    summary: "Battery packs and charging stations built to charge electric commercial vehicles rapidly.",
+    sector: "mobility",
+    stage: "TBD",
+    yearInvested: 2021,
+    website: "https://www.exponent.energy/",
+    fund: "pre-fund",
+  },
+  {
+    slug: "billione-mobility",
+    name: "BillionE Mobility",
+    summary: "Electric commercial-vehicle fleets for logistics, with charging and fleet services.",
+    sector: "mobility",
+    stage: "TBD",
+    yearInvested: 2021,
+    website: "https://www.billionemobility.com/",
+    fund: "pre-fund",
+  },
+  {
+    slug: "chargezone",
+    name: "ChargeZone",
+    summary: "A network of fast-charging stations for electric vehicles, serving fleets, cities and highways.",
+    sector: "mobility",
+    stage: "TBD",
+    yearInvested: 2021,
+    website: "https://chargezone.co/",
+    fund: "pre-fund",
   },
 ];

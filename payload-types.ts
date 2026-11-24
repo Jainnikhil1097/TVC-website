@@ -174,7 +174,7 @@ export interface Company {
   /**
    * Shown on the company card and used by the Portfolio page's fund filter.
    */
-  fund: 'fund-1' | 'fund-2';
+  fund: 'pre-fund' | 'fund-1' | 'fund-2';
   yearInvested: number;
   website: string;
   /**
@@ -248,6 +248,36 @@ export interface Company {
     | null;
   marketOpportunity?: string | null;
   whyTheyWin?: string | null;
+  impact?: {
+    show?: boolean | null;
+    featured?: boolean | null;
+    /**
+     * Lower comes first.
+     */
+    order?: number | null;
+    sectorLabel?: string | null;
+    stage?: string | null;
+    period?: string | null;
+    tagline?: string | null;
+    /**
+     * Falls back to the logo.
+     */
+    image?: (number | null) | Media;
+    metrics?:
+      | {
+          label: string;
+          value?: string | null;
+          unit?: string | null;
+          evidence?: string | null;
+          note?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    closerValue?: string | null;
+    closerText?: string | null;
+    evidence?: string | null;
+    sources?: string | null;
+  };
   /**
    * Exited and acquired companies get a badge and aren't counted as active.
    */
@@ -346,13 +376,13 @@ export interface Team {
    */
   group:
     | 'founding'
+    | 'advisors'
     | 'investments'
     | 'investor-relations'
     | 'portfolio-investments'
-    | 'marketing'
     | 'finance'
     | 'hr'
-    | 'advisors'
+    | 'marketing'
     | 'executive';
   /**
    * Portrait, ideally at least 1200 × 1500 px. Initials are shown until a photo is added.
@@ -360,12 +390,19 @@ export interface Team {
   photo?: (number | null) | Media;
   linkedin?: string | null;
   /**
-   * 3–4 lines. Shown on the founder cards on the About page.
+   * Founders only. One or two short paragraphs (leave an empty line between them).
    */
   bio?: string | null;
   /**
-   * Up to 3 short points, shown on the founder cards.
+   * Founders only, shown under the bio: e.g. previous firms (no heading), then "Private Equity Investments and Exits", "Early-stage Investments". Each row is one image of logos on white.
    */
+  logoRows?:
+    | {
+        heading?: string | null;
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
   highlights?:
     | {
         text: string;
@@ -454,7 +491,7 @@ export interface Fund {
   status: 'raising' | 'investing' | 'deployed' | 'closed';
   description?: string | null;
   /**
-   * About lists every fund.
+   * Funds are listed on the home page ("Our funds").
    */
   showOnHome?: boolean | null;
   sebiCategory: string;
@@ -674,6 +711,32 @@ export interface CompaniesSelect<T extends boolean = true> {
       };
   marketOpportunity?: T;
   whyTheyWin?: T;
+  impact?:
+    | T
+    | {
+        show?: T;
+        featured?: T;
+        order?: T;
+        sectorLabel?: T;
+        stage?: T;
+        period?: T;
+        tagline?: T;
+        image?: T;
+        metrics?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              unit?: T;
+              evidence?: T;
+              note?: T;
+              id?: T;
+            };
+        closerValue?: T;
+        closerText?: T;
+        evidence?: T;
+        sources?: T;
+      };
   status?: T;
   exitYear?: T;
   exitNote?: T;
@@ -697,6 +760,13 @@ export interface TeamSelect<T extends boolean = true> {
   photo?: T;
   linkedin?: T;
   bio?: T;
+  logoRows?:
+    | T
+    | {
+        heading?: T;
+        image?: T;
+        id?: T;
+      };
   highlights?:
     | T
     | {
@@ -1058,7 +1128,7 @@ export interface HomePage {
    */
   positioning: string;
   /**
-   * Shown four to a row: 4 or 8 works best. Keep each to one short sentence.
+   * Shown as tiers of a spiral staircase on the home page; clicking a heading opens its points. 8 works best.
    */
   pillars?:
     | {
@@ -1080,7 +1150,13 @@ export interface HomePage {
           | 'grants'
           | 'communications'
           | 'events';
-        text: string;
+        points?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        text?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1212,29 +1288,198 @@ export interface PerspectivesPage {
   createdAt?: string | null;
 }
 /**
+ * Every section of the Impact page. Each company's own impact view (measures, evidence, sources) is on the company: Portfolio → company → Impact tab.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "impact-page".
  */
 export interface ImpactPage {
   id: number;
-  eyebrow: string;
-  headline: string;
-  intro: string;
-  stats?:
-    | {
-        value: string;
-        label: string;
-        id?: string | null;
-      }[]
-    | null;
-  themes?:
+  hero?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    statement?: string | null;
+    intro?: string | null;
+    primaryLabel?: string | null;
+    secondaryLabel?: string | null;
+    tiles?:
+      | {
+          image: number | Media;
+          company?: (number | null) | Company;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  pathways?:
     | {
         title: string;
-        body: string;
+        subtitle?: string | null;
+        body?: string | null;
         companies?: (number | Company)[] | null;
         id?: string | null;
       }[]
     | null;
+  outcomes?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    status?: string | null;
+    /**
+     * Leave a value empty to show "In preparation".
+     */
+    measures?:
+      | {
+          label: string;
+          value?: string | null;
+          unit?: string | null;
+          definition?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    coverageTitle?: string | null;
+    coverageText?: string | null;
+    coverageNote?: string | null;
+    footnote?: string | null;
+  };
+  footprint?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    cardText?: string | null;
+    footnote?: string | null;
+    /**
+     * Country-level markers (not facility locations). Latitude/longitude place the marker.
+     */
+    countries?:
+      | {
+          name: string;
+          lat: number;
+          lon: number;
+          presence?: ('hq' | 'manufacturing' | 'deployments')[] | null;
+          companies?: (number | Company)[] | null;
+          value?: string | null;
+          valueLabel?: string | null;
+          detail?: string | null;
+          source?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  sdgs?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    note?: string | null;
+    /**
+     * Goal 5 (Gender Equality) is shown as the bar under the grid.
+     */
+    goals?:
+      | {
+          number: number;
+          title: string;
+          summary?: string | null;
+          /**
+           * A portfolio company, or a label (e.g. "Transition VC × GreenTech", a team or person).
+           */
+          entries?:
+            | {
+                company?: (number | null) | Company;
+                label?: string | null;
+                connection: string;
+                measures?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  carousel?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    footnote?: string | null;
+  };
+  contribution?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    pillars?:
+      | {
+          label?: string | null;
+          title?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    caseLabel?: string | null;
+    caseTitle?: string | null;
+    casePoints?:
+      | {
+          title?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    caseSource?: string | null;
+    footnote?: string | null;
+  };
+  women?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    leaders?:
+      | {
+          area?: string | null;
+          name?: string | null;
+          role?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    functions?:
+      | {
+          title?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    footnote?: string | null;
+  };
+  perspectives?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    footnote?: string | null;
+  };
+  measurement?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    items?:
+      | {
+          title: string;
+          body?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    reports?:
+      | {
+          title: string;
+          status?: string | null;
+          file?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+    processTitle?: string | null;
+    process?:
+      | {
+          step?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1487,6 +1732,12 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         title?: T;
         icon?: T;
+        points?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
         text?: T;
         id?: T;
       };
@@ -1580,23 +1831,196 @@ export interface PerspectivesPageSelect<T extends boolean = true> {
  * via the `definition` "impact-page_select".
  */
 export interface ImpactPageSelect<T extends boolean = true> {
-  eyebrow?: T;
-  headline?: T;
-  intro?: T;
-  stats?:
+  hero?:
     | T
     | {
-        value?: T;
-        label?: T;
-        id?: T;
+        eyebrow?: T;
+        headline?: T;
+        statement?: T;
+        intro?: T;
+        primaryLabel?: T;
+        secondaryLabel?: T;
+        tiles?:
+          | T
+          | {
+              image?: T;
+              company?: T;
+              caption?: T;
+              id?: T;
+            };
       };
-  themes?:
+  pathways?:
     | T
     | {
         title?: T;
+        subtitle?: T;
         body?: T;
         companies?: T;
         id?: T;
+      };
+  outcomes?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        status?: T;
+        measures?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              unit?: T;
+              definition?: T;
+              id?: T;
+            };
+        coverageTitle?: T;
+        coverageText?: T;
+        coverageNote?: T;
+        footnote?: T;
+      };
+  footprint?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        cardText?: T;
+        footnote?: T;
+        countries?:
+          | T
+          | {
+              name?: T;
+              lat?: T;
+              lon?: T;
+              presence?: T;
+              companies?: T;
+              value?: T;
+              valueLabel?: T;
+              detail?: T;
+              source?: T;
+              id?: T;
+            };
+      };
+  sdgs?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        note?: T;
+        goals?:
+          | T
+          | {
+              number?: T;
+              title?: T;
+              summary?: T;
+              entries?:
+                | T
+                | {
+                    company?: T;
+                    label?: T;
+                    connection?: T;
+                    measures?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
+  carousel?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        footnote?: T;
+      };
+  contribution?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        pillars?:
+          | T
+          | {
+              label?: T;
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        caseLabel?: T;
+        caseTitle?: T;
+        casePoints?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        caseSource?: T;
+        footnote?: T;
+      };
+  women?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        leaders?:
+          | T
+          | {
+              area?: T;
+              name?: T;
+              role?: T;
+              id?: T;
+            };
+        functions?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        footnote?: T;
+      };
+  perspectives?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        footnote?: T;
+      };
+  measurement?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+        reports?:
+          | T
+          | {
+              title?: T;
+              status?: T;
+              file?: T;
+              id?: T;
+            };
+        processTitle?: T;
+        process?:
+          | T
+          | {
+              step?: T;
+              text?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

@@ -290,38 +290,247 @@ export const HomeSectors: GlobalConfig = {
   ],
 };
 
+// ─── Impact page ─────────────────────────────────────────────────────────────
+const t = (name: string, label: string, extra: Partial<Field> = {}): Field => ({ name, label, type: "text", ...extra }) as Field;
+const ta = (name: string, label: string, extra: Partial<Field> = {}): Field => ({ name, label, type: "textarea", ...extra }) as Field;
+/** Small heading, headline and intro: every Impact section opens with these. */
+const sectionHeading: Field[] = [t("eyebrow", "Small heading"), t("headline", "Headline"), ta("intro", "Intro")];
+const companies = (name: string, label: string): Field => ({ name, label, type: "relationship", relationTo: "companies", hasMany: true });
+
 export const ImpactPage: GlobalConfig = {
   slug: "impact-page",
   label: "Impact page",
-  admin: { group: "Pages", preview: () => "/impact" },
+  admin: {
+    group: "Pages",
+    preview: () => "/impact",
+    description:
+      "Every section of the Impact page. Each company's own impact view (measures, evidence, sources) is on the company: Portfolio → company → Impact tab.",
+  },
   access: editable,
   hooks,
   fields: [
-    { name: "eyebrow", label: "Small heading", type: "text", required: true },
-    { name: "headline", label: "Headline", type: "text", required: true },
-    { name: "intro", label: "Intro", type: "textarea", required: true },
     {
-      name: "stats",
-      label: "Figures",
-      type: "array",
-      fields: [
+      type: "tabs",
+      tabs: [
         {
-          type: "row",
+          label: "Opening",
           fields: [
-            { name: "value", label: "Value", type: "text", required: true },
-            { name: "label", label: "Label", type: "text", required: true },
+            {
+              name: "hero",
+              type: "group",
+              label: false,
+              fields: [
+                t("eyebrow", "Small heading"),
+                t("headline", "Headline"),
+                ta("statement", "Statement (right of the headline)"),
+                ta("intro", "Intro"),
+                { type: "row", fields: [t("primaryLabel", "Button: portfolio progress"), t("secondaryLabel", "Button: how we measure")] },
+                {
+                  name: "tiles",
+                  label: "Photo tiles",
+                  type: "array",
+                  maxRows: 3,
+                  labels: { singular: "Tile", plural: "Tiles" },
+                  fields: [
+                    { name: "image", label: "Photo", type: "upload", relationTo: "media", required: true },
+                    { type: "row", fields: [{ name: "company", label: "Company", type: "relationship", relationTo: "companies" }, t("caption", "Caption")] },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "pathways",
+              label: "Impact pathways (under the photos, and in the SDG section)",
+              type: "array",
+              maxRows: 3,
+              fields: [
+                { type: "row", fields: [t("title", "Title", { required: true }), t("subtitle", "Short line")] },
+                ta("body", "Text"),
+                companies("companies", "Example companies"),
+              ],
+            },
           ],
         },
-      ],
-    },
-    {
-      name: "themes",
-      label: "Impact themes",
-      type: "array",
-      fields: [
-        { name: "title", label: "Title", type: "text", required: true },
-        { name: "body", label: "Text", type: "textarea", required: true },
-        { name: "companies", label: "Related companies", type: "relationship", relationTo: "companies", hasMany: true },
+        {
+          label: "Fund I outcomes",
+          fields: [
+            {
+              name: "outcomes",
+              type: "group",
+              label: false,
+              fields: [
+                ...sectionHeading,
+                t("status", "Status line (top right)"),
+                {
+                  name: "measures",
+                  label: "Portfolio measures",
+                  type: "array",
+                  maxRows: 4,
+                  admin: { description: 'Leave a value empty to show "In preparation".' },
+                  fields: [
+                    { type: "row", fields: [t("label", "Measure", { required: true }), t("value", "Value"), t("unit", "Unit")] },
+                    ta("definition", "Definition"),
+                  ],
+                },
+                t("coverageTitle", "Reporting coverage: title"),
+                ta("coverageText", "Reporting coverage: text"),
+                t("coverageNote", "Reporting coverage: note"),
+                ta("footnote", "Footnote"),
+              ],
+            },
+          ],
+        },
+        {
+          label: "Footprint",
+          fields: [
+            {
+              name: "footprint",
+              type: "group",
+              label: false,
+              fields: [
+                ...sectionHeading,
+                t("cardText", "Line on the summary card"),
+                ta("footnote", "Footnote"),
+                {
+                  name: "countries",
+                  label: "Countries",
+                  type: "array",
+                  labels: { singular: "Country", plural: "Countries" },
+                  admin: { description: "Country-level markers (not facility locations). Latitude/longitude place the marker." },
+                  fields: [
+                    { type: "row", fields: [t("name", "Country", { required: true }), { name: "lat", label: "Latitude", type: "number", required: true }, { name: "lon", label: "Longitude", type: "number", required: true }] },
+                    {
+                      name: "presence",
+                      label: "Presence",
+                      type: "select",
+                      hasMany: true,
+                      options: [
+                        { label: "HQ & offices", value: "hq" },
+                        { label: "Manufacturing & R&D", value: "manufacturing" },
+                        { label: "Deployments & pilots", value: "deployments" },
+                      ],
+                    },
+                    companies("companies", "Companies"),
+                    { type: "row", fields: [t("value", "Headline figure (optional)"), t("valueLabel", "What it measures")] },
+                    ta("detail", "Detail"),
+                    ta("source", "Source"),
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: "SDGs",
+          fields: [
+            {
+              name: "sdgs",
+              type: "group",
+              label: false,
+              fields: [
+                ...sectionHeading,
+                t("note", "Note beside the goals"),
+                {
+                  name: "goals",
+                  label: "UN Sustainable Development Goals",
+                  type: "array",
+                  labels: { singular: "Goal", plural: "Goals" },
+                  admin: { description: "Goal 5 (Gender Equality) is shown as the bar under the grid." },
+                  fields: [
+                    { type: "row", fields: [{ name: "number", label: "SDG number", type: "number", required: true, min: 1, max: 17 }, t("title", "Title", { required: true })] },
+                    ta("summary", "One-line summary"),
+                    {
+                      name: "entries",
+                      label: "Who contributes",
+                      type: "array",
+                      admin: { initCollapsed: true, description: "A portfolio company, or a label (e.g. \"Transition VC × GreenTech\", a team or person)." },
+                      fields: [
+                        { type: "row", fields: [{ name: "company", label: "Company", type: "relationship", relationTo: "companies" }, t("label", "…or label")] },
+                        ta("connection", "Contribution", { required: true }),
+                        t("measures", "Measures behind it"),
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: "Company views",
+          description: "The heading for the company-by-company section. Each company's view is edited on the company (Impact tab).",
+          fields: [{ name: "carousel", type: "group", label: false, fields: [...sectionHeading, ta("footnote", "Footnote")] }],
+        },
+        {
+          label: "Investor contribution",
+          fields: [
+            {
+              name: "contribution",
+              type: "group",
+              label: false,
+              fields: [
+                ...sectionHeading,
+                {
+                  name: "pillars",
+                  label: "Pillars",
+                  type: "array",
+                  maxRows: 4,
+                  fields: [{ type: "row", fields: [t("label", "Label"), t("title", "Title")] }, t("text", "Text")],
+                },
+                { type: "row", fields: [t("caseLabel", "Case: small heading"), t("caseTitle", "Case: title")] },
+                { name: "casePoints", label: "Case: points", type: "array", maxRows: 3, fields: [t("title", "Title"), ta("text", "Text")] },
+                ta("caseSource", "Case: source"),
+                ta("footnote", "Footnote"),
+              ],
+            },
+          ],
+        },
+        {
+          label: "Women in leadership",
+          fields: [
+            {
+              name: "women",
+              type: "group",
+              label: false,
+              fields: [
+                ...sectionHeading,
+                { name: "leaders", label: "Leaders", type: "array", fields: [{ type: "row", fields: [t("area", "Area"), t("name", "Name"), t("role", "Role")] }] },
+                { name: "functions", label: "Functions", type: "array", fields: [{ type: "row", fields: [t("title", "Function"), t("text", "Text")] }] },
+                ta("footnote", "Footnote"),
+              ],
+            },
+          ],
+        },
+        {
+          label: "Perspectives",
+          description: "The three latest Substack essays are shown automatically.",
+          fields: [{ name: "perspectives", type: "group", label: false, fields: [...sectionHeading, ta("footnote", "Footnote")] }],
+        },
+        {
+          label: "Measurement",
+          fields: [
+            {
+              name: "measurement",
+              type: "group",
+              label: false,
+              fields: [
+                ...sectionHeading,
+                { name: "items", label: "Questions", type: "array", fields: [t("title", "Title", { required: true }), ta("body", "Text")] },
+                {
+                  name: "reports",
+                  label: "Reports & policies",
+                  type: "array",
+                  fields: [
+                    { type: "row", fields: [t("title", "Title", { required: true }), t("status", "Status (shown until a file is added)")] },
+                    { name: "file", label: "PDF", type: "upload", relationTo: "media", filterOptions: { mimeType: { equals: "application/pdf" } } },
+                  ],
+                },
+                t("processTitle", "Process heading"),
+                { name: "process", label: "Process steps", type: "array", maxRows: 6, fields: [{ type: "row", fields: [t("step", "Step"), t("text", "Text")] }] },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],
@@ -516,13 +725,16 @@ export const HomePage: GlobalConfig = {
               label: "Pillars",
               type: "array",
               labels: { singular: "Pillar", plural: "Pillars" },
-              maxRows: 8,
-              admin: { description: "Shown four to a row: 4 or 8 works best. Keep each to one short sentence." },
+              maxRows: 10,
+              admin: {
+                description:
+                  "Shown as tiers of a spiral staircase on the home page; clicking a heading opens its points. 8 works best.",
+              },
               fields: [
                 {
                   type: "row",
                   fields: [
-                    { name: "title", label: "Title", type: "text", required: true, maxLength: 40 },
+                    { name: "title", label: "Heading", type: "text", required: true, maxLength: 100 },
                     {
                       name: "icon",
                       label: "Icon",
@@ -533,7 +745,14 @@ export const HomePage: GlobalConfig = {
                     },
                   ],
                 },
-                { name: "text", label: "Sentence", type: "textarea", required: true, maxLength: 200 },
+                {
+                  name: "points",
+                  label: "Points (shown in the pop-up)",
+                  type: "array",
+                  labels: { singular: "Point", plural: "Points" },
+                  fields: [{ name: "text", label: "Point", type: "textarea", required: true, maxLength: 300 }],
+                },
+                { name: "text", label: "Short summary (optional)", type: "textarea", maxLength: 200 },
               ],
             },
           ],

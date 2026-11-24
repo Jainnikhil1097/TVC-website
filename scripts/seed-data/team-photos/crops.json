@@ -118,5 +118,35 @@
     "top": 0.0769,
     "width": 0.3833,
     "centre": 0.5
+  },
+  "anuj-khanna": {
+    "top": 0.0062,
+    "width": 0.5043,
+    "centre": 0.4137
+  },
+  "dr-ingolf-groning": {
+    "top": 0.0759,
+    "width": 0.7393,
+    "centre": 0.4313
+  },
+  "mustafa-wajid": {
+    "top": 0.0605,
+    "width": 0.859,
+    "centre": 0.5435
+  },
+  "ravin-mirchandani": {
+    "top": 0.0147,
+    "width": 0.7882,
+    "centre": 0.4708
+  },
+  "tejas-goenka": {
+    "top": 0.1012,
+    "width": 0.7754,
+    "centre": 0.4995
+  },
+  "dr-arvind-parthasarathy": {
+    "top": 0.1,
+    "width": 0.72,
+    "centre": 0.51
   }
 }

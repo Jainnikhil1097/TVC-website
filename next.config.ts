@@ -15,8 +15,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/careers", destination: "/contact", permanent: true },
-      // The Funds page was folded into About (every fund is listed there).
-      { source: "/funds", destination: "/about#funds", permanent: true },
+      // The Funds page was retired; the home page's "Our funds" section lists them.
+      { source: "/funds", destination: "/#funds", permanent: true },
     ];
   },
   images: {
