@@ -1,0 +1,121 @@
+name: Deploy static site to Hostinger
+
+# Mirrors the static export (out/) to transitionventurecapital.com over FTPS.
+# This is the same look-only preview the GitHub Pages workflow publishes: every
+# page and animation, but no /admin and forms disabled. The full Next.js +
+# Payload app (Postgres, real forms) runs on the VPS.
+#
+# Required repository secrets:
+#   FTP_HOST     145.79.210.40
+#   FTP_USERNAME u161900088.transitionventurecapital.com
+#   FTP_PASSWORD the FTP password
+#   FTP_BASE     optional; leave unset to auto-detect the web root
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-hostinger-tvc
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./.data/preview.db
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Load the starting content into a temporary database
+        run: mkdir -p .data && npm run seed
+
+      - name: Build the static pages
+        run: npm run build:pages
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: out
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: out
+
+      - name: Install lftp
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+
+      - name: Resolve the web root on the FTP account
+        id: root
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USERNAME }}
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+          FTP_BASE: ${{ secrets.FTP_BASE }}
+        run: |
+          set -u
+          LISTING=$(lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" -e \
+            "set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:check-hostname off; pwd; ls -la; bye" 2>&1) || true
+          echo "$LISTING"
+
+          if [ -n "${FTP_BASE:-}" ]; then
+            echo "Using FTP_BASE secret: ${FTP_BASE}"
+            echo "target=${FTP_BASE}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if echo "$LISTING" | grep -q 'public_html'; then
+            echo "Login lands in the domain folder; deploying into public_html/."
+            echo "target=public_html/" >> "$GITHUB_OUTPUT"
+          elif echo "$LISTING" | grep -qE 'index\.html|\.htaccess'; then
+            echo "Login lands directly in the web root; deploying into ./."
+            echo "target=./" >> "$GITHUB_OUTPUT"
+          elif echo "$LISTING" | grep -qE '(^|[[:space:]])domains([[:space:]]|$)'; then
+            echo "::error::FTP login landed at the account home (listing shows 'domains'). Set FTP_BASE to the domain folder path instead of uploading."
+            exit 1
+          else
+            echo "Directory looks empty; treating it as the web root."
+            echo "target=./" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload site
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USERNAME }}
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+          TARGET: ${{ steps.root.outputs.target }}
+        run: |
+          lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" <<EOF
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ssl:check-hostname off
+          set cmd:fail-exit yes
+          set net:max-retries 3
+          mirror -R --delete --verbose --parallel=4 ./out/ "${TARGET}"
+          bye
+          EOF
+
+      - name: Smoke check
+        run: |
+          echo "Deployed to transitionventurecapital.com (static preview)."
+          for url in https://transitionventurecapital.com/ https://www.transitionventurecapital.com/; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$url" || echo 000)
+            echo "$url -> $code"
+            [ "$code" = "200" ] || echo "::warning::${url} returned ${code} (DNS may still be propagating)"
+          done
