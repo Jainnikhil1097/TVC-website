@@ -1,6 +1,6 @@
 import type { PortfolioSectorId } from "./types";
 
-/** The eight investment themes — these are the "planets" in the home hero. */
+/** The investment themes (the home "Where we invest" grid), in display order. */
 export type InvestmentSector = {
   id: string;
   name: string;
@@ -24,16 +24,25 @@ export const investmentSectors: InvestmentSector[] = [
     portfolioSector: "industrial",
   },
   {
+    id: "built-environment",
+    name: "Built Environment",
+    line: "Efficient cooling, lighting and energy management for the buildings and cities India is yet to build.",
+  },
+  {
+    id: "semiconductors",
+    name: "Semiconductors",
+    line: "Chips, wide-bandgap devices and substrates that make power conversion and sensing more efficient.",
+  },
+  {
+    id: "power-electronics",
+    name: "Power Electronics",
+    line: "Converters, chargers and control that sit between every source and every load.",
+  },
+  {
     id: "renewable-tech",
     name: "Renewable Tech",
     line: "Technology that makes wind and solar assets generate more, for longer.",
     portfolioSector: "renewables",
-  },
-  {
-    id: "alt-fuels",
-    name: "Alt Fuels",
-    line: "Hydrogen and alternative fuels, produced and used where industry needs them.",
-    portfolioSector: "hydrogen",
   },
   {
     id: "energy-storage",
@@ -41,34 +50,9 @@ export const investmentSectors: InvestmentSector[] = [
     line: "Safer, longer-lasting storage for vehicles, the grid and critical backup.",
   },
   {
-    id: "power-electronics",
-    name: "Power Electronics",
-    line: "Converters, substrates and control that sit between every source and every load.",
-  },
-  {
-    id: "buildings",
-    name: "Buildings",
-    line: "Efficient cooling, lighting and energy management for the buildings India is yet to build.",
-  },
-  {
-    id: "sustainability",
-    name: "Sustainability",
-    line: "Data, carbon and ESG platforms that make climate outcomes measurable and investable.",
-    portfolioSector: "platforms",
+    id: "alt-fuels",
+    name: "Alt Fuels",
+    line: "Hydrogen and alternative fuels, produced and used where industry needs them.",
+    portfolioSector: "hydrogen",
   },
 ];
-
-/** Filters used on the portfolio page (as on the current site, spelling fixed). */
-export const portfolioSectors: { id: PortfolioSectorId; name: string }[] = [
-  { id: "drone", name: "Drone" },
-  { id: "industrial", name: "Industrial" },
-  { id: "platforms", name: "Platforms" },
-  { id: "utility-grid", name: "Utility / Grid" },
-  { id: "renewables", name: "Renewables" },
-  { id: "hydrogen", name: "Hydrogen" },
-  { id: "mobility", name: "Mobility" },
-  { id: "data-centers", name: "Data Centers" },
-];
-
-export const portfolioSectorName = (id: PortfolioSectorId) =>
-  portfolioSectors.find((s) => s.id === id)?.name ?? id;

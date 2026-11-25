@@ -2,6 +2,44 @@ import type { Company } from "./types";
 
 // Ordered newest investment first, as on the current site.
 export const portfolio: Company[] = [
+  // Added 21 Nov 2026 from the team's company list ("Website Ideas and Link" PDF). All Fund I
+  // (the team, 23 Nov 2026: "everything we have now is Fund 1"; Fund II is still being finalised).
+  {
+    slug: "earthen",
+    name: "EarthEn",
+    summary:
+      "CO₂-based thermal batteries for long-duration energy storage and clean industrial heat.",
+    sector: "utility-grid",
+    stage: "Seed",
+    yearInvested: 2026,
+    website: "https://www.earthen.energy/",
+    founders: [{ name: "Manas Pathak" }],
+    fund: "fund-1",
+  },
+  {
+    slug: "perovskia-solar",
+    name: "Perovskia Solar",
+    summary:
+      "Inkjet-printed, custom-shaped perovskite solar cells that let electronics and IoT devices run on indoor light instead of batteries.",
+    sector: "renewables",
+    stage: "Pre-Series A",
+    yearInvested: 2026,
+    website: "https://perovskia.solar/",
+    founders: [{ name: "Toby Meyer" }, { name: "Anand Verma" }],
+    fund: "fund-1",
+  },
+  {
+    slug: "two-point-o",
+    name: "Two Point O",
+    summary:
+      "Opex-as-a-Service for clean-energy infrastructure: it selects, funds and owns the equipment, and leases it to businesses with a performance warranty.",
+    sector: "platforms",
+    stage: "Series A",
+    yearInvested: 2026,
+    website: "https://twopointo.capital/",
+    founders: [{ name: "Manya Ranjan" }, { name: "Karan Bhutani" }, { name: "Archit Mehrotra" }, { name: "Shashidhar Reddy" }],
+    fund: "fund-1",
+  },
   {
     slug: "suind",
     name: "SUIND",
@@ -186,5 +224,48 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2023,
     website: "https://www.emoenergy.in/",
+  },
+  // Pre Fund: the partners' investments from before Fund I (2021), on the map's Pre Fund board.
+  // Draft descriptions from public information, for the team to check in the CMS. Their
+  // multiples are never shown on the site.
+  {
+    slug: "ethereal-machines",
+    name: "Ethereal Machines",
+    summary: "5-axis CNC milling and 3D printing in one compact, desktop-sized machine, so complex shapes can be machined efficiently in a single setup, with more design freedom and stronger parts.",
+    sector: "industrial",
+    stage: "TBD",
+    yearInvested: 2021,
+    website: "https://etherealmachines.com/",
+    fund: "pre-fund",
+  },
+  {
+    slug: "exponent-energy",
+    name: "Exponent Energy",
+    summary: "Battery packs, rapid-charging stations and charging software that charge commercial EVs in 15 minutes, built for fleets of three-wheelers, trucks and buses to cut downtime and battery costs.",
+    sector: "mobility",
+    stage: "TBD",
+    yearInvested: 2021,
+    website: "https://www.exponent.energy/",
+    fund: "pre-fund",
+  },
+  {
+    slug: "billione-mobility",
+    name: "BillionE Mobility",
+    summary: "Electric Mobility-as-a-Service (e-MaaS) for commercial logistics: electric trucks and buses, with the charging infrastructure and fleet management to run them.",
+    sector: "mobility",
+    stage: "TBD",
+    yearInvested: 2021,
+    website: "https://www.billione.com/",
+    fund: "pre-fund",
+  },
+  {
+    slug: "chargezone",
+    name: "ChargeZone",
+    summary: "A full-stack charge point operator that builds, owns and runs EV charging networks for cars, buses and trucks, combining fast-charging hardware, cloud software and energy services across cities and highways.",
+    sector: "mobility",
+    stage: "TBD",
+    yearInvested: 2021,
+    website: "https://www.chargezone.co.in/",
+    fund: "pre-fund",
   },
 ];

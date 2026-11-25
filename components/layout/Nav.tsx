@@ -11,7 +11,8 @@ import { basePath } from "@/lib/base-path";
 
 /**
  * Light by default; transparent with white text while it sits over a dark hero
- * (any element marked `data-nav-dark`, e.g. the home globe), then white once
+ * (any element marked `data-nav-dark`: the home hero and page headers), then white once
+ * a `data-nav-cover` section slides over it or
  * the visitor scrolls past it.
  */
 export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; email: string }) {
@@ -24,7 +25,10 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
     const update = () => {
       setScrolled(window.scrollY > 8);
       const hero = document.querySelector<HTMLElement>("[data-nav-dark]");
-      setOverDark(Boolean(hero && hero.getBoundingClientRect().bottom > 72));
+      // A section that slides over a sticky hero ends the dark zone when it reaches the nav.
+      const cover = document.querySelector<HTMLElement>("[data-nav-cover]");
+      const covered = Boolean(cover && cover.getBoundingClientRect().top <= 72);
+      setOverDark(Boolean(hero && hero.getBoundingClientRect().bottom > 72 && !covered));
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -46,7 +50,9 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
   const investorProps = investorLoginUrl ? { target: "_blank", rel: "noopener noreferrer" } : {};
 
   return (
-    <header className="fixed inset-x-0 top-[var(--banner-h,0px)] z-50" data-theme={dark ? "dark" : undefined}>
+    // bg-transparent: data-theme="dark" would otherwise paint the band colour (globals.css) and
+    // show as a solid bar over the hero; the inner bar below owns the light-mode background.
+    <header className="fixed inset-x-0 top-[var(--banner-h,0px)] z-50 bg-transparent [view-transition-name:site-nav]" data-theme={dark ? "dark" : undefined}>
       <div
         className={cn(
           "border-b transition-[background-color,border-color] duration-300",
@@ -74,7 +80,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative px-3 py-2 text-[0.9rem] font-medium transition-colors",
+                      "relative px-3 py-2 text-[0.9rem] font-normal transition-colors",
                       dark
                         ? active
                           ? "text-white"
@@ -104,7 +110,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
               href={investorHref}
               {...investorProps}
               className={cn(
-                "hidden items-center gap-1 px-2 py-2 text-[0.85rem] font-medium transition-colors md:inline-flex",
+                "hidden items-center gap-1 px-2 py-2 text-[0.85rem] font-normal transition-colors md:inline-flex",
                 dark ? "text-white/70 hover:text-white" : "text-muted hover:text-ink"
               )}
             >
@@ -113,7 +119,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
             <Link
               href={pitchHref}
               className={cn(
-                "hidden min-h-10 items-center rounded-full px-5 text-[0.85rem] font-semibold transition-colors sm:inline-flex",
+                "hidden min-h-10 items-center rounded-full px-5 text-[0.85rem] font-bold transition-colors sm:inline-flex",
                 dark ? "bg-white text-ink hover:bg-teal-soft" : "bg-ink text-white hover:bg-teal-ink"
               )}
             >
@@ -147,7 +153,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
                   href={item.href}
                   aria-current={pathname === item.href ? "page" : undefined}
                   onClick={() => setOpen(false)}
-                  className="flex min-h-14 items-center justify-between font-serif text-2xl font-light"
+                  className="flex min-h-14 items-center justify-between font-display text-2xl"
                 >
                   {item.label}
                   {pathname === item.href && <span className="h-px w-8 bg-teal-ink" aria-hidden />}
@@ -159,7 +165,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
             <Link
               href={pitchHref}
               onClick={() => setOpen(false)}
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink text-[0.95rem] font-semibold text-white"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink text-[0.95rem] font-bold text-white"
             >
               Pitch to us
             </Link>
@@ -167,7 +173,7 @@ export function Nav({ investorLoginUrl, email }: { investorLoginUrl?: string; em
               href={investorHref}
               {...investorProps}
               onClick={() => setOpen(false)}
-              className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-line text-[0.95rem] font-medium"
+              className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-line text-[0.95rem] font-normal"
             >
               Investor login <ArrowUpRight className="size-4" aria-hidden />
             </a>

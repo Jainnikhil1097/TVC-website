@@ -2,8 +2,9 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Site } from "@/lib/cms";
 import { getFunds } from "@/lib/cms";
-import { footerLinks, nav, pitchHref } from "@/lib/site-config";
+import { footerLinks, nav } from "@/lib/site-config";
 import { NewsletterForm } from "./NewsletterForm";
+import { FooterWave } from "./FooterWave";
 import { Logo } from "@/components/ui/Logo";
 import { AccentRule } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
@@ -13,7 +14,9 @@ export async function Footer({ site }: { site: Site }) {
   const funds = await getFunds();
 
   return (
-    <footer data-theme="dark" className="relative bg-ink text-white">
+    <footer data-theme="dark" className="relative isolate bg-ink text-white">
+      {/* A quiet, static echo of the home hero's wave */}
+      <FooterWave />
       {/* Newsletter signup — on every page */}
       <Reveal className="container-site grid gap-8 py-16 md:grid-cols-[1.2fr_1fr] md:items-end md:py-20">
         <div>
@@ -23,12 +26,6 @@ export async function Footer({ site }: { site: Site }) {
         </div>
         <div className="md:justify-self-end">
           <NewsletterForm substackUrl={site.substackUrl} />
-          <p className="mt-3 text-xs text-ink-400">
-            Opens Substack to confirm. Building in energy?{" "}
-            <Link href={pitchHref} className="text-white underline decoration-white/30 underline-offset-4 hover:decoration-teal">
-              Pitch to us
-            </Link>
-          </p>
         </div>
       </Reveal>
 
@@ -42,10 +39,11 @@ export async function Footer({ site }: { site: Site }) {
 
         <div>
           <h3 className="eyebrow text-ink-400">Explore</h3>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-3 space-y-0.5 text-sm">
             {[...nav, ...footerLinks].map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-ink-200 transition-colors hover:text-teal">
+                {/* py-1.5: a comfortable tap target on phones, same rhythm as before */}
+                <Link href={item.href} className="inline-block py-1.5 text-ink-200 transition-colors hover:text-teal">
                   {item.label}
                 </Link>
               </li>
@@ -54,20 +52,27 @@ export async function Footer({ site }: { site: Site }) {
         </div>
 
         <div>
-          <h3 className="eyebrow text-ink-400">Our office</h3>
-          <address className="mt-4 text-sm leading-relaxed text-ink-200 not-italic">
-            {site.contact.address.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
+          <h3 className="eyebrow text-ink-400">{site.contact.offices.length > 1 ? "Our offices" : "Our office"}</h3>
+          <div className="mt-4 space-y-4 text-sm leading-relaxed text-ink-200">
+            {site.contact.offices.map((office) => (
+              <address key={office.name} className="not-italic">
+                {office.address.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </address>
             ))}
-            <a
-              href={`mailto:${site.contact.email}`}
-              className="mt-3 block text-white underline decoration-white/25 underline-offset-4 hover:decoration-teal"
-            >
-              {site.contact.email}
-            </a>
-          </address>
+            <p>
+              <span className="block text-ink-400">General Enquiries</span>
+              <a
+                href={`mailto:${site.contact.email}`}
+                className="text-white underline decoration-white/25 underline-offset-4 hover:decoration-teal"
+              >
+                {site.contact.email}
+              </a>
+            </p>
+          </div>
         </div>
 
         <div>
@@ -107,10 +112,15 @@ export async function Footer({ site }: { site: Site }) {
         <p>
           © {year} {site.legalName}. All rights reserved.
         </p>
-        <ul className="flex flex-wrap gap-x-5 gap-y-2">
+        <ul className="flex flex-wrap gap-x-5">
+          <li>
+            <Link href="/gift-city#disclosures" className="inline-block py-1.5 hover:text-teal">
+              IFSCA disclosures
+            </Link>
+          </li>
           {site.policies.map((p) => (
             <li key={p.href}>
-              <a href={p.href} className="hover:text-teal" target="_blank" rel="noopener noreferrer">
+              <a href={p.href} className="inline-block py-1.5 hover:text-teal" target="_blank" rel="noopener noreferrer">
                 {p.label}
               </a>
             </li>

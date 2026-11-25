@@ -13,6 +13,10 @@ export const pillarIcons = [
   { value: "energy", label: "Energy (plug)" },
   { value: "growth", label: "Growth (sprout)" },
   { value: "focus", label: "Focus (target)" },
+  { value: "talent", label: "Talent (people)" },
+  { value: "grants", label: "Grants (institution)" },
+  { value: "communications", label: "Communications (megaphone)" },
+  { value: "events", label: "Events (calendar)" },
 ] as const;
 
 export type PillarIcon = (typeof pillarIcons)[number]["value"];

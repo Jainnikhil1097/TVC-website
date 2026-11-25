@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource/merriweather/latin-300.css";
-import "@fontsource/merriweather/latin-ext-300.css";
-import "@fontsource/merriweather/latin-400.css";
-import "@fontsource-variable/manrope/index.css";
+// Brand Book typography, self-hosted (all OFL):
+//   headlines: Inter · body & interface: Calibri → Carlito (its free, metric-identical
+//   twin; real Calibri is used where installed) · taglines: Baron → Montserrat (stand-in
+//   until licensed Baron web fonts are supplied).
+import "@fontsource-variable/inter/wght.css";
+import "@fontsource/carlito/400.css";
+import "@fontsource/carlito/700.css";
+import "@fontsource-variable/montserrat/wght.css";
 import "./globals.css";
 import { siteIdentity as site } from "@/lib/site-config";
 import { isStaticPreview } from "@/lib/base-path";
@@ -30,7 +34,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0e14",
+  themeColor: "#000000",
   width: "device-width",
   initialScale: 1,
 };

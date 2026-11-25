@@ -107,6 +107,9 @@ export interface Config {
     'page-seo': PageSeo;
     'home-page': HomePage;
     'home-sectors': HomeSector;
+    'portfolio-page': PortfolioPage;
+    'about-page': AboutPage;
+    'perspectives-page': PerspectivesPage;
     'impact-page': ImpactPage;
     'gift-city-page': GiftCityPage;
     'fund-metrics': FundMetric;
@@ -117,6 +120,9 @@ export interface Config {
     'page-seo': PageSeoSelect<false> | PageSeoSelect<true>;
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
     'home-sectors': HomeSectorsSelect<false> | HomeSectorsSelect<true>;
+    'portfolio-page': PortfolioPageSelect<false> | PortfolioPageSelect<true>;
+    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
+    'perspectives-page': PerspectivesPageSelect<false> | PerspectivesPageSelect<true>;
     'impact-page': ImpactPageSelect<false> | ImpactPageSelect<true>;
     'gift-city-page': GiftCityPageSelect<false> | GiftCityPageSelect<true>;
     'fund-metrics': FundMetricsSelect<false> | FundMetricsSelect<true>;
@@ -165,6 +171,10 @@ export interface Company {
   sector:
     'drone' | 'industrial' | 'platforms' | 'utility-grid' | 'renewables' | 'hydrogen' | 'mobility' | 'data-centers';
   stage: 'Pre-Seed' | 'Seed' | 'Pre-Series A' | 'Series A' | 'TBD';
+  /**
+   * Shown on the company card and used by the Portfolio page's fund filter.
+   */
+  fund: 'pre-fund' | 'fund-1' | 'fund-2';
   yearInvested: number;
   website: string;
   /**
@@ -172,7 +182,7 @@ export interface Company {
    */
   logo?: (number | null) | Media;
   /**
-   * A product or team photo, shown when the company is featured on the home page (landscape, at least 1600 px wide).
+   * A product or team photo, landscape, at least 2400 px wide. Shown when the company is featured on the home page. Set the focal point on the subject.
    */
   coverImage?: (number | null) | Media;
   founders?:
@@ -194,6 +204,81 @@ export interface Company {
   essayUrl?: string | null;
   videoUrl?: string | null;
   /**
+   * A clean product render on a white or transparent background, without text labels (add those as callouts below). At least 1600 px wide.
+   */
+  productImage?: (number | null) | Media;
+  /**
+   * Labels pointing at parts of the product image. Position is a percentage of the image: 0/0 is the top-left corner, 50/50 the centre.
+   */
+  callouts?:
+    | {
+        label: string;
+        detail?: string | null;
+        x: number;
+        y: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Not shown on the site at the moment — kept for future use.
+   */
+  proofValue?: string | null;
+  proofLabel?: string | null;
+  deployment?: string | null;
+  /**
+   * Only customers that are cleared to be named publicly.
+   */
+  customers?: string | null;
+  /**
+   * The problem in the market, in two or three sentences.
+   */
+  marketGap?: string | null;
+  /**
+   * What the company built and why it's different. The first sentence also shows on the home page.
+   */
+  breakthrough?: string | null;
+  /**
+   * Milestones: deployments, pilots, patents, partners. No revenue, fundraising or return figures.
+   */
+  traction?:
+    | {
+        point: string;
+        id?: string | null;
+      }[]
+    | null;
+  marketOpportunity?: string | null;
+  whyTheyWin?: string | null;
+  impact?: {
+    show?: boolean | null;
+    featured?: boolean | null;
+    /**
+     * Lower comes first.
+     */
+    order?: number | null;
+    sectorLabel?: string | null;
+    stage?: string | null;
+    period?: string | null;
+    tagline?: string | null;
+    /**
+     * Falls back to the logo.
+     */
+    image?: (number | null) | Media;
+    metrics?:
+      | {
+          label: string;
+          value?: string | null;
+          unit?: string | null;
+          evidence?: string | null;
+          note?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    closerValue?: string | null;
+    closerText?: string | null;
+    evidence?: string | null;
+    sources?: string | null;
+  };
+  /**
    * Exited and acquired companies get a badge and aren't counted as active.
    */
   status: 'active' | 'exited' | 'acquired';
@@ -207,6 +292,10 @@ export interface Company {
    * Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too.
    */
   featured?: boolean | null;
+  /**
+   * 1 shows first among the featured companies. Leave empty to follow the portfolio order.
+   */
+  homeOrder?: number | null;
   /**
    * Untick to hide this from the website without deleting it.
    */
@@ -282,13 +371,44 @@ export interface Team {
    * e.g. "VP - Investments". Leave blank for advisors.
    */
   title?: string | null;
-  group: 'founding' | 'executive' | 'advisors';
+  /**
+   * The team this person appears under on the About page.
+   */
+  group:
+    | 'founding'
+    | 'advisors'
+    | 'investments'
+    | 'investor-relations'
+    | 'portfolio-investments'
+    | 'finance'
+    | 'hr'
+    | 'marketing'
+    | 'executive';
   /**
    * Portrait, ideally at least 1200 × 1500 px. Initials are shown until a photo is added.
    */
   photo?: (number | null) | Media;
   linkedin?: string | null;
+  /**
+   * Founders only. One or two short paragraphs (leave an empty line between them).
+   */
   bio?: string | null;
+  /**
+   * Founders only, shown under the bio: e.g. previous firms (no heading), then "Private Equity Investments and Exits", "Early-stage Investments". Each row is one image of logos on white.
+   */
+  logoRows?:
+    | {
+        heading?: string | null;
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  highlights?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Untick to hide this from the website without deleting it.
    */
@@ -313,6 +433,10 @@ export interface News {
   source: string;
   date: string;
   url: string;
+  /**
+   * Shown on the news card. Its alt text is set on the photo.
+   */
+  image?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -370,6 +494,9 @@ export interface Fund {
   size?: string | null;
   status: 'raising' | 'investing' | 'deployed' | 'closed';
   description?: string | null;
+  /**
+   * Funds are listed on the home page ("Our funds").
+   */
   showOnHome?: boolean | null;
   sebiCategory: string;
   sebiRegistration: string;
@@ -547,6 +674,7 @@ export interface CompaniesSelect<T extends boolean = true> {
   summary?: T;
   sector?: T;
   stage?: T;
+  fund?: T;
   yearInvested?: T;
   website?: T;
   logo?: T;
@@ -563,11 +691,62 @@ export interface CompaniesSelect<T extends boolean = true> {
   whyWeInvested?: T;
   essayUrl?: T;
   videoUrl?: T;
+  productImage?: T;
+  callouts?:
+    | T
+    | {
+        label?: T;
+        detail?: T;
+        x?: T;
+        y?: T;
+        id?: T;
+      };
+  proofValue?: T;
+  proofLabel?: T;
+  deployment?: T;
+  customers?: T;
+  marketGap?: T;
+  breakthrough?: T;
+  traction?:
+    | T
+    | {
+        point?: T;
+        id?: T;
+      };
+  marketOpportunity?: T;
+  whyTheyWin?: T;
+  impact?:
+    | T
+    | {
+        show?: T;
+        featured?: T;
+        order?: T;
+        sectorLabel?: T;
+        stage?: T;
+        period?: T;
+        tagline?: T;
+        image?: T;
+        metrics?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              unit?: T;
+              evidence?: T;
+              note?: T;
+              id?: T;
+            };
+        closerValue?: T;
+        closerText?: T;
+        evidence?: T;
+        sources?: T;
+      };
   status?: T;
   exitYear?: T;
   exitNote?: T;
   slug?: T;
   featured?: T;
+  homeOrder?: T;
   showOnSite?: T;
   order?: T;
   updatedAt?: T;
@@ -585,6 +764,19 @@ export interface TeamSelect<T extends boolean = true> {
   photo?: T;
   linkedin?: T;
   bio?: T;
+  logoRows?:
+    | T
+    | {
+        heading?: T;
+        image?: T;
+        id?: T;
+      };
+  highlights?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
   showOnSite?: T;
   order?: T;
   updatedAt?: T;
@@ -600,6 +792,7 @@ export interface NewsSelect<T extends boolean = true> {
   source?: T;
   date?: T;
   url?: T;
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -808,14 +1001,42 @@ export interface Site {
   thesis: string;
   stage: string;
   cheque: string;
+  /**
+   * Shown when a visitor switches the About page to USD. Leave empty to hide the switch.
+   */
+  chequeUsd?: string | null;
   footerHeadline: string;
   newsletterBlurb: string;
+  /**
+   * Shown as "General Enquiries" on the Contact page and in the footer.
+   */
   email: string;
   /**
-   * One line per row, as it should appear on the site.
+   * Shown as "Explore careers" under General Enquiries on the Contact page. Leave empty to hide it.
    */
-  address: string;
-  mapUrl?: string | null;
+  careersEmail?: string | null;
+  /**
+   * Shown on the Contact page (with a map) and in the footer, in this order.
+   */
+  offices?:
+    | {
+        name: string;
+        /**
+         * One line per row, as it should appear on the site.
+         */
+        address: string;
+        mapUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * An email alert goes to these addresses for every new enquiry (separate several with commas). All enquiries are also kept under Enquiries.
+   */
+  formRecipients?: {
+    startup?: string | null;
+    investor?: string | null;
+    partner?: string | null;
+  };
   /**
    * Where the Investor Login button goes. If empty, it opens the investor enquiry form.
    */
@@ -899,11 +1120,6 @@ export interface PageSeo {
     description?: string | null;
     image?: (number | null) | Media;
   };
-  funds?: {
-    title?: string | null;
-    description?: string | null;
-    image?: (number | null) | Media;
-  };
   contact?: {
     title?: string | null;
     description?: string | null;
@@ -913,7 +1129,7 @@ export interface PageSeo {
   createdAt?: string | null;
 }
 /**
- * The positioning line, "Why founders choose us" and the founder FAQ.
+ * The positioning line and "Why founders choose us" (home page), and the founder FAQ (shown on the Contact page).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-page".
@@ -924,8 +1140,10 @@ export interface HomePage {
    * Shown above the headline figures, e.g. "India's first energy-transition venture fund".
    */
   positioning: string;
+  aboutPhoto?: (number | null) | Media;
+  aboutPhotoCaption?: string | null;
   /**
-   * 4–5 works best. Keep each to one short sentence.
+   * Shown as tiers of a spiral staircase on the home page; clicking a heading opens its points. 8 works best.
    */
   pillars?:
     | {
@@ -942,8 +1160,18 @@ export interface HomePage {
           | 'industry'
           | 'energy'
           | 'growth'
-          | 'focus';
-        text: string;
+          | 'focus'
+          | 'talent'
+          | 'grants'
+          | 'communications'
+          | 'events';
+        points?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        text?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -973,6 +1201,22 @@ export interface HomeSector {
         name: string;
         line: string;
         /**
+         * Leave empty to choose one automatically from the sector's name.
+         */
+        icon?:
+          | (
+              | 'mobility'
+              | 'industrial'
+              | 'built'
+              | 'semiconductors'
+              | 'electronics'
+              | 'renewables'
+              | 'storage'
+              | 'fuels'
+              | 'general'
+            )
+          | null;
+        /**
          * Leave empty to link to the full portfolio.
          */
         portfolioSector?:
@@ -994,29 +1238,273 @@ export interface HomeSector {
   createdAt?: string | null;
 }
 /**
+ * The Portfolio page's heading, intro, button and figure labels. The companies themselves are under Content → Portfolio.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio-page".
+ */
+export interface PortfolioPage {
+  id: number;
+  eyebrow?: string | null;
+  headline?: string | null;
+  intro?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  activeLabel?: string | null;
+  sectorsLabel?: string | null;
+  stagesLabel?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The About page's headings, group photos and closing cards. The intro, approach quote, stage and cheque size (in rupees and US dollars) are in Settings → Site settings; people are under Team; funds under Funds.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page".
+ */
+export interface AboutPage {
+  id: number;
+  eyebrow?: string | null;
+  headline?: string | null;
+  approachEyebrow?: string | null;
+  teamEyebrow?: string | null;
+  teamHeading?: string | null;
+  /**
+   * Team photos, drifting slowly across the end of this page and beside "About Transition VC" on the home page. Alt text is set on each photo.
+   */
+  groupPhotos?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The three link cards at the bottom of the page.
+   */
+  nextSteps?:
+    | {
+        eyebrow: string;
+        title: string;
+        body: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * The Perspectives page's heading, intro and buttons. Essays and videos load from Substack and YouTube automatically; news, events and reports are under Content.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "perspectives-page".
+ */
+export interface PerspectivesPage {
+  id: number;
+  eyebrow?: string | null;
+  headline?: string | null;
+  intro?: string | null;
+  substackLabel?: string | null;
+  youtubeLabel?: string | null;
+  indexEyebrow?: string | null;
+  indexHeading?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Every section of the Impact page. Women in leadership is edited under SDGs → Gender Equality (goal 5).
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "impact-page".
  */
 export interface ImpactPage {
   id: number;
-  eyebrow: string;
-  headline: string;
-  intro: string;
-  stats?:
-    | {
-        value: string;
-        label: string;
-        id?: string | null;
-      }[]
-    | null;
-  themes?:
+  hero?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    statement?: string | null;
+    intro?: string | null;
+    primaryLabel?: string | null;
+    secondaryLabel?: string | null;
+    tiles?:
+      | {
+          image: number | Media;
+          company?: (number | null) | Company;
+          caption?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  pathways?:
     | {
         title: string;
-        body: string;
+        subtitle?: string | null;
+        body?: string | null;
         companies?: (number | Company)[] | null;
         id?: string | null;
       }[]
     | null;
+  outcomes?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    status?: string | null;
+    /**
+     * Leave a value empty to show "In preparation".
+     */
+    measures?:
+      | {
+          label: string;
+          value?: string | null;
+          unit?: string | null;
+          definition?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    coverageTitle?: string | null;
+    coverageText?: string | null;
+    coverageNote?: string | null;
+    footnote?: string | null;
+  };
+  footprint?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    cardText?: string | null;
+    footnote?: string | null;
+    /**
+     * Country-level markers (not facility locations). Latitude/longitude place the marker.
+     */
+    countries?:
+      | {
+          name: string;
+          lat: number;
+          lon: number;
+          presence?: ('hq' | 'manufacturing' | 'deployments')[] | null;
+          companies?: (number | Company)[] | null;
+          value?: string | null;
+          valueLabel?: string | null;
+          detail?: string | null;
+          source?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  sdgs?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    note?: string | null;
+    /**
+     * Goal 5 (Gender Equality) is shown as the bar under the grid.
+     */
+    goals?:
+      | {
+          number: number;
+          title: string;
+          summary?: string | null;
+          /**
+           * A portfolio company, or a label (e.g. "Transition VC × GreenTech", a team or person). For Gender Equality (goal 5), each entry is one line of the bar: the label as its heading (e.g. "Women in leadership") and the contribution as the names or figure.
+           */
+          entries?:
+            | {
+                company?: (number | null) | Company;
+                label?: string | null;
+                connection: string;
+                measures?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  measurement?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    items?:
+      | {
+          title: string;
+          body?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    reports?:
+      | {
+          title: string;
+          status?: string | null;
+          file?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+    processTitle?: string | null;
+    process?:
+      | {
+          step?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  carousel?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    footnote?: string | null;
+  };
+  contribution?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    pillars?:
+      | {
+          label?: string | null;
+          title?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    caseLabel?: string | null;
+    caseTitle?: string | null;
+    casePoints?:
+      | {
+          title?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    caseSource?: string | null;
+    footnote?: string | null;
+  };
+  women?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    leaders?:
+      | {
+          area?: string | null;
+          name?: string | null;
+          role?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    functions?:
+      | {
+          title?: string | null;
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    footnote?: string | null;
+  };
+  perspectives?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    footnote?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1028,6 +1516,9 @@ export interface GiftCityPage {
   id: number;
   eyebrow: string;
   headline: string;
+  /**
+   * Shown in the "Same team, same thesis" section, below the key facts (not in the hero).
+   */
   intro: string;
   highlights?:
     | {
@@ -1038,6 +1529,75 @@ export interface GiftCityPage {
     | null;
   ctaLabel?: string | null;
   ctaHref?: string | null;
+  disclosures?: {
+    show?: boolean | null;
+    asOf?: string | null;
+    fme?: {
+      name?: string | null;
+      legalForm?: string | null;
+      category?: string | null;
+      registrationNumber?: string | null;
+      registrationDate?: string | null;
+    };
+    contact?: {
+      registeredOffice?: string | null;
+      correspondence?: string | null;
+      telephone?: string | null;
+      email?: string | null;
+    };
+    funds?:
+      | {
+          name: string;
+          registrationNumber?: string | null;
+          category?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    serviceProviders?:
+      | {
+          role: string;
+          name?: string | null;
+          address?: string | null;
+          telephone?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    grievance?: {
+      text?: string | null;
+      /**
+       * Linked from the text above once uploaded.
+       */
+      policy?: (number | null) | Media;
+      /**
+       * Most recent quarter first. Leave empty to show the note below.
+       */
+      complaints?:
+        | {
+            quarterEnded: string;
+            pendingStart?: string | null;
+            received?: string | null;
+            disposed?: string | null;
+            pendingEnd?: string | null;
+            id?: string | null;
+          }[]
+        | null;
+      complaintsNote?: string | null;
+    };
+    officers?:
+      | {
+          designation: string;
+          name: string;
+          email?: string | null;
+          telephone?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    actions?: {
+      action?: string | null;
+      status?: string | null;
+    };
+    disclaimer?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1054,9 +1614,6 @@ export interface FundMetric {
         value: string;
         label: string;
         note?: string | null;
-        /**
-         * Pick 3–4 headline figures for the home page. All figures appear on Funds.
-         */
         showOnHome?: boolean | null;
         id?: string | null;
       }[]
@@ -1078,11 +1635,26 @@ export interface SiteSelect<T extends boolean = true> {
   thesis?: T;
   stage?: T;
   cheque?: T;
+  chequeUsd?: T;
   footerHeadline?: T;
   newsletterBlurb?: T;
   email?: T;
-  address?: T;
-  mapUrl?: T;
+  careersEmail?: T;
+  offices?:
+    | T
+    | {
+        name?: T;
+        address?: T;
+        mapUrl?: T;
+        id?: T;
+      };
+  formRecipients?:
+    | T
+    | {
+        startup?: T;
+        investor?: T;
+        partner?: T;
+      };
   investorLoginUrl?: T;
   socials?:
     | T
@@ -1168,13 +1740,6 @@ export interface PageSeoSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  funds?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        image?: T;
-      };
   contact?:
     | T
     | {
@@ -1192,11 +1757,19 @@ export interface PageSeoSelect<T extends boolean = true> {
  */
 export interface HomePageSelect<T extends boolean = true> {
   positioning?: T;
+  aboutPhoto?: T;
+  aboutPhotoCaption?: T;
   pillars?:
     | T
     | {
         title?: T;
         icon?: T;
+        points?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
         text?: T;
         id?: T;
       };
@@ -1221,6 +1794,7 @@ export interface HomeSectorsSelect<T extends boolean = true> {
     | {
         name?: T;
         line?: T;
+        icon?: T;
         portfolioSector?: T;
         id?: T;
       };
@@ -1230,26 +1804,262 @@ export interface HomeSectorsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "impact-page_select".
+ * via the `definition` "portfolio-page_select".
  */
-export interface ImpactPageSelect<T extends boolean = true> {
+export interface PortfolioPageSelect<T extends boolean = true> {
   eyebrow?: T;
   headline?: T;
   intro?: T;
-  stats?:
+  ctaLabel?: T;
+  ctaHref?: T;
+  activeLabel?: T;
+  sectorsLabel?: T;
+  stagesLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  approachEyebrow?: T;
+  teamEyebrow?: T;
+  teamHeading?: T;
+  groupPhotos?:
     | T
     | {
-        value?: T;
-        label?: T;
+        image?: T;
+        caption?: T;
         id?: T;
       };
-  themes?:
+  nextSteps?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        body?: T;
+        href?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "perspectives-page_select".
+ */
+export interface PerspectivesPageSelect<T extends boolean = true> {
+  eyebrow?: T;
+  headline?: T;
+  intro?: T;
+  substackLabel?: T;
+  youtubeLabel?: T;
+  indexEyebrow?: T;
+  indexHeading?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "impact-page_select".
+ */
+export interface ImpactPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        statement?: T;
+        intro?: T;
+        primaryLabel?: T;
+        secondaryLabel?: T;
+        tiles?:
+          | T
+          | {
+              image?: T;
+              company?: T;
+              caption?: T;
+              id?: T;
+            };
+      };
+  pathways?:
     | T
     | {
         title?: T;
+        subtitle?: T;
         body?: T;
         companies?: T;
         id?: T;
+      };
+  outcomes?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        status?: T;
+        measures?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              unit?: T;
+              definition?: T;
+              id?: T;
+            };
+        coverageTitle?: T;
+        coverageText?: T;
+        coverageNote?: T;
+        footnote?: T;
+      };
+  footprint?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        cardText?: T;
+        footnote?: T;
+        countries?:
+          | T
+          | {
+              name?: T;
+              lat?: T;
+              lon?: T;
+              presence?: T;
+              companies?: T;
+              value?: T;
+              valueLabel?: T;
+              detail?: T;
+              source?: T;
+              id?: T;
+            };
+      };
+  sdgs?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        note?: T;
+        goals?:
+          | T
+          | {
+              number?: T;
+              title?: T;
+              summary?: T;
+              entries?:
+                | T
+                | {
+                    company?: T;
+                    label?: T;
+                    connection?: T;
+                    measures?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
+  measurement?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+        reports?:
+          | T
+          | {
+              title?: T;
+              status?: T;
+              file?: T;
+              id?: T;
+            };
+        processTitle?: T;
+        process?:
+          | T
+          | {
+              step?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  carousel?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        footnote?: T;
+      };
+  contribution?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        pillars?:
+          | T
+          | {
+              label?: T;
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        caseLabel?: T;
+        caseTitle?: T;
+        casePoints?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        caseSource?: T;
+        footnote?: T;
+      };
+  women?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        leaders?:
+          | T
+          | {
+              area?: T;
+              name?: T;
+              role?: T;
+              id?: T;
+            };
+        functions?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              id?: T;
+            };
+        footnote?: T;
+      };
+  perspectives?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        footnote?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1272,6 +2082,79 @@ export interface GiftCityPageSelect<T extends boolean = true> {
       };
   ctaLabel?: T;
   ctaHref?: T;
+  disclosures?:
+    | T
+    | {
+        show?: T;
+        asOf?: T;
+        fme?:
+          | T
+          | {
+              name?: T;
+              legalForm?: T;
+              category?: T;
+              registrationNumber?: T;
+              registrationDate?: T;
+            };
+        contact?:
+          | T
+          | {
+              registeredOffice?: T;
+              correspondence?: T;
+              telephone?: T;
+              email?: T;
+            };
+        funds?:
+          | T
+          | {
+              name?: T;
+              registrationNumber?: T;
+              category?: T;
+              id?: T;
+            };
+        serviceProviders?:
+          | T
+          | {
+              role?: T;
+              name?: T;
+              address?: T;
+              telephone?: T;
+              id?: T;
+            };
+        grievance?:
+          | T
+          | {
+              text?: T;
+              policy?: T;
+              complaints?:
+                | T
+                | {
+                    quarterEnded?: T;
+                    pendingStart?: T;
+                    received?: T;
+                    disposed?: T;
+                    pendingEnd?: T;
+                    id?: T;
+                  };
+              complaintsNote?: T;
+            };
+        officers?:
+          | T
+          | {
+              designation?: T;
+              name?: T;
+              email?: T;
+              telephone?: T;
+              id?: T;
+            };
+        actions?:
+          | T
+          | {
+              action?: T;
+              status?: T;
+            };
+        disclaimer?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

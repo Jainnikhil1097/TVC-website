@@ -20,7 +20,6 @@ export const nav: Link[] = [
 
 /** Secondary pages linked from the footer (and from the home page / About). */
 export const footerLinks: Link[] = [
-  { label: "Funds", href: "/funds" },
   { label: "GIFT City", href: "/gift-city" },
 ];
 

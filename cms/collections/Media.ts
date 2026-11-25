@@ -13,7 +13,8 @@ export const Media: CollectionConfig = {
   access: { read: anyone, create: loggedIn, update: loggedIn, delete: loggedIn },
   hooks: revalidateHooks,
   upload: {
-    staticDir: "media",
+    // Local-disk uploads (when Vercel Blob isn't configured). Tests point this elsewhere.
+    staticDir: process.env.MEDIA_DIR || "media",
     mimeTypes: ["image/*", "application/pdf"],
     adminThumbnail: "thumbnail",
     focalPoint: true,

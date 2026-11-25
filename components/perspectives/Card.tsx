@@ -16,7 +16,7 @@ export function Card({ item, interactive = true, className }: CardProps) {
     <article
       className={cn(
         "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white transition-[box-shadow,border-color] duration-300",
-        interactive && "hover:border-ink/15 hover:shadow-[0_12px_32px_-12px_rgb(11_22_38/0.18)]",
+        interactive && "hover:border-ink/15 hover:shadow-[0_12px_32px_-12px_rgb(0_0_0/0.18)]",
         className
       )}
     >
@@ -43,7 +43,7 @@ export function Card({ item, interactive = true, className }: CardProps) {
           />
         </div>
 
-        <h3 className={cn("font-serif text-xl leading-snug font-light text-ink sm:text-[1.4rem]", item.image ? "mt-3" : "mt-6")}>
+        <h3 className={cn("font-display font-bold text-xl leading-snug text-ink sm:text-[1.4rem]", item.image ? "mt-3" : "mt-6")}>
           <a
             href={item.href}
             target="_blank"
@@ -59,9 +59,9 @@ export function Card({ item, interactive = true, className }: CardProps) {
         {item.teaser && <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-muted">{item.teaser}</p>}
 
         <div className="mt-auto flex items-center justify-between gap-4 pt-7">
-          <span className="text-sm font-semibold text-ink transition-colors group-hover:text-teal-ink">{item.action}</span>
+          <span className="text-sm font-bold text-ink transition-colors group-hover:text-teal-ink">{item.action}</span>
           {item.tag && (
-            <span className="truncate rounded-full bg-surface px-2.5 py-1 text-xs font-medium text-ink">{item.tag}</span>
+            <span className="truncate rounded-full bg-surface px-2.5 py-1 text-xs font-normal text-ink">{item.tag}</span>
           )}
         </div>
       </div>

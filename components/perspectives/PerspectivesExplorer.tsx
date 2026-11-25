@@ -45,7 +45,7 @@ export function PerspectivesExplorer({ tabs }: { tabs: PerspectiveTab[] }) {
               tabIndex={active ? 0 : -1}
               onClick={() => setSelected(i)}
               className={cn(
-                "relative -mb-px min-h-12 shrink-0 border-b-2 px-3 text-[0.95rem] font-medium transition-colors duration-300 sm:px-4",
+                "relative -mb-px min-h-12 shrink-0 border-b-2 px-3 text-[0.95rem] font-normal transition-colors duration-300 sm:px-4",
                 active ? "border-teal-ink text-ink" : "border-transparent text-muted hover:text-ink"
               )}
             >

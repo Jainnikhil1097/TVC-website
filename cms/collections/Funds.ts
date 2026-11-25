@@ -37,7 +37,8 @@ export const Funds: CollectionConfig = {
     { name: "description", label: "Short description", type: "textarea", maxLength: 400 },
     {
       name: "showOnHome",
-      label: "Show on home and About pages",
+      label: "Show on the home page",
+      admin: { description: "Funds are listed on the home page (\"Our funds\")." },
       type: "checkbox",
       defaultValue: false,
     },

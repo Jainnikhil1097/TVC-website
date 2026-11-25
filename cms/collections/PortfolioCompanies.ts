@@ -2,14 +2,14 @@ import type { CollectionConfig } from "payload";
 import { loggedIn, publishedOrLoggedIn } from "../access";
 import { orderField, showOnSiteField, slugify, urlField } from "../fields";
 import { revalidateHooks } from "../hooks/revalidate";
-import { companyStatuses, portfolioSectors, stages } from "@/lib/taxonomy";
+import { companyStatuses, portfolioFunds, portfolioSectors, stages } from "@/lib/taxonomy";
 
 export const PortfolioCompanies: CollectionConfig = {
   slug: "companies",
   labels: { singular: "Portfolio company", plural: "Portfolio" },
   admin: {
     useAsTitle: "name",
-    defaultColumns: ["name", "sector", "stage", "status", "featured", "updatedAt"],
+    defaultColumns: ["name", "sector", "fund", "stage", "status", "featured", "updatedAt"],
     group: "Content",
     description:
       "Companies shown on the Portfolio page, the home page strip and the map. New sectors need a developer.",
@@ -62,6 +62,15 @@ export const PortfolioCompanies: CollectionConfig = {
                   options: stages.map((s) => ({ label: s, value: s })),
                 },
                 {
+                  name: "fund",
+                  label: "Fund",
+                  type: "select",
+                  required: true,
+                  defaultValue: "fund-1",
+                  options: portfolioFunds.map((f) => ({ label: f.name, value: f.id })),
+                  admin: { description: "Shown on the company card and used by the Portfolio page's fund filter." },
+                },
+                {
                   name: "yearInvested",
                   label: "Year invested",
                   type: "number",
@@ -85,7 +94,8 @@ export const PortfolioCompanies: CollectionConfig = {
               type: "upload",
               relationTo: "media",
               admin: {
-                description: "A product or team photo, shown when the company is featured on the home page (landscape, at least 1600 px wide).",
+                description:
+                  "A product or team photo, landscape, at least 2400 px wide. Shown when the company is featured on the home page. Set the focal point on the subject.",
               },
             },
           ],
@@ -126,8 +136,156 @@ export const PortfolioCompanies: CollectionConfig = {
           ],
         },
         {
+          label: "One-pager",
+          description:
+            "Product, proof and story from the company's one-pager. Everything here is public — never add revenue, fundraising, valuation or return figures.",
+          fields: [
+            {
+              name: "productImage",
+              label: "Product image",
+              type: "upload",
+              relationTo: "media",
+              admin: {
+                description:
+                  "A clean product render on a white or transparent background, without text labels (add those as callouts below). At least 1600 px wide.",
+              },
+            },
+            {
+              name: "callouts",
+              label: "Product callouts",
+              type: "array",
+              maxRows: 4,
+              labels: { singular: "Callout", plural: "Callouts" },
+              admin: {
+                description:
+                  "Labels pointing at parts of the product image. Position is a percentage of the image: 0/0 is the top-left corner, 50/50 the centre.",
+                initCollapsed: true,
+              },
+              fields: [
+                {
+                  type: "row",
+                  fields: [
+                    { name: "label", label: "Label", type: "text", required: true, admin: { placeholder: "e.g. Motor controller unit" } },
+                    { name: "detail", label: "Short detail", type: "text", maxLength: 90 },
+                  ],
+                },
+                {
+                  type: "row",
+                  fields: [
+                    { name: "x", label: "Across (% from left)", type: "number", required: true, min: 0, max: 100, defaultValue: 50 },
+                    { name: "y", label: "Down (% from top)", type: "number", required: true, min: 0, max: 100, defaultValue: 50 },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "proofValue",
+                  label: "Headline number",
+                  type: "text",
+                  admin: { placeholder: "e.g. 200,000+", description: "Not shown on the site at the moment — kept for future use." },
+                },
+                {
+                  name: "proofLabel",
+                  label: "What it counts",
+                  type: "text",
+                  admin: { placeholder: "e.g. motors deployed" },
+                },
+              ],
+            },
+            {
+              name: "deployment",
+              label: "Deployment",
+              type: "text",
+              // Not shown since 25 Nov 2026 (too often out of date); hidden, data kept.
+              admin: { hidden: true, placeholder: "e.g. 200,000+ motors across mobility & pumps" },
+            },
+            { name: "customers", label: "Customers", type: "text", admin: { hidden: true, description: "Only customers that are cleared to be named publicly." } },
+            {
+              name: "marketGap",
+              label: "The gap",
+              type: "textarea",
+              maxLength: 500,
+              admin: { description: "The problem in the market, in two or three sentences." },
+            },
+            {
+              name: "breakthrough",
+              label: "The breakthrough",
+              type: "textarea",
+              maxLength: 500,
+              admin: { description: "What the company built and why it's different. The first sentence also shows on the home page." },
+            },
+            {
+              name: "traction",
+              label: "Traction",
+              type: "array",
+              maxRows: 4,
+              labels: { singular: "Point", plural: "Points" },
+              // Not shown since 25 Nov 2026; hidden, data kept.
+              admin: {
+                hidden: true,
+                description: "Milestones: deployments, pilots, patents, partners. No revenue, fundraising or return figures.",
+                initCollapsed: true,
+              },
+              fields: [{ name: "point", label: "Point", type: "text", required: true, maxLength: 200 }],
+            },
+            { name: "marketOpportunity", label: "Market opportunity", type: "textarea", maxLength: 500, admin: { hidden: true } }, // not shown since 25 Nov 2026
+            { name: "whyTheyWin", label: "Why they win", type: "textarea", maxLength: 500 },
+          ],
+        },
+        {
           label: "Status",
           fields: [
+            // The company's Impact-page view; the section was removed on 25 Nov 2026. Hidden, data kept.
+            {
+              name: "impact",
+              type: "group",
+              label: false,
+              admin: { hidden: true },
+              fields: [
+                {
+                  type: "row",
+                  fields: [
+                    { name: "show", label: "Show on the Impact page", type: "checkbox", defaultValue: false },
+                    { name: "featured", label: "Quick-select chip", type: "checkbox", defaultValue: false },
+                    { name: "order", label: "Order", type: "number", admin: { description: "Lower comes first." } },
+                  ],
+                },
+                {
+                  type: "row",
+                  fields: [
+                    { name: "sectorLabel", label: "Impact area", type: "text", admin: { placeholder: "Renewable asset productivity" } },
+                    { name: "stage", label: "Evidence stage", type: "text", admin: { placeholder: "Commercial deployments" } },
+                    { name: "period", label: "Period / source line", type: "text", admin: { placeholder: "FY2025-26 · Company reported" } },
+                  ],
+                },
+                { name: "tagline", label: "Tagline", type: "text" },
+                { name: "image", label: "Image", type: "upload", relationTo: "media", admin: { description: "Falls back to the logo." } },
+                {
+                  name: "metrics",
+                  label: "Measures",
+                  type: "array",
+                  maxRows: 4,
+                  labels: { singular: "Measure", plural: "Measures" },
+                  fields: [
+                    {
+                      type: "row",
+                      fields: [
+                        { name: "label", label: "Measure", type: "text", required: true },
+                        { name: "value", label: "Value", type: "text" },
+                        { name: "unit", label: "Unit", type: "text" },
+                      ],
+                    },
+                    { type: "row", fields: [{ name: "evidence", label: "Evidence label", type: "text" }, { name: "note", label: "Note", type: "text" }] },
+                  ],
+                },
+                { type: "row", fields: [{ name: "closerValue", label: "A closer look: figure", type: "text" }, { name: "closerText", label: "A closer look: text", type: "text" }] },
+                { name: "evidence", label: "Evidence & boundary", type: "textarea" },
+                { name: "sources", label: "Sources", type: "textarea" },
+              ],
+            },
             {
               name: "status",
               label: "Status",
@@ -166,6 +324,17 @@ export const PortfolioCompanies: CollectionConfig = {
       type: "checkbox",
       defaultValue: false,
       admin: { position: "sidebar", description: "Shown in the Featured portfolio tabs on the home page (3–6 works best). Add a cover image too." },
+    },
+    {
+      name: "homeOrder",
+      label: "Home page position",
+      type: "number",
+      min: 1,
+      admin: {
+        position: "sidebar",
+        condition: (data) => Boolean(data?.featured),
+        description: "1 shows first among the featured companies. Leave empty to follow the portfolio order.",
+      },
     },
     showOnSiteField,
     orderField,

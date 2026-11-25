@@ -16,7 +16,7 @@ import {
   type MapLayout,
   type Pin,
 } from "./geometry";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { statusLabel, type CompanyEssay } from "./status";
 import { CompanyLogo } from "./CompanyLogo";
 import { MAP_POPOVER_ID, MapPopover, mapLabelId } from "./MapPopover";
@@ -33,12 +33,13 @@ type PortfolioMapProps = {
   essays: Record<string, CompanyEssay | undefined>;
 };
 
-// A true blueprint: pale line art on deep navy, bright teal highlights — the same
-// ink as the page heroes and the home globe.
-const INK = "#d6e4f0"; // line colour
+// A blueprint: pale line art on black, bright teal highlights — the same black as
+// the page heroes.
+const INK = "#e0e0e0"; // line colour
 const ACCENT = "#0ed5c2";
-const PAPER = "#0b1626"; // map background
-const TOP = "#13263f"; // tower roofs: a lighter navy so towers read as solid volumes
+const PAPER = "#000000"; // map background
+const TOP = "#1f1f1f"; // tower roofs: a lighter grey so towers read as solid volumes
+const AMBER = "#ffa24c"; // the warm, earlier end of the brand spectrum: the Pre Fund board
 
 // Scoped to the map SVG: hairline strokes at any scale, and a slow "current" along the transmission line.
 const mapCss = `
@@ -73,6 +74,9 @@ function Tower({ pin, state, onEnter, onLeave, onActivate }: TowerProps) {
   const active = state === "active";
   const top = iso(u, v, h);
   const tip = iso(u, v, h + pin.leader);
+  // Pre Fund towers take their board's amber; everything else the brand teal.
+  const tint = pin.zone === "pre-fund" ? AMBER : ACCENT;
+  const roof = pin.zone === "pre-fund" ? "#40311f" : "#14403f";
 
   return (
     <g
@@ -83,7 +87,7 @@ function Tower({ pin, state, onEnter, onLeave, onActivate }: TowerProps) {
         cursor: state === "dim" ? "default" : "pointer",
         pointerEvents: state === "dim" ? "none" : "auto",
       }}
-      stroke={active ? ACCENT : INK}
+      stroke={active ? tint : INK}
       strokeLinejoin="round"
       onPointerEnter={onEnter}
       onPointerLeave={onLeave}
@@ -101,21 +105,21 @@ function Tower({ pin, state, onEnter, onLeave, onActivate }: TowerProps) {
       {/* Left and right faces, then top */}
       <polygon
         points={poly([g(D), g(C), g(C, h), g(D, h)])}
-        fill={ACCENT}
+        fill={tint}
         fillOpacity={active ? 0.22 : 0.06}
         strokeOpacity={active ? 1 : 0.6}
         strokeWidth={1}
       />
       <polygon
         points={poly([g(C), g(B), g(B, h), g(C, h)])}
-        fill={ACCENT}
+        fill={tint}
         fillOpacity={active ? 0.38 : 0.14}
         strokeOpacity={active ? 1 : 0.6}
         strokeWidth={1}
       />
       <polygon
         points={poly([g(A, h), g(B, h), g(C, h), g(D, h)])}
-        fill={active ? "#14403f" : TOP}
+        fill={active ? roof : TOP}
         fillOpacity={1}
         strokeOpacity={active ? 1 : 0.75}
         strokeWidth={1}
@@ -127,12 +131,12 @@ function Tower({ pin, state, onEnter, onLeave, onActivate }: TowerProps) {
         y1={top.y}
         x2={tip.x}
         y2={tip.y}
-        stroke={active ? ACCENT : INK}
+        stroke={active ? tint : INK}
         strokeOpacity={active ? 0.9 : 0.35}
         strokeDasharray="2 3"
         strokeWidth={1}
       />
-      <circle cx={tip.x} cy={tip.y} r={2.5} fill={active ? ACCENT : INK} stroke="none" />
+      <circle cx={tip.x} cy={tip.y} r={2.5} fill={active ? tint : INK} stroke="none" />
     </g>
   );
 }
@@ -146,9 +150,21 @@ export function PortfolioMap({
   onOpenProfile,
   essays,
 }: PortfolioMapProps) {
-  const { zones, pinsByDepth, ground, viewBox } = layout;
+  const { zones, districts, pinsByDepth, ground, viewBox } = layout;
   const stageRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState<string | null>(null);
+  // Set by the parallax effect: holds the map flat (and still) while an info card is open,
+  // so the card stays lined up with its company's label.
+  const freezeTilt = useRef<(frozen: boolean) => void>(() => {});
+  const openPopover = (slug: string | null) => {
+    freezeTilt.current(slug !== null);
+    onPopoverChange(slug);
+  };
+
+  // However the card closes (filters, opening the profile…), let the map tilt again.
+  useEffect(() => {
+    if (popover === null) freezeTilt.current(false);
+  }, [popover]);
 
   // Gentle pointer parallax — a few degrees at most; off for touch and reduced motion.
   useEffect(() => {
@@ -164,6 +180,16 @@ export function PortfolioMap({
     let ty = 0;
     let cx = 0;
     let cy = 0;
+    let frozen = false;
+    freezeTilt.current = (on) => {
+      frozen = on;
+      if (on) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        tx = ty = cx = cy = 0;
+        stage.style.transform = "";
+      }
+    };
     const loop = () => {
       cx += (tx - cx) * 0.08;
       cy += (ty - cy) * 0.08;
@@ -174,6 +200,7 @@ export function PortfolioMap({
       if (!raf) raf = requestAnimationFrame(loop);
     };
     const onMove = (e: PointerEvent) => {
+      if (frozen) return;
       const r = frame.getBoundingClientRect();
       tx = (e.clientX - r.left) / r.width - 0.5;
       ty = (e.clientY - r.top) / r.height - 0.5;
@@ -188,6 +215,7 @@ export function PortfolioMap({
     frame.addEventListener("pointerleave", onLeave);
     return () => {
       cancelAnimationFrame(raf);
+      freezeTilt.current = () => {};
       frame.removeEventListener("pointermove", onMove);
       frame.removeEventListener("pointerleave", onLeave);
     };
@@ -209,6 +237,9 @@ export function PortfolioMap({
     roads.push({ from: [u, -24], to: [u, ground.h + 24] });
   }
   roads.push({ from: [-24, PLOT + GAP / 2], to: [ground.w + 24, PLOT + GAP / 2] });
+  // Roads out to the fund boards: along the front-left edge, and across to the front-right plot.
+  roads.push({ from: [-24, ground.h + GAP / 2], to: [ground.w + GAP + PLOT + 24, ground.h + GAP / 2] });
+  roads.push({ from: [ground.w + GAP / 2, PLOT + GAP / 2], to: [ground.w + GAP / 2, ground.h + GAP + 24] });
 
   return (
     <div
@@ -302,9 +333,91 @@ export function PortfolioMap({
                       x={z.u + 20}
                       y={z.v + PLOT - 22}
                       fill={on ? ACCENT : "#8fa3b8"}
-                      style={{ fontFamily: "var(--font-mono)", fontSize: 15, letterSpacing: 2.5 }}
+                      style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 700, letterSpacing: 2.5 }}
                     >
-                      {`${z.number} — ${z.name.toUpperCase()}`}
+                      {z.name.toUpperCase()}
+                    </text>
+                  </g>
+                </g>
+              );
+            })}
+
+            {/* Fund boards beside the main site: Pre Fund (built) and Fund II (being built) */}
+            {districts.map((d) => {
+              const pre = d.id === "pre-fund";
+              const building = !pre && d.companies === 0;
+              const colour = pre ? AMBER : ACCENT;
+              const rect = (u: number, v: number, w: number, dd: number) => [iso(u, v), iso(u + w, v), iso(u + w, v + dd), iso(u, v + dd)];
+              const lotW = (d.w - (d.lots - 1) * GAP) / d.lots;
+              const lots = Array.from({ length: d.lots }, (_, i) => d.u + i * (lotW + GAP));
+              return (
+                <g key={d.id} className="transition-opacity duration-500" style={{ opacity: activeSector ? 0.35 : 1 }}>
+                  <polygon
+                    points={poly(rect(d.u, d.v, d.w, d.d))}
+                    fill={colour}
+                    fillOpacity={pre ? 0.05 : 0.02}
+                    stroke={INK}
+                    strokeOpacity={0.22}
+                    strokeDasharray={building ? "6 6" : undefined}
+                    strokeWidth={1}
+                  />
+                  {lots.map((u, i) => (
+                    <polygon
+                      key={i}
+                      points={poly(rect(u + 12, d.v + 12, lotW - 24, d.d - 24))}
+                      fill="none"
+                      stroke={colour}
+                      strokeOpacity={building ? 0.3 : 0.45}
+                      strokeDasharray="4 5"
+                      strokeWidth={1}
+                    />
+                  ))}
+                  {/* Under construction: ghost scaffolds in two lots and a tower crane in another */}
+                  {building && (
+                    <g stroke={INK} strokeOpacity={0.3} strokeDasharray="3 4" strokeWidth={1} fill="none">
+                      {[
+                        { u: lots[0] + lotW * 0.55, v: d.v + d.d * 0.5, h: 70 },
+                        { u: lots[2] + lotW * 0.4, v: d.v + d.d * 0.45, h: 46 },
+                      ].map((t, i) => {
+                        const S = 15;
+                        const c = [[t.u - S, t.v + S], [t.u + S, t.v + S], [t.u + S, t.v - S], [t.u - S, t.v - S]] as const;
+                        return (
+                          <g key={i}>
+                            <polygon points={poly(c.map(([a, b]) => iso(a, b, t.h)))} />
+                            {c.map(([a, b], k) => {
+                              const g0 = iso(a, b);
+                              const g1 = iso(a, b, t.h);
+                              return <line key={k} x1={g0.x} y1={g0.y} x2={g1.x} y2={g1.y} />;
+                            })}
+                          </g>
+                        );
+                      })}
+                      {(() => {
+                        const base = { u: lots[1] + lotW * 0.5, v: d.v + d.d * 0.5 };
+                        const foot = iso(base.u, base.v);
+                        const top = iso(base.u, base.v, 130);
+                        const jib = iso(base.u + 120, base.v - 40, 130);
+                        const tail = iso(base.u - 40, base.v + 14, 130);
+                        const hook = iso(base.u + 90, base.v - 30, 70);
+                        const hookTop = iso(base.u + 90, base.v - 30, 130);
+                        return (
+                          <g strokeDasharray="none" strokeOpacity={0.4}>
+                            <line x1={foot.x} y1={foot.y} x2={top.x} y2={top.y} />
+                            <line x1={tail.x} y1={tail.y} x2={jib.x} y2={jib.y} />
+                            <line x1={hookTop.x} y1={hookTop.y} x2={hook.x} y2={hook.y} strokeDasharray="2 3" />
+                          </g>
+                        );
+                      })()}
+                    </g>
+                  )}
+                  <g transform={GROUND_MATRIX}>
+                    <text
+                      x={d.u + 20}
+                      y={d.v + d.d - 22}
+                      fill={pre ? AMBER : "#8fa3b8"}
+                      style={{ fontFamily: "var(--font-sans)", fontSize: 15, fontWeight: 700, letterSpacing: 2.5 }}
+                    >
+                      {building ? `${d.name.toUpperCase()} · UNDER CONSTRUCTION` : d.name.toUpperCase()}
                     </text>
                   </g>
                 </g>
@@ -325,7 +438,7 @@ export function PortfolioMap({
             {/* Towers, back to front */}
             {pinsByDepth.map((pin) => {
               const slug = pin.company.slug;
-              const dim = activeSector !== null && activeSector !== pin.zone;
+              const dim = activeSector !== null && activeSector !== pin.company.sector;
               const active = !dim && (selected === slug || hovered === slug || popover === slug);
               return (
                 <Tower
@@ -334,7 +447,7 @@ export function PortfolioMap({
                   state={dim ? "dim" : active ? "active" : "idle"}
                   onEnter={() => setHovered(slug)}
                   onLeave={() => setHovered((h) => (h === slug ? null : h))}
-                  onActivate={() => onPopoverChange(popover === slug ? null : slug)}
+                  onActivate={() => openPopover(popover === slug ? null : slug)}
                 />
               );
             })}
@@ -345,7 +458,7 @@ export function PortfolioMap({
           {pinsByDepth.map((pin, depth) => {
             const { company } = pin;
             const slug = company.slug;
-            const dim = activeSector !== null && activeSector !== pin.zone;
+            const dim = activeSector !== null && activeSector !== pin.company.sector;
             const focus = hovered ?? popover;
             const active = !dim && (selected === slug || hovered === slug || popover === slug);
             const recede = !dim && focus !== null && focus !== slug && !active;
@@ -357,7 +470,7 @@ export function PortfolioMap({
                 id={mapLabelId(slug)}
                 type="button"
                 data-map-label
-                onClick={() => onPopoverChange(popover === slug ? null : slug)}
+                onClick={() => openPopover(popover === slug ? null : slug)}
                 onPointerEnter={() => setHovered(slug)}
                 onPointerLeave={() => setHovered((h) => (h === slug ? null : h))}
                 onFocus={() => setHovered(slug)}
@@ -366,13 +479,13 @@ export function PortfolioMap({
                 aria-hidden={dim || undefined}
                 aria-expanded={popover === slug}
                 aria-controls={popover === slug ? MAP_POPOVER_ID : undefined}
-                aria-label={`${company.name} — ${portfolioSectorName(company.sector)}, ${company.stage}, invested ${company.yearInvested}${status ? `, ${status}` : ""}. Show details`}
+                aria-label={`${company.name} — ${portfolioSectorName(company.sector)}, ${company.stage}, ${portfolioFundName(company.fund)}${status ? `, ${status}` : ""}. Show details`}
                 data-active={active || undefined}
                 className={cn(
                   "group absolute -translate-y-full origin-bottom-left rounded-lg border px-2.5 py-1.5 text-left whitespace-nowrap",
                   "transition-[opacity,border-color,background-color,box-shadow,scale] duration-300 ease-out-quart motion-reduce:transition-none",
-                  "border-white/15 bg-[#0f1d31]/90 shadow-[0_2px_12px_rgb(0_0_0/0.25)] backdrop-blur-sm hover:border-teal/60",
-                  "data-[active]:scale-[1.06] data-[active]:border-teal data-[active]:bg-[#0f1d31] data-[active]:shadow-[0_14px_36px_rgb(0_0_0/0.4),0_0_0_1px_rgb(14_213_194/0.25)] motion-reduce:data-[active]:scale-100",
+                  "border-white/15 bg-[#161616]/90 shadow-[0_2px_12px_rgb(0_0_0/0.25)] backdrop-blur-sm hover:border-teal/60",
+                  "data-[active]:scale-[1.06] data-[active]:border-teal data-[active]:bg-[#161616] data-[active]:shadow-[0_14px_36px_rgb(0_0_0/0.4),0_0_0_1px_rgb(14_213_194/0.25)] motion-reduce:data-[active]:scale-100",
                   recede && "opacity-60",
                   dim && "pointer-events-none opacity-25"
                 )}
@@ -383,46 +496,49 @@ export function PortfolioMap({
                   <span className="overflow-hidden">
                     <span className="block pt-1 pb-2">
                       {company.logo ? (
-                        <CompanyLogo company={company} tone="dark" className="h-9 w-36" />
+                        // In its own colours on a white chip (an inverted logo turns boxed marks solid white).
+                        <span className="block rounded-md bg-white px-2 py-1.5">
+                          <CompanyLogo company={company} className="h-7 w-32" />
+                        </span>
                       ) : (
-                        <span className="block font-serif text-lg leading-tight text-white">{company.name}</span>
+                        <span className="block font-display text-lg leading-tight text-white">{company.name}</span>
                       )}
                     </span>
                   </span>
                 </span>
                 <span className="flex items-baseline gap-2">
-                  <span className="hud text-teal">{pin.number}</span>
-                  <span className={cn("text-[0.75rem] font-semibold text-white", !company.logo && "group-data-[active]:hidden")}>
+                  <span className={cn("text-[0.75rem] font-bold text-white", !company.logo && "group-data-[active]:hidden")}>
                     {company.name}
                   </span>
                   {status && <span className="hud text-ink-300">· {status}</span>}
                 </span>
                 <span className="hud hidden pt-1 text-ink-300 group-data-[active]:block">
-                  {portfolioSectorName(company.sector)} · {company.stage} · {company.yearInvested}
+                  {portfolioSectorName(company.sector)} · {company.stage} · {portfolioFundName(company.fund)}
                 </span>
               </button>
             );
           })}
 
-          {/* Info card beside the clicked company */}
+        </div>
+      </div>
+
+      {/* Info card beside the clicked company. Rendered outside the tilting 3D stage, as a
+          flat layer over the map, so nothing in the 3D scene can take its clicks. */}
           {(() => {
             const pin = popover ? pinsByDepth.find((p) => p.company.slug === popover) : undefined;
-            if (!pin || (activeSector !== null && activeSector !== pin.zone)) return null;
+            if (!pin || (activeSector !== null && activeSector !== pin.company.sector)) return null;
             const a = iso(pin.u, pin.v, pin.h + pin.leader);
             return (
               <MapPopover
                 key={pin.company.slug}
                 company={pin.company}
-                number={pin.number}
                 essay={essays[pin.company.slug]}
                 anchor={{ fx: (a.x - viewBox.x) / viewBox.w, fy: (a.y - viewBox.y) / viewBox.h }}
-                onClose={() => onPopoverChange(null)}
+                onClose={() => openPopover(null)}
                 onOpenProfile={onOpenProfile}
               />
             );
           })()}
-        </div>
-      </div>
 
       {/* Legend: tower height encodes stage */}
       <div className="pointer-events-none absolute bottom-8 left-9 z-20 flex items-end gap-4">

@@ -19,7 +19,7 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     let cancelled = false;
     const start = () =>
       import("lenis").then(({ default: Lenis }) => {
-        if (!cancelled) lenis = new Lenis({ lerp: 0.1, autoRaf: true });
+        if (!cancelled) lenis = new Lenis({ lerp: 0.1, autoRaf: true, anchors: { offset: -96 } }); // in-page links glide, clearing the fixed nav
       });
     const idle = typeof window.requestIdleCallback === "function";
     const id = idle ? window.requestIdleCallback(start, { timeout: 2000 }) : setTimeout(start, 800);

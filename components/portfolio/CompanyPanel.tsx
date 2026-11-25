@@ -7,19 +7,19 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ArrowUpRight, X } from "lucide-react";
 import type { Company } from "@/lib/types";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { AccentRule } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { hostname } from "@/lib/utils";
 import { CompanyLogo, StatusBadge } from "./CompanyLogo";
+import { ProductCallouts } from "./ProductCallouts";
 import { statusLabel, type CompanyEssay } from "./status";
 
 gsap.registerPlugin(useGSAP);
 
 type CompanyPanelProps = {
   company: Company;
-  number: string;
   /** Related Substack essay, if the company links to one. */
   essay?: CompanyEssay;
   onClose: () => void;
@@ -34,7 +34,7 @@ const isDesktop = () => window.matchMedia("(min-width: 64rem)").matches;
  * Focus moves to the close button on open, is trapped inside, and returns to
  * the triggering element on close.
  */
-export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelProps) {
+export function CompanyPanel({ company, essay, onClose }: CompanyPanelProps) {
   const root = useRef<HTMLDivElement>(null);
   const sheet = useRef<HTMLDivElement>(null);
   const backdrop = useRef<HTMLDivElement>(null);
@@ -110,7 +110,12 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
   const facts = [
     { label: "Stage", value: company.stage === "TBD" ? "Undisclosed" : company.stage },
     { label: "Focus sector", value: portfolioSectorName(company.sector) },
-    { label: "Year invested", value: String(company.yearInvested) },
+    { label: "Fund", value: portfolioFundName(company.fund) },
+  ];
+  // One-pager story sections, each shown only when filled in.
+  const story = [
+    { title: "The gap", text: company.marketGap },
+    { title: "The breakthrough", text: company.breakthrough },
   ];
 
   // Portalled to <body> so no transformed ancestor (e.g. a Reveal wrapper) can
@@ -124,12 +129,12 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col rounded-t-3xl border-t border-line bg-white text-ink shadow-[0_-24px_80px_rgb(11_22_38/0.18)] lg:inset-y-0 lg:left-auto lg:max-h-none lg:w-[34rem] lg:rounded-none lg:rounded-l-3xl lg:border-t-0 lg:border-l lg:border-line"
+        className="absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col rounded-t-3xl border-t border-line bg-white text-ink shadow-[0_-24px_80px_rgb(0_0_0/0.18)] lg:inset-y-0 lg:left-auto lg:max-h-none lg:w-[34rem] lg:rounded-none lg:rounded-l-3xl lg:border-t-0 lg:border-l lg:border-line"
       >
         {/* Grab handle (mobile) + header */}
         <div className="flex items-center justify-between gap-4 px-6 pt-4 pb-2 sm:px-8 lg:pt-6">
           <span aria-hidden className="absolute top-2 left-1/2 h-1 w-10 -translate-x-1/2 rounded-full bg-ink/15 lg:hidden" />
-          <p className="hud pt-2 text-muted">Company profile <span className="text-teal-ink">· {number}</span></p>
+          <p className="hud pt-2 text-muted">Company profile</p>
           <button
             ref={closeBtn}
             type="button"
@@ -158,7 +163,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             {facts.map((f) => (
               <div key={f.label}>
                 <dt className="hud text-muted">{f.label}</dt>
-                <dd className="mt-2 text-sm font-medium text-ink">{f.value}</dd>
+                <dd className="mt-2 text-sm font-normal text-ink">{f.value}</dd>
               </div>
             ))}
           </dl>
@@ -167,6 +172,32 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             <h3 className="eyebrow text-muted">About</h3>
             <p className="mt-3 leading-relaxed text-ink/80">{company.summary}</p>
           </section>
+
+          {company.productImage && (
+            <section className="mt-8">
+              <h3 className="eyebrow text-muted">The product</h3>
+              <div className="mt-4">
+                <ProductCallouts company={company} sizes="(min-width: 1024px) 480px, 100vw" />
+              </div>
+            </section>
+          )}
+
+          {story.map(
+            (s) =>
+              s.text && (
+                <section key={s.title} className="mt-8">
+                  <h3 className="eyebrow text-muted">{s.title}</h3>
+                  <p className="mt-3 leading-relaxed text-ink/80">{s.text}</p>
+                </section>
+              )
+          )}
+
+          {company.whyTheyWin && (
+            <section className="mt-8">
+              <h3 className="eyebrow text-muted">Why they win</h3>
+              <p className="mt-3 leading-relaxed text-ink/80">{company.whyTheyWin}</p>
+            </section>
+          )}
 
           {company.whyWeInvested && (
             <section className="mt-8">
@@ -179,11 +210,11 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             <section className="mt-8">
               <h3 className="eyebrow text-muted">Founders</h3>
               <ul className="mt-4 space-y-3">
-                {company.founders.map((f) => (
+                {company.founders?.map((f) => (
                   <li key={f.name} className="flex items-center gap-4">
                     <Avatar name={f.name} photo={f.photo} sizes="48px" className="size-12 shrink-0 rounded-full" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-ink">{f.name}</p>
+                      <p className="text-sm font-normal text-ink">{f.name}</p>
                       {f.title && <p className="text-xs text-muted">{f.title}</p>}
                     </div>
                     {f.linkedin && (
@@ -213,11 +244,11 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
                 className="group mt-3 block rounded-2xl border border-line bg-surface p-5 transition-colors hover:border-teal-ink/50"
               >
                 <span className="hud text-teal-ink">From our Substack</span>
-                <span className="mt-2 block font-serif text-lg font-light text-ink">
+                <span className="mt-2 block font-display text-lg text-ink">
                   {essay.title ?? "Read our investment note"}
                 </span>
                 {essay.teaser && <span className="mt-2 block text-sm text-muted">{essay.teaser}</span>}
-                <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-ink group-hover:text-teal-ink">
+                <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-ink group-hover:text-teal-ink">
                   Read our investment note <ArrowUpRight className="size-3.5" aria-hidden />
                 </span>
               </a>
@@ -235,7 +266,7 @@ export function CompanyPanel({ company, number, essay, onClose }: CompanyPanelPr
             )}
             <Link
               href="/contact?type=startup"
-              className="inline-flex min-h-11 items-center px-2 text-[0.9rem] font-medium text-muted transition-colors hover:text-teal-ink"
+              className="inline-flex min-h-11 items-center px-2 text-[0.9rem] font-normal text-muted transition-colors hover:text-teal-ink"
             >
               Building something similar? Pitch to us
             </Link>

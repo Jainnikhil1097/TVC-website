@@ -2,26 +2,27 @@
 
 import { ArrowUpRight } from "lucide-react";
 import type { Company } from "@/lib/types";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { hostname } from "@/lib/utils";
 import { CompanyLogo, StatusBadge } from "./CompanyLogo";
 import { statusLabel } from "./status";
 
 type CompanyCardProps = {
   company: Company;
-  number: string;
   onOpen: (slug: string) => void;
 };
 
-export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
+export function CompanyCard({ company, onOpen }: CompanyCardProps) {
   const status = statusLabel(company);
   return (
-    <article className="group relative flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(11_22_38/0.06)] sm:p-7">
+    <article className="group relative flex h-full flex-col rounded-2xl border border-line bg-white p-6 transition-[border-color,box-shadow] duration-300 hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(0_0_0/0.06)] sm:p-7">
       <div className="flex items-center justify-between gap-4">
-        <p className="hud text-muted">
-          <span className="text-teal-ink">{number}</span> · {portfolioSectorName(company.sector)}
-        </p>
-        {status ? <StatusBadge label={status} /> : <p className="hud text-muted">{company.yearInvested}</p>}
+        <p className="hud text-teal-ink">{portfolioSectorName(company.sector)}</p>
+        {status ? (
+          <StatusBadge label={status} />
+        ) : (
+          <span className="hud rounded-full border border-line px-2.5 py-1 text-muted">{portfolioFundName(company.fund)}</span>
+        )}
       </div>
 
       <CompanyLogo company={company} className="mt-6" />
@@ -29,8 +30,8 @@ export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
       <h3
         className={
           company.logo
-            ? "mt-4 text-base font-semibold text-ink"
-            : "mt-6 font-serif text-2xl font-light text-ink"
+            ? "mt-4 text-base font-bold text-ink"
+            : "mt-6 font-display text-2xl text-ink"
         }
       >
         {/* The stretched button makes the whole card open the profile. */}
@@ -47,7 +48,7 @@ export function CompanyCard({ company, number, onOpen }: CompanyCardProps) {
       <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">{company.summary}</p>
 
       <div className="mt-auto flex items-center justify-between gap-3 pt-6">
-        <span className="rounded-full border border-line bg-surface px-3 py-1 text-[0.72rem] font-medium text-ink">
+        <span className="rounded-full border border-line bg-surface px-3 py-1 text-[0.72rem] font-normal text-ink">
           {company.stage === "TBD" ? "Stage undisclosed" : company.stage}
         </span>
         <a

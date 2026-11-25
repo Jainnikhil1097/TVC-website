@@ -24,7 +24,7 @@ export function NewsletterForm({ substackUrl, className }: { substackUrl: string
       />
       <button
         type="submit"
-        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-6 text-[0.9rem] font-semibold text-ink transition-colors hover:bg-teal-soft"
+        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-6 text-[0.9rem] font-bold text-ink transition-colors hover:bg-teal-soft"
       >
         Subscribe <ArrowRight className="size-4" aria-hidden />
       </button>

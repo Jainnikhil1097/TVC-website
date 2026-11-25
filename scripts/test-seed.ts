@@ -20,6 +20,9 @@ const context = { disableRevalidate: true };
 await payload.updateGlobal({ slug: "home-page", data: { positioning: "Edited by an editor" }, context });
 await payload.updateGlobal({ slug: "site", data: { tagline: "Edited tagline" }, context });
 const before = await payload.count({ collection: "companies" });
+const matel = (await payload.find({ collection: "companies", where: { slug: { equals: "matel-motion" } }, limit: 1 })).docs[0];
+assert.ok(matel.breakthrough && matel.traction?.length && matel.callouts?.length, "one-pager content is seeded");
+await payload.update({ collection: "companies", id: matel.id, data: { breakthrough: "Edited breakthrough", traction: [] }, context });
 
 // …then someone re-runs the seed.
 execFileSync(process.execPath, ["--import", "tsx", "scripts/seed.ts"], { env: process.env, stdio: "pipe" });
@@ -31,6 +34,30 @@ assert.equal(home.positioning, "Edited by an editor", "home page edits survive a
 assert.equal(site.tagline, "Edited tagline", "site settings edits survive a re-seed");
 assert.equal(after.totalDocs, before.totalDocs, "no duplicate companies");
 assert.ok((home.pillars ?? []).length > 0 && (home.faq ?? []).length > 0, "seeded pillars and FAQ are present");
+const matelAfter = await payload.findByID({ collection: "companies", id: matel.id });
+assert.equal(matelAfter.breakthrough, "Edited breakthrough", "one-pager edits survive a re-seed");
+assert.ok(matelAfter.traction?.length, "emptied one-pager fields are filled again");
 
-console.log("seed: re-running the seed preserves edits");
+// One-pager content is public: no company financials or return figures.
+const { onePagers } = await import("./seed-data/one-pagers");
+const FORBIDDEN = /revenue|raised|raising|\breturns?\b|EBITDA|\bIRR\b|\bIPO\b|valuation|margin|funding|order book/i;
+for (const [slug, content] of Object.entries(onePagers)) {
+  const text = JSON.stringify(content);
+  assert.ok(!FORBIDDEN.test(text), `one-pager for ${slug} mentions "${text.match(FORBIDDEN)?.[0]}"`);
+}
+
+// Impact content is public too, and also names no lenders or debt (the public-site rule).
+const { impact } = await import("./seed-data/impact");
+const { companyImpact, sdgGoals } = await import("./seed-data/impact-content");
+const IMPACT_FORBIDDEN = new RegExp(`${FORBIDDEN.source}|\\bdebt\\b|lender|\\bSBI\\b|ICICI|order pipeline|Article 8`, "i");
+for (const [name, content] of Object.entries({ page: impact, companies: companyImpact, sdgs: sdgGoals })) {
+  const text = JSON.stringify(content);
+  assert.ok(!IMPACT_FORBIDDEN.test(text), `impact ${name} content mentions "${text.match(IMPACT_FORBIDDEN)?.[0]}"`);
+}
+const impactPage = await payload.findGlobal({ slug: "impact-page" });
+assert.ok(impactPage.hero?.headline && (impactPage.sdgs?.goals ?? []).length >= 9, "impact page is seeded");
+const { totalDocs: withImpact } = await payload.count({ collection: "companies", where: { "impact.show": { equals: true } } });
+assert.equal(withImpact, Object.keys(companyImpact).length, "every company view is seeded");
+
+console.log("seed: re-running the seed preserves edits; one-pagers and impact content are seeded and public-safe");
 process.exit(0);

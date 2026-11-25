@@ -1,17 +1,17 @@
 import { cn } from "@/lib/utils";
+import { BrandSymbol } from "@/components/ui/BrandSymbol";
 
 /**
- * Placeholder wordmark until the official SVG logo is supplied.
- * Replace the contents with the supplied SVG, keeping the same props.
+ * Stand-in for the Brand Book's primary logo (aqua symbol + "TRANSITION" wordmark)
+ * until the official SVG is supplied. Replace the contents with it, keeping the props.
+ * The wordmark inherits the text colour (black on light, white on dark bands).
  */
 export function Logo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-baseline gap-1.5 leading-none", className)} aria-label="Transition VC">
-      <span aria-hidden className="font-serif text-[1.05rem] font-normal tracking-[0.14em] uppercase">
+    <span className={cn("inline-flex items-center gap-2 leading-none", className)} aria-label="Transition VC">
+      <BrandSymbol className="size-[1.35rem] shrink-0 text-aqua" />
+      <span aria-hidden className="font-display text-[1.15rem] font-bold tracking-[0.02em] uppercase">
         Transition
-      </span>
-      <span aria-hidden className="text-[0.95rem] font-bold tracking-[0.1em] text-teal-ink in-data-[theme=dark]:text-teal">
-        VC
       </span>
     </span>
   );

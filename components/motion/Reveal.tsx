@@ -8,6 +8,7 @@ type RevealProps = {
   stagger?: number;
   delay?: number;
   y?: number;
+  id?: string;
 };
 
 /**
@@ -17,11 +18,11 @@ type RevealProps = {
  * default and only hidden when <html> has `js-motion` (set pre-paint for users
  * without reduced motion), so nothing is lost without JS.
  */
-export function Reveal({ children, as: Tag = "div", className, stagger, delay = 0, y = 24 }: RevealProps) {
+export function Reveal({ children, as: Tag = "div", className, stagger, delay = 0, y = 24, id }: RevealProps) {
   const style = { "--reveal-y": `${y}px`, ...(delay ? { "--reveal-delay": `${delay}s` } : {}) } as CSSProperties;
   const attrs = stagger ? { "data-reveal-group": String(stagger) } : { "data-reveal": "" };
   return (
-    <Tag className={className} style={style} {...attrs}>
+    <Tag id={id} className={className} style={style} {...attrs}>
       {children}
     </Tag>
   );

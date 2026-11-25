@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import "@fontsource/merriweather/latin-300.css";
-import "@fontsource-variable/manrope/index.css";
+import "@fontsource-variable/inter/wght.css";
+import "@fontsource/carlito/400.css";
+import "@fontsource/carlito/700.css";
 import "./(site)/globals.css";
 import { Logo } from "@/components/ui/Logo";
 import { ButtonLink } from "@/components/ui/Button";

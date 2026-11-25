@@ -6,6 +6,7 @@ import {
   getNews,
   getPortfolio,
   getReports,
+  getPerspectivesPage,
   getSite,
   getVideos,
 } from "@/lib/cms";
@@ -38,7 +39,7 @@ function eventDates(e: EventItem) {
 }
 
 export default async function PerspectivesPage() {
-  const [site, essays, videos, news, events, reports, portfolio] = await Promise.all([
+  const [site, essays, videos, news, events, reports, portfolio, page] = await Promise.all([
     getSite(),
     getEssays(),
     getVideos(),
@@ -46,6 +47,7 @@ export default async function PerspectivesPage() {
     getEvents(),
     getReports(),
     getPortfolio(),
+    getPerspectivesPage(),
   ]);
 
   const nameOf = (slug?: string) => (slug ? companyName(portfolio, slug) : undefined);
@@ -99,8 +101,9 @@ export default async function PerspectivesPage() {
         id: n.url,
         eyebrow: `${n.source} · ${day(n.date)}`,
         title: n.title,
+        image: n.image,
         href: n.url,
-        action: "Read coverage",
+        action: n.url.includes("youtube.com") ? "Watch coverage" : "Read coverage",
       })),
     },
     events.upcoming.length || events.past.length
@@ -190,18 +193,18 @@ export default async function PerspectivesPage() {
     <>
       {/* Dark hero, then the formats carousel on its own light band */}
       <PageHero
-        art="flow"
-        eyebrow="Perspectives"
-        title="Ideas behind the investments"
-        intro={<>Perspectives on India&rsquo;s energy transition, straight from our newsletter.</>}
+        art="writing"
+        eyebrow={page.eyebrow}
+        title={page.headline}
+        intro={page.intro}
       >
         <div className="mt-10 flex flex-wrap gap-3">
           <ButtonLink href={site.substackUrl} variant="solid">
-            Subscribe on Substack
+            {page.substackLabel}
           </ButtonLink>
           {site.youtubeUrl && (
             <ButtonLink href={site.youtubeUrl} variant="outline">
-              Watch on YouTube
+              {page.youtubeLabel}
             </ButtonLink>
           )}
         </div>
@@ -217,7 +220,7 @@ export default async function PerspectivesPage() {
       {/* Full index — scannable and crawlable */}
       <section className="py-20 sm:py-28" aria-labelledby="index-heading">
         <div className="container-site">
-          <SectionHeading eyebrow="Index" title={<span id="index-heading">Everything we&rsquo;ve published</span>} />
+          <SectionHeading eyebrow={page.indexEyebrow} title={<span id="index-heading">{page.indexHeading}</span>} />
 
           <div className="mt-14 grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
             <Reveal>
@@ -233,7 +236,7 @@ export default async function PerspectivesPage() {
                         className="group flex min-h-16 items-baseline gap-5 py-4"
                       >
                         <span className="flex-1">
-                          <span className="block font-serif font-light text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
+                          <span className="block font-display text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
                             {e.title}
                           </span>
                           {(e.date || nameOf(e.company)) && (
@@ -258,7 +261,7 @@ export default async function PerspectivesPage() {
                     href={site.substackUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-ink underline decoration-ink/25 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
+                    className="font-normal text-ink underline decoration-ink/25 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
                   >
                     our Substack
                   </a>
@@ -279,7 +282,7 @@ export default async function PerspectivesPage() {
                           className="group flex min-h-16 items-baseline justify-between gap-5 py-4"
                         >
                           <span>
-                            <span className="block font-serif font-light text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
+                            <span className="block font-display text-ink transition-colors group-hover:text-teal-ink sm:text-lg">
                               {r.title}
                             </span>
                             <span className="mt-1 block text-sm text-muted">
@@ -309,7 +312,7 @@ export default async function PerspectivesPage() {
                       <span className="block text-sm text-muted">
                         {n.source} · <time dateTime={n.date}>{day(n.date)}</time>
                       </span>
-                      <span className="mt-1.5 block text-[0.95rem] leading-snug font-medium text-ink transition-colors group-hover:text-teal-ink">
+                      <span className="mt-1.5 block text-[0.95rem] leading-snug font-normal text-ink transition-colors group-hover:text-teal-ink">
                         {n.title}
                       </span>
                       <span className="sr-only">(opens in a new tab)</span>

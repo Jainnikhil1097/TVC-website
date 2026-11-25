@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRef, useState, type KeyboardEvent } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Company } from "@/lib/types";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { cn, hostname } from "@/lib/utils";
 
 type Props = {
@@ -15,7 +15,10 @@ type Props = {
   totalActive: number;
 };
 
-/** Cover image, or a quiet blueprint panel with the company's wordmark. */
+/**
+ * Fills the panel: the cover photo if there is one, else the company's logo, large, on a
+ * white panel edge to edge (logos are made for white), else the company name.
+ */
 function Cover({ company, priority }: { company: Company; priority?: boolean }) {
   if (company.coverImage) {
     return (
@@ -29,24 +32,19 @@ function Cover({ company, priority }: { company: Company; priority?: boolean }) 
       />
     );
   }
+  if (company.logo) {
+    return (
+      <div aria-hidden className="absolute inset-0 grid place-items-center bg-white">
+        {/* Large, but never wider than the file itself, so a small logo isn't blown up and blurred. */}
+        <div className="relative h-[64%] w-[76%]" style={company.logo.width ? { maxWidth: company.logo.width } : undefined}>
+          <Image src={company.logo.url} alt="" fill priority={priority} sizes="(min-width: 1024px) 40vw, 80vw" className="object-contain" />
+        </div>
+      </div>
+    );
+  }
   return (
-    <div
-      aria-hidden
-      className="absolute inset-0 grid place-items-center"
-      style={{
-        backgroundColor: "#0f1d31",
-        backgroundImage:
-          "linear-gradient(rgb(14 213 194 / 0.08) 1px, transparent 1px), linear-gradient(90deg, rgb(14 213 194 / 0.08) 1px, transparent 1px)",
-        backgroundSize: "32px 32px",
-      }}
-    >
-      {company.logo ? (
-        <span className="relative block h-16 w-56">
-          <Image src={company.logo.url} alt="" fill sizes="224px" className="object-contain brightness-0 invert" />
-        </span>
-      ) : (
-        <span className="font-serif text-4xl text-white/85">{company.name}</span>
-      )}
+    <div aria-hidden className="absolute inset-0 grid place-items-center bg-[#161616]">
+      <span className="font-display text-4xl text-white/85">{company.name}</span>
     </div>
   );
 }
@@ -56,7 +54,7 @@ function Details({ company, note }: { company: Company; note?: string }) {
   return (
     <div className="flex flex-col">
       <p className="hud text-teal">
-        {portfolioSectorName(company.sector)} · {company.stage} · {company.yearInvested}
+        {portfolioSectorName(company.sector)} · {company.stage} · {portfolioFundName(company.fund)}
       </p>
       <h3 className="display mt-4 text-3xl text-white sm:text-4xl">{company.name}</h3>
       <p className="mt-4 max-w-lg leading-relaxed text-ink-200">{company.summary}</p>
@@ -67,14 +65,14 @@ function Details({ company, note }: { company: Company; note?: string }) {
             href={note}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-5 text-[0.9rem] font-semibold text-ink hover:bg-teal-soft"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-5 text-[0.9rem] font-bold text-ink hover:bg-teal-soft"
           >
             Read our investment note <ArrowUpRight className="size-4" aria-hidden />
           </a>
         )}
         <Link
           href={`/portfolio?company=${company.slug}`}
-          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 px-5 text-[0.9rem] font-semibold text-white hover:border-teal hover:text-teal"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 px-5 text-[0.9rem] font-bold text-white hover:border-teal hover:text-teal"
         >
           Company profile <ArrowRight className="size-4" aria-hidden />
         </Link>
@@ -126,7 +124,7 @@ export function FeaturedPortfolio({ companies, notes, totalActive }: Props) {
           </div>
           <Link
             href="/portfolio"
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 font-semibold text-white hover:text-teal"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 font-bold text-white hover:text-teal"
           >
             All {totalActive} companies <ArrowRight className="size-4" aria-hidden />
           </Link>
@@ -155,7 +153,7 @@ export function FeaturedPortfolio({ companies, notes, totalActive }: Props) {
                     selected ? "border-teal text-white" : "border-white/10 text-ink-300 hover:text-white"
                   )}
                 >
-                  <span className="block font-serif text-lg">{c.name}</span>
+                  <span className="block font-display text-lg">{c.name}</span>
                   <span className="hud mt-1 block text-ink-400">{portfolioSectorName(c.sector)}</span>
                 </button>
               );

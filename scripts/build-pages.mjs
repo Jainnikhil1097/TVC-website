@@ -6,9 +6,9 @@
 // Every page is saved as plain HTML into out/, using the content currently in the
 // CMS database (DATABASE_URL, or dev.db). The CMS admin (/admin) and its API need
 // a server, so they're set aside during the build and put back afterwards; forms
-// show a "preview" note instead of sending.
+// show a "preview" note instead of sending. Uploaded images (media/) are copied in.
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
@@ -66,6 +66,9 @@ try {
 if (status === 0) {
   // GitHub Pages runs Jekyll by default, which hides folders starting with "_" (like _next).
   writeFileSync(path.join(root, "out", ".nojekyll"), "");
+  // CMS uploads (team photos etc.): on the preview, lib/cms.ts points images at /media/.
+  const media = path.resolve(root, process.env.MEDIA_DIR || "media");
+  if (existsSync(media)) cpSync(media, path.join(root, "out", "media"), { recursive: true });
   console.log(`\nStatic preview ready in out/${basePath ? ` (for ${basePath}/)` : ""}.`);
 }
 process.exit(status);

@@ -13,7 +13,11 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: process.cwd(),
   // Careers was removed; send old links somewhere useful instead of a 404.
   async redirects() {
-    return [{ source: "/careers", destination: "/contact", permanent: true }];
+    return [
+      { source: "/careers", destination: "/contact", permanent: true },
+      // The Funds page was retired; the home page's "Our funds" section lists them.
+      { source: "/funds", destination: "/#funds", permanent: true },
+    ];
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -40,6 +44,9 @@ if (staticExport) {
   // Redirects and headers need a server, so they're dropped from the static files.
   delete config.redirects;
   delete config.headers;
+  // The CMS routes are set aside during this build, but a running dev server's generated
+  // types (.next/dev/types) still point at them. Types are checked by `npm run typecheck`.
+  config.typescript = { ...config.typescript, ignoreBuildErrors: true };
 }
 
 export default config;

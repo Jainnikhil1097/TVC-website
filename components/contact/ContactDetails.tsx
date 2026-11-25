@@ -1,40 +1,8 @@
 import { ArrowUpRight, Mail, MapPin } from "lucide-react";
 import type { Site } from "@/lib/cms";
+import { OfficeMap } from "./OfficeMap";
 
 type ContactInfo = Pick<Site, "contact" | "socials">;
-
-/**
- * Real, interactive Google Map of the office. The pin is placed by Google from the
- * street address (so it's exact and follows any address change in the CMS). Shown
- * muted to sit with the site's palette, returning to full colour when the visitor
- * interacts with it. Lazy-loaded, so it costs nothing until it's scrolled into view.
- */
-function MapCard({ address, mapUrl }: { address: string[]; mapUrl: string }) {
-  const query = encodeURIComponent(address.join(", "));
-  const embed = `https://www.google.com/maps?q=${query}&z=16&output=embed`;
-  return (
-    <div className="group overflow-hidden rounded-3xl border border-line bg-white transition-colors focus-within:border-teal-ink/40 hover:border-teal-ink/40">
-      <div className="relative aspect-[16/10] border-b border-line bg-surface">
-        <iframe
-          src={embed}
-          title="Map showing the Transition VC office in Domlur, Bengaluru"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          allowFullScreen
-          className="absolute inset-0 size-full border-0 [filter:saturate(0.25)_contrast(1.04)] transition-[filter] duration-500 group-hover:[filter:none] group-focus-within:[filter:none]"
-        />
-      </div>
-      <a
-        href={mapUrl || `https://www.google.com/maps/search/?api=1&query=${query}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex min-h-12 items-center justify-between px-5 py-3 text-sm font-medium text-ink hover:text-teal-ink"
-      >
-        Open in Google Maps <ArrowUpRight className="size-4" aria-hidden />
-      </a>
-    </div>
-  );
-}
 
 export function ContactDetails({ site }: { site: ContactInfo }) {
   return (
@@ -46,11 +14,11 @@ export function ContactDetails({ site }: { site: ContactInfo }) {
 
       <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         <div className="rounded-2xl border border-line bg-surface p-5">
-          <dt className="flex items-center gap-3 text-sm font-semibold text-ink">
+          <dt className="flex items-center gap-3 text-sm font-bold text-ink">
             <span className="grid size-9 place-items-center rounded-full border border-line bg-white text-teal-ink">
               <Mail className="size-4" aria-hidden />
             </span>
-            Email
+            General Enquiries
           </dt>
           <dd className="mt-3 text-sm">
             <a
@@ -60,27 +28,40 @@ export function ContactDetails({ site }: { site: ContactInfo }) {
               {site.contact.email}
             </a>
           </dd>
+          {site.contact.careersEmail && (
+            <dd className="mt-4 border-t border-line pt-4 text-sm">
+              <span className="block font-bold text-ink">Explore careers &rarr;</span>
+              <a
+                href={`mailto:${site.contact.careersEmail}`}
+                className="mt-1.5 inline-block break-all text-ink underline decoration-ink/20 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
+              >
+                {site.contact.careersEmail}
+              </a>
+            </dd>
+          )}
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5">
-          <dt className="flex items-center gap-3 text-sm font-semibold text-ink">
+          <dt className="flex items-center gap-3 text-sm font-bold text-ink">
             <span className="grid size-9 place-items-center rounded-full border border-line bg-white text-teal-ink">
               <MapPin className="size-4" aria-hidden />
             </span>
-            Our office
+            {site.contact.offices.length > 1 ? "Our offices" : "Our office"}
           </dt>
-          <dd className="mt-3 text-sm leading-relaxed text-ink/80">
-            <address className="not-italic">
-              {site.contact.address.map((line) => (
-                <span key={line} className="block">
-                  {line}
-                </span>
-              ))}
-            </address>
+          <dd className="mt-3 space-y-3 text-sm leading-relaxed text-ink/80">
+            {site.contact.offices.map((office) => (
+              <address key={office.name} className="not-italic">
+                {office.address.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </address>
+            ))}
           </dd>
         </div>
       </dl>
 
-      {site.contact.address.length > 0 && <MapCard address={site.contact.address} mapUrl={site.contact.mapUrl} />}
+      {site.contact.offices.length > 0 && <OfficeMap offices={site.contact.offices} />}
 
       <div>
         <p className="eyebrow text-muted">Follow</p>

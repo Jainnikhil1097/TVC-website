@@ -4,14 +4,13 @@ import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, ArrowUpRight, X } from "lucide-react";
 import type { Company } from "@/lib/types";
-import { portfolioSectorName } from "@/lib/taxonomy";
+import { portfolioFundName, portfolioSectorName } from "@/lib/taxonomy";
 import { hostname } from "@/lib/utils";
 import { CompanyLogo, StatusBadge } from "./CompanyLogo";
 import { statusLabel, type CompanyEssay } from "./status";
 
 type Props = {
   company: Company;
-  number: string;
   essay?: CompanyEssay;
   /** Where the company's label sits, as fractions (0–1) of the map's width and height. */
   anchor: { fx: number; fy: number };
@@ -32,7 +31,7 @@ const EDGE = 16;
  * right, or to the left when there isn't room on the right — aligned to the label's
  * top in the upper half of the map and to its bottom in the lower half.
  */
-export function MapPopover({ company, number, essay, anchor, onClose, onOpenProfile }: Props) {
+export function MapPopover({ company, essay, anchor, onClose, onOpenProfile }: Props) {
   const card = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number; openLeft: boolean } | null>(null);
   const openDown = anchor.fy < 0.5;
@@ -48,9 +47,9 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       const l = label.getBoundingClientRect();
       const w = el.offsetWidth;
       const h = el.offsetHeight;
-      // The map frame gives ~1.5rem of room either side of this box, ~5rem above and below.
-      const minLeft = -EDGE;
-      const maxLeft = box.width + EDGE - w;
+      // Positioned within the map frame (outside its tilting 3D stage), kept inside it.
+      const minLeft = EDGE;
+      const maxLeft = box.width - EDGE - w;
       const spaceRight = maxLeft - (l.right - box.left + GAP);
       const spaceLeft = l.left - box.left - GAP - w - minLeft;
       // Open towards whichever side has room (right by default); then keep it inside.
@@ -59,7 +58,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       const rawTop = openDown ? l.top - box.top : l.bottom - box.top - h;
       setPos({
         left: Math.min(Math.max(rawLeft, minLeft), maxLeft),
-        top: Math.min(Math.max(rawTop, -64), box.height - h + 64),
+        top: Math.min(Math.max(rawTop, EDGE), box.height - h - EDGE),
         openLeft,
       });
     };
@@ -108,7 +107,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       data-theme="light"
       aria-labelledby="map-popover-title"
       tabIndex={-1}
-      className="map-popover absolute z-[200] w-[21rem] rounded-2xl border border-line bg-white p-5 text-left shadow-[0_18px_50px_rgb(11_22_38/0.16)] outline-none"
+      className="map-popover absolute z-[200] w-[21rem] rounded-2xl border border-line bg-white p-5 text-left shadow-[0_18px_50px_rgb(0_0_0/0.16)] outline-none"
       style={{
         left: pos?.left ?? 0,
         top: pos?.top ?? 0,
@@ -122,7 +121,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
           {company.logo ? (
             <CompanyLogo company={company} className="h-10 w-40" />
           ) : (
-            <span aria-hidden className="grid size-10 place-items-center rounded-lg bg-surface font-serif text-sm text-ink">
+            <span aria-hidden className="grid size-10 place-items-center rounded-lg bg-surface font-display text-sm text-ink">
               {company.name.slice(0, 2).toUpperCase()}
             </span>
           )}
@@ -141,9 +140,9 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       </div>
 
       <p className="hud mt-4 text-teal-ink">
-        {number} · {portfolioSectorName(company.sector)}
+        {portfolioSectorName(company.sector)}
       </p>
-      <h3 id="map-popover-title" className="mt-1.5 font-serif text-2xl leading-tight text-ink">
+      <h3 id="map-popover-title" className="mt-1.5 font-display font-bold text-2xl leading-tight text-ink">
         {company.name}
       </h3>
       {status && <StatusBadge label={status} className="mt-2" />}
@@ -152,11 +151,11 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
       <dl className="mt-4 grid grid-cols-3 gap-3 border-y border-line py-3 text-sm">
         <div>
           <dt className="text-xs text-muted">Stage</dt>
-          <dd className="mt-0.5 font-medium text-ink">{company.stage}</dd>
+          <dd className="mt-0.5 font-normal text-ink">{company.stage}</dd>
         </div>
         <div>
-          <dt className="text-xs text-muted">Invested</dt>
-          <dd className="mt-0.5 font-medium text-ink">{company.yearInvested}</dd>
+          <dt className="text-xs text-muted">Fund</dt>
+          <dd className="mt-0.5 font-normal text-ink">{portfolioFundName(company.fund)}</dd>
         </div>
         <div className="min-w-0">
           <dt className="text-xs text-muted">Website</dt>
@@ -165,7 +164,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
               href={company.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-teal-ink underline-offset-2 hover:underline"
+              className="font-normal text-teal-ink underline-offset-2 hover:underline"
             >
               {hostname(company.website)}
             </a>
@@ -178,7 +177,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
         <button
           type="button"
           onClick={() => onOpenProfile(company.slug)}
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-teal-ink"
+          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-ink px-4 text-sm font-bold text-white transition-colors hover:bg-teal-ink"
         >
           Full profile <ArrowRight className="size-3.5" aria-hidden />
         </button>
@@ -187,7 +186,7 @@ export function MapPopover({ company, number, essay, anchor, onClose, onOpenProf
             href={essay.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-ink/20 px-4 text-sm font-semibold text-ink transition-colors hover:border-teal-ink hover:text-teal-ink"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-ink/20 px-4 text-sm font-bold text-ink transition-colors hover:border-teal-ink hover:text-teal-ink"
           >
             Investment note <ArrowUpRight className="size-3.5" aria-hidden />
           </Link>

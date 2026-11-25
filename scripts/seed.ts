@@ -12,11 +12,17 @@ nextEnv.loadEnvConfig(process.cwd());
 const { default: config } = await import("../payload.config");
 const { site, metrics, funds, investmentCriteria } = await import("./seed-data/site");
 const { portfolio } = await import("./seed-data/portfolio");
-const { teamGroups } = await import("./seed-data/team");
+const { importTeam } = await import("./team-import");
+const { importCompanyPhotos } = await import("./company-photos");
+const { importCompanyLogos } = await import("./company-logos");
+const { importOnePagers } = await import("./one-pagers");
+const { importImpact } = await import("./impact-import");
+const { importGroupPhotos } = await import("./group-photos");
+const { importNewsPhotos } = await import("./news-photos");
+const { founderPillars } = await import("./seed-data/founder-pillars");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
 const { investmentSectors } = await import("./seed-data/sectors");
-const { impact } = await import("./seed-data/impact");
-const { giftCity } = await import("./seed-data/gift-city");
+const { giftCity, giftCityDisclosures } = await import("./seed-data/gift-city");
 
 const reset = process.argv.includes("--reset");
 const payload = await getPayload({ config });
@@ -36,9 +42,8 @@ async function isEmpty(collection: Slug) {
 }
 
 // ─── Portfolio ───────────────────────────────────────────────────────────────
-// Recent investments with published investment notes, shown in the home page's
-// Featured portfolio tabs (editors can change this in the CMS).
-const FEATURED = ["suind", "albatross-energetics", "prithu", "workongrid"];
+// The home page's Featured portfolio tabs, in this order (editors can change this in the CMS).
+const FEATURED = ["matel-motion", "greentech-mw", "fitsol", "comminent"];
 
 const companyIds = new Map<string, number>();
 if (await isEmpty("companies")) {
@@ -53,9 +58,11 @@ if (await isEmpty("companies")) {
         sector: c.sector,
         stage: c.stage,
         yearInvested: c.yearInvested,
+        fund: c.fund ?? "fund-1",
         website: c.website,
         status: "active",
         featured: FEATURED.includes(c.slug),
+        homeOrder: FEATURED.includes(c.slug) ? FEATURED.indexOf(c.slug) + 1 : undefined,
         founders: c.founders?.map((f) => ({ name: f.name, title: f.title })),
         order: (i + 1) * 10,
         _status: "published",
@@ -70,31 +77,17 @@ if (await isEmpty("companies")) {
 }
 
 // ─── Team ────────────────────────────────────────────────────────────────────
-if (await isEmpty("team")) {
-  let n = 0;
-  for (const group of teamGroups) {
-    for (const [i, p] of group.people.entries()) {
-      await payload.create({
-        collection: "team",
-        context,
-        data: {
-          name: p.name,
-          title: p.title,
-          group: group.id,
-          linkedin: p.linkedin,
-          order: (i + 1) * 10,
-          _status: "published",
-        },
-      });
-      n++;
-    }
-  }
-  log(`team: ${n} added`);
-}
+if (await isEmpty("team")) await importTeam(payload, log);
+// Company cover photos (scripts/seed-data/company-photos/<slug>.jpg), once companies exist.
+await importCompanyPhotos(payload, log);
+// Company logos (scripts/seed-data/company-logos/<slug>.png); fills empty logos only.
+await importCompanyLogos(payload, log);
+// One-pager content and product renders (scripts/seed-data/one-pagers.ts); fills empty fields only.
+await importOnePagers(payload, log);
 
 // ─── News, funds ─────────────────────────────────────────────────────────────
 if (await isEmpty("news")) {
-  for (const item of news) await payload.create({ collection: "news", context, data: item });
+  for (const { date, title, source, url } of news) await payload.create({ collection: "news", context, data: { date, title, source, url } });
   log(`news: ${news.length} added`);
 }
 
@@ -140,7 +133,6 @@ type GlobalSlug =
   | "fund-metrics"
   | "home-sectors"
   | "home-page"
-  | "impact-page"
   | "gift-city-page"
   | "announcement";
 
@@ -165,11 +157,13 @@ await fillGlobal("site", emptyText("tagline"), {
   thesis: site.thesis,
   stage: investmentCriteria.stage,
   cheque: investmentCriteria.cheque,
+  chequeUsd: investmentCriteria.chequeUsd,
   footerHeadline: site.footerHeadline,
   newsletterBlurb: site.newsletterBlurb,
   email: site.contact.email,
-  address: site.contact.address.join("\n"),
-  mapUrl: site.contact.mapUrl,
+  careersEmail: site.contact.careersEmail,
+  offices: site.contact.offices.map((o) => ({ name: o.name, address: o.address.join("\n"), mapUrl: o.mapUrl })),
+  formRecipients: site.contact.formRecipients,
   investorLoginUrl: site.investorLoginUrl || undefined,
   socials: site.socials.filter((s) => s.label !== "Substack").map((s) => ({ label: s.label, url: s.href })),
   substackUrl,
@@ -190,40 +184,14 @@ await fillGlobal("home-sectors", emptyArray("sectors"), {
 // Draft copy drawn from the fund's published thesis — for Transition VC to review in the CMS.
 await fillGlobal("home-page", emptyText("positioning"), {
   positioning: "India's first energy-transition venture fund",
-  pillars: [
-    {
-      title: "Engineering-first",
-      icon: "engineering",
-      text: "We underwrite the technology itself, and back teams solving hard physical bottlenecks.",
-    },
-    {
-      title: "Early, catalytic capital",
-      icon: "capital",
-      text: `${investmentCriteria.stage} cheques of ${investmentCriteria.cheque}, when conviction matters most.`,
-    },
-    {
-      title: "Built for India",
-      icon: "india",
-      text: "We back products and cost structures designed for India's energy transition.",
-    },
-    {
-      title: "Energy is all we do",
-      icon: "energy",
-      text: "Mobility, industry, storage, alternate fuels and more — one focus, deep context.",
-    },
-    {
-      title: "Beyond subsidies",
-      icon: "growth",
-      text: "We look for economics that work without relying on subsidies or regulatory timing.",
-    },
-  ],
+  pillars: founderPillars.map((p) => ({ title: p.title, icon: p.icon, points: p.points.map((text) => ({ text })) })),
   faq: [
     { question: "What stage do you invest at?", answer: `${investmentCriteria.stage}.` },
     { question: "How much do you invest?", answer: `Typically ${investmentCriteria.cheque} per company.` },
     {
       question: "Which sectors do you invest in?",
       answer:
-        "Mobility, Industrial, Buildings, Renewable Tech, Alternative Fuels, Power Electronics, Energy Storage and Sustainability.",
+        "Mobility, Industrial, Built Environment, Semiconductors, Power Electronics, Renewable Tech, Energy Storage and Alternative Fuels.",
     },
     {
       question: "What do you look for?",
@@ -238,22 +206,16 @@ await fillGlobal("home-page", emptyText("positioning"), {
     {
       question: "How do I pitch to you?",
       answer:
-        "Send your deck through the Startups & Founders form on our Contact page (PDF or PowerPoint, up to 10 MB). We read every deck.",
+        "Send your deck through the Startups & Founders form on this page (PDF or PowerPoint, up to 10 MB). We read every deck.",
     },
   ],
 });
 
-await fillGlobal("impact-page", emptyText("headline"), {
-  eyebrow: impact.eyebrow,
-  headline: impact.headline,
-  intro: impact.intro,
-  stats: impact.stats,
-  themes: impact.themes.map((t) => ({
-    title: t.title,
-    body: t.body,
-    companies: t.companies.map((slug) => companyIds.get(slug)).filter((id): id is number => id !== undefined),
-  })),
-});
+await importImpact(payload, log);
+// Group photos (About page, home page band); fills empty fields only.
+await importGroupPhotos(payload, log);
+// News photos already in seed-data/news-photos/ (no downloading here).
+await importNewsPhotos(payload, log);
 
 await fillGlobal("gift-city-page", emptyText("headline"), {
   eyebrow: giftCity.eyebrow,
@@ -262,6 +224,7 @@ await fillGlobal("gift-city-page", emptyText("headline"), {
   highlights: giftCity.highlights,
   ctaLabel: giftCity.cta.label,
   ctaHref: giftCity.cta.href,
+  disclosures: giftCityDisclosures,
 });
 
 log("done");
