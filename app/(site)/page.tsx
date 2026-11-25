@@ -6,6 +6,7 @@ import { FeaturedPortfolio } from "@/components/home/FeaturedPortfolio";
 import { PerspectivesTeaser } from "@/components/home/HomeSections";
 import { FundsSection } from "@/components/funds/FundsSection";
 import {
+  getAboutPage,
   getEssays,
   getEvents,
   getFunds,
@@ -26,9 +27,10 @@ export function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const [site, home, sectors, companies, funds, essays, news, events] = await Promise.all([
+  const [site, home, about, sectors, companies, funds, essays, news, events] = await Promise.all([
     getSite(),
     getHomePage(),
+    getAboutPage(),
     getInvestmentSectors(),
     getPortfolio(),
     getFunds(),
@@ -61,6 +63,12 @@ export default async function HomePage() {
         <PositioningBand
           positioning={home.positioning || site.tagline}
           about={site.about}
+          photos={about.groupPhotos}
+          facts={[
+            { label: "Stage", value: site.investmentCriteria.stage },
+            { label: "Cheque size", value: site.investmentCriteria.cheque },
+            { label: "Portfolio", value: active.length ? `${active.length} active companies` : "" },
+          ].filter((f) => f.value)}
         />
         <SectorGrid sectors={sectors} companies={companies} />
         <FounderPillars pillars={home.pillars} />

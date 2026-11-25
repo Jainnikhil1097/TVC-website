@@ -19,5 +19,5 @@ export type Company = {
 };
 export type Fund = { name: string; category: string; sebiRegistration: string; manager: string };
 export type Essay = { slug: string; title: string; teaser: string; url?: string; company?: string };
-export type NewsItem = { date: string; title: string; source: string; url: string };
+export type NewsItem = { date: string; title: string; source: string; url: string; photo?: string; photoUrl?: string };
 export type Role = { title: string; function: string; experience: string; location: string; applyUrl?: string };

@@ -1214,27 +1214,22 @@ export const sdgGoals: { number: number; title: string; summary: string; entries
   {
     "number": 5,
     "title": "Gender Equality",
-    "summary": "Women lead portfolio growth, corporate partnerships, marketing, and people operations.",
+    "summary": "Women lead across Transition VC, from the leadership team to the departments that run the firm.",
     "entries": [
       {
-        "connection": "Leads corporate partnerships at Transition VC, making women’s leadership visible in the manager’s industry engagement.",
+        "connection": "Navi Sharma · Yashodhara Bakliwal",
         "measures": "",
-        "label": "Navi Sharma"
+        "label": "Women in leadership"
       },
       {
-        "connection": "Leads portfolio growth at Transition VC, placing women in a role supporting portfolio development and company progress.",
+        "connection": "Aditi Manjunath · Saloni Pattnaik",
         "measures": "",
-        "label": "Yashodhara Bakliwal"
+        "label": "Women spearheading departments"
       },
       {
-        "connection": "Women lead Transition VC’s marketing function, shaping the firm’s communication and public presentation across its channels.",
+        "connection": "44% of employees are women.",
         "measures": "",
-        "label": "Marketing"
-      },
-      {
-        "connection": "Women lead people, operations and administration functions, with responsibilities across the manager’s internal teams and everyday operations.",
-        "measures": "",
-        "label": "People & Operations"
+        "label": "Women's representation in the organisation"
       }
     ]
   }

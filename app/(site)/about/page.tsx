@@ -6,6 +6,8 @@ import { PageHero } from "@/components/layout/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
 import { TeamSection } from "@/components/about/TeamSection";
+import { ChequeSize } from "@/components/about/ChequeSize";
+import { PhotoMarquee } from "@/components/media/PhotoMarquee";
 
 export const revalidate = 3600;
 
@@ -20,9 +22,10 @@ export function generateMetadata() {
 export default async function AboutPage() {
   const [site, page, teamGroups] = await Promise.all([getSite(), getAboutPage(), getTeamGroups()]);
 
+  const { stage, cheque, chequeUsd } = site.investmentCriteria;
   const facts = [
-    { label: "Stage", value: site.investmentCriteria.stage },
-    { label: "Cheque size", value: site.investmentCriteria.cheque },
+    { label: "Stage", value: stage },
+    { label: "Cheque size", value: cheque, usd: chequeUsd },
   ].filter((f) => f.value);
 
   return (
@@ -34,26 +37,27 @@ export default async function AboutPage() {
               key={f.label}
               className={i > 0 ? "border-t border-white/15 py-5 sm:border-t-0 sm:border-l sm:pl-6" : "py-5 sm:pr-6"}
             >
-              <dt className="text-sm text-ink-300">{f.label}</dt>
-              <dd className="mt-1 font-display text-xl text-white">{f.value}</dd>
+              {"usd" in f ? (
+                <ChequeSize label={f.label} inr={f.value} usd={f.usd ?? ""} />
+              ) : (
+                <>
+                  <dt className="text-sm text-ink-300">{f.label}</dt>
+                  <dd className="mt-1 font-display text-xl text-white">{f.value}</dd>
+                </>
+              )}
             </div>
           ))}
         </dl>
       </PageHero>
 
-      {/* Approach */}
+      {/* Approach: the quote alone, in two or three lines */}
       <section className="py-20 sm:py-28">
-        <div className="container-site grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
-          <Reveal>
-            <p className="eyebrow text-teal-ink">{page.approachEyebrow}</p>
-            <blockquote className="display mt-6 text-3xl leading-tight text-ink sm:text-4xl lg:text-[2.75rem]">
-              &ldquo;{site.approach}&rdquo;
-            </blockquote>
-          </Reveal>
-          <Reveal className="lg:pt-12">
-            <p className="text-base leading-relaxed text-muted sm:text-lg">{site.thesis}</p>
-          </Reveal>
-        </div>
+        <Reveal className="container-site">
+          <p className="eyebrow text-teal-ink">{page.approachEyebrow}</p>
+          <blockquote className="display mt-6 max-w-5xl text-3xl leading-tight text-balance text-ink sm:text-4xl lg:text-[2.75rem]">
+            &ldquo;{site.approach}&rdquo;
+          </blockquote>
+        </Reveal>
       </section>
 
       {/* Team: everyone visible, team by team */}
@@ -69,6 +73,15 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Group photos, drifting slowly across the full width */}
+      {page.groupPhotos.length > 0 && (
+        <section aria-label="Group photos" className="py-16 sm:py-20">
+          <Reveal>
+            <PhotoMarquee photos={page.groupPhotos} height="h-72 sm:h-[26rem] lg:h-[30rem]" secondsPerPhoto={16} sizes="(min-width: 1024px) 720px, 90vw" />
+          </Reveal>
+        </section>
+      )}
 
       {/* Next steps */}
       <section className="border-t border-line py-16 sm:py-20">

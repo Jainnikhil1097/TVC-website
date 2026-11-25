@@ -41,6 +41,12 @@ export const SiteSettings: GlobalConfig = {
               fields: [
                 { name: "stage", label: "Stages we invest in", type: "text", required: true, admin: { placeholder: "Pre-Seed to Series A" } },
                 { name: "cheque", label: "Cheque size", type: "text", required: true, admin: { placeholder: "₹20 Cr – ₹50 Cr" } },
+                {
+                  name: "chequeUsd",
+                  label: "Cheque size in US dollars",
+                  type: "text",
+                  admin: { placeholder: "$2.3M – $5.7M", description: "Shown when a visitor switches the About page to USD. Leave empty to hide the switch." },
+                },
               ],
             },
             { name: "footerHeadline", label: "Footer headline", type: "text", required: true },
@@ -56,6 +62,12 @@ export const SiteSettings: GlobalConfig = {
               type: "email",
               required: true,
               admin: { description: 'Shown as "General Enquiries" on the Contact page and in the footer.' },
+            },
+            {
+              name: "careersEmail",
+              label: "Careers email",
+              type: "email",
+              admin: { description: 'Shown as "Explore careers" under General Enquiries on the Contact page. Leave empty to hide it.' },
             },
             {
               name: "offices",
@@ -304,7 +316,7 @@ export const ImpactPage: GlobalConfig = {
     group: "Pages",
     preview: () => "/impact",
     description:
-      "Every section of the Impact page. Each company's own impact view (measures, evidence, sources) is on the company: Portfolio → company → Impact tab.",
+      "Every section of the Impact page. Women in leadership is edited under SDGs → Gender Equality (goal 5).",
   },
   access: editable,
   hooks,
@@ -372,9 +384,10 @@ export const ImpactPage: GlobalConfig = {
                     ta("definition", "Definition"),
                   ],
                 },
-                t("coverageTitle", "Reporting coverage: title"),
-                ta("coverageText", "Reporting coverage: text"),
-                t("coverageNote", "Reporting coverage: note"),
+                // No longer shown (removed from the page on 25 Nov 2026); kept so the data survives.
+                t("coverageTitle", "Reporting coverage: title", { admin: { hidden: true } }),
+                ta("coverageText", "Reporting coverage: text", { admin: { hidden: true } }),
+                t("coverageNote", "Reporting coverage: note", { admin: { hidden: true } }),
                 ta("footnote", "Footnote"),
               ],
             },
@@ -389,7 +402,7 @@ export const ImpactPage: GlobalConfig = {
               label: false,
               fields: [
                 ...sectionHeading,
-                t("cardText", "Line on the summary card"),
+                t("cardText", "Line on the summary card", { admin: { hidden: true } }), // no longer shown
                 ta("footnote", "Footnote"),
                 {
                   name: "countries",
@@ -443,7 +456,11 @@ export const ImpactPage: GlobalConfig = {
                       name: "entries",
                       label: "Who contributes",
                       type: "array",
-                      admin: { initCollapsed: true, description: "A portfolio company, or a label (e.g. \"Transition VC × GreenTech\", a team or person)." },
+                      admin: {
+                        initCollapsed: true,
+                        description:
+                          'A portfolio company, or a label (e.g. "Transition VC × GreenTech", a team or person). For Gender Equality (goal 5), each entry is one line of the bar: the label as its heading (e.g. "Women in leadership") and the contribution as the names or figure.',
+                      },
                       fields: [
                         { type: "row", fields: [{ name: "company", label: "Company", type: "relationship", relationTo: "companies" }, t("label", "…or label")] },
                         ta("connection", "Contribution", { required: true }),
@@ -455,56 +472,6 @@ export const ImpactPage: GlobalConfig = {
               ],
             },
           ],
-        },
-        {
-          label: "Company views",
-          description: "The heading for the company-by-company section. Each company's view is edited on the company (Impact tab).",
-          fields: [{ name: "carousel", type: "group", label: false, fields: [...sectionHeading, ta("footnote", "Footnote")] }],
-        },
-        {
-          label: "Investor contribution",
-          fields: [
-            {
-              name: "contribution",
-              type: "group",
-              label: false,
-              fields: [
-                ...sectionHeading,
-                {
-                  name: "pillars",
-                  label: "Pillars",
-                  type: "array",
-                  maxRows: 4,
-                  fields: [{ type: "row", fields: [t("label", "Label"), t("title", "Title")] }, t("text", "Text")],
-                },
-                { type: "row", fields: [t("caseLabel", "Case: small heading"), t("caseTitle", "Case: title")] },
-                { name: "casePoints", label: "Case: points", type: "array", maxRows: 3, fields: [t("title", "Title"), ta("text", "Text")] },
-                ta("caseSource", "Case: source"),
-                ta("footnote", "Footnote"),
-              ],
-            },
-          ],
-        },
-        {
-          label: "Women in leadership",
-          fields: [
-            {
-              name: "women",
-              type: "group",
-              label: false,
-              fields: [
-                ...sectionHeading,
-                { name: "leaders", label: "Leaders", type: "array", fields: [{ type: "row", fields: [t("area", "Area"), t("name", "Name"), t("role", "Role")] }] },
-                { name: "functions", label: "Functions", type: "array", fields: [{ type: "row", fields: [t("title", "Function"), t("text", "Text")] }] },
-                ta("footnote", "Footnote"),
-              ],
-            },
-          ],
-        },
-        {
-          label: "Perspectives",
-          description: "The three latest Substack essays are shown automatically.",
-          fields: [{ name: "perspectives", type: "group", label: false, fields: [...sectionHeading, ta("footnote", "Footnote")] }],
         },
         {
           label: "Measurement",
@@ -529,6 +496,35 @@ export const ImpactPage: GlobalConfig = {
                 { name: "process", label: "Process steps", type: "array", maxRows: 6, fields: [{ type: "row", fields: [t("step", "Step"), t("text", "Text")] }] },
               ],
             },
+            // Sections removed from the page on 25 Nov 2026 (company views, investor contribution,
+            // women in leadership, perspectives). Hidden from editors; kept in the schema so their
+            // content isn't dropped from the database and they can come back.
+            { name: "carousel", type: "group", admin: { hidden: true }, fields: [...sectionHeading, ta("footnote", "Footnote")] },
+            {
+              name: "contribution",
+              type: "group",
+              admin: { hidden: true },
+              fields: [
+                ...sectionHeading,
+                { name: "pillars", type: "array", fields: [{ type: "row", fields: [t("label", "Label"), t("title", "Title")] }, t("text", "Text")] },
+                { type: "row", fields: [t("caseLabel", "Case: small heading"), t("caseTitle", "Case: title")] },
+                { name: "casePoints", type: "array", fields: [t("title", "Title"), ta("text", "Text")] },
+                ta("caseSource", "Case: source"),
+                ta("footnote", "Footnote"),
+              ],
+            },
+            {
+              name: "women",
+              type: "group",
+              admin: { hidden: true },
+              fields: [
+                ...sectionHeading,
+                { name: "leaders", type: "array", fields: [{ type: "row", fields: [t("area", "Area"), t("name", "Name"), t("role", "Role")] }] },
+                { name: "functions", type: "array", fields: [{ type: "row", fields: [t("title", "Function"), t("text", "Text")] }] },
+                ta("footnote", "Footnote"),
+              ],
+            },
+            { name: "perspectives", type: "group", admin: { hidden: true }, fields: [...sectionHeading, ta("footnote", "Footnote")] },
           ],
         },
       ],
@@ -554,7 +550,7 @@ export const GiftCityPage: GlobalConfig = {
           fields: [
             { name: "eyebrow", label: "Small heading", type: "text", required: true },
             { name: "headline", label: "Headline", type: "text", required: true },
-            { name: "intro", label: "Intro", type: "textarea", required: true },
+            { name: "intro", label: "Intro", type: "textarea", required: true, admin: { description: 'Shown in the "Same team, same thesis" section, below the key facts (not in the hero).' } },
             {
               name: "highlights",
               label: "Highlights",
@@ -715,6 +711,20 @@ export const HomePage: GlobalConfig = {
               required: true,
               admin: { description: "Shown above the headline figures, e.g. \"India's first energy-transition venture fund\"." },
             },
+            {
+              name: "aboutPhoto",
+              label: "Photo beside it",
+              type: "upload",
+              relationTo: "media",
+              // Replaced on 25 Nov 2026 by the About page's group photos, which scroll in the band. Hidden, data kept.
+              admin: { hidden: true },
+            },
+            {
+              name: "aboutPhotoCaption",
+              label: "Photo caption",
+              type: "text",
+              admin: { hidden: true },
+            },
           ],
         },
         {
@@ -823,7 +833,7 @@ export const AboutPage: GlobalConfig = {
   admin: {
     group: "Pages",
     description:
-      "The About page's headings and closing cards. The intro, approach quote, thesis, stage and cheque size are in Settings → Site settings; people are under Team; funds under Funds.",
+      "The About page's headings, group photos and closing cards. The intro, approach quote, stage and cheque size (in rupees and US dollars) are in Settings → Site settings; people are under Team; funds under Funds.",
     preview: () => "/about",
   },
   access: editable,
@@ -837,6 +847,18 @@ export const AboutPage: GlobalConfig = {
       fields: [
         text("teamEyebrow", "Team: small heading", aboutPageDefaults.teamEyebrow),
         text("teamHeading", "Team: heading", aboutPageDefaults.teamHeading),
+      ],
+    },
+    {
+      name: "groupPhotos",
+      label: "Group photos",
+      type: "array",
+      maxRows: 10,
+      labels: { singular: "Photo", plural: "Photos" },
+      admin: { description: "Team photos, drifting slowly across the end of this page and beside \"About Transition VC\" on the home page. Alt text is set on each photo." },
+      fields: [
+        { name: "image", label: "Photo", type: "upload", relationTo: "media", required: true },
+        { name: "caption", label: "Caption", type: "text" },
       ],
     },
     {

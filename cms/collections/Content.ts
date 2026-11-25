@@ -31,6 +31,7 @@ export const News: CollectionConfig = {
       ],
     },
     urlField({ name: "url", label: "Link to article", required: true }),
+    { name: "image", label: "Photo", type: "upload", relationTo: "media", admin: { description: "Shown on the news card. Its alt text is set on the photo." } },
   ],
 };
 

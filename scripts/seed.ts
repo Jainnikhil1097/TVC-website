@@ -17,6 +17,8 @@ const { importCompanyPhotos } = await import("./company-photos");
 const { importCompanyLogos } = await import("./company-logos");
 const { importOnePagers } = await import("./one-pagers");
 const { importImpact } = await import("./impact-import");
+const { importGroupPhotos } = await import("./group-photos");
+const { importNewsPhotos } = await import("./news-photos");
 const { founderPillars } = await import("./seed-data/founder-pillars");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
 const { investmentSectors } = await import("./seed-data/sectors");
@@ -85,7 +87,7 @@ await importOnePagers(payload, log);
 
 // ─── News, funds ─────────────────────────────────────────────────────────────
 if (await isEmpty("news")) {
-  for (const item of news) await payload.create({ collection: "news", context, data: item });
+  for (const { date, title, source, url } of news) await payload.create({ collection: "news", context, data: { date, title, source, url } });
   log(`news: ${news.length} added`);
 }
 
@@ -155,9 +157,11 @@ await fillGlobal("site", emptyText("tagline"), {
   thesis: site.thesis,
   stage: investmentCriteria.stage,
   cheque: investmentCriteria.cheque,
+  chequeUsd: investmentCriteria.chequeUsd,
   footerHeadline: site.footerHeadline,
   newsletterBlurb: site.newsletterBlurb,
   email: site.contact.email,
+  careersEmail: site.contact.careersEmail,
   offices: site.contact.offices.map((o) => ({ name: o.name, address: o.address.join("\n"), mapUrl: o.mapUrl })),
   formRecipients: site.contact.formRecipients,
   investorLoginUrl: site.investorLoginUrl || undefined,
@@ -208,6 +212,10 @@ await fillGlobal("home-page", emptyText("positioning"), {
 });
 
 await importImpact(payload, log);
+// Group photos (About page, home page band); fills empty fields only.
+await importGroupPhotos(payload, log);
+// News photos already in seed-data/news-photos/ (no downloading here).
+await importNewsPhotos(payload, log);
 
 await fillGlobal("gift-city-page", emptyText("headline"), {
   eyebrow: giftCity.eyebrow,

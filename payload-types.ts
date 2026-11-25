@@ -433,6 +433,10 @@ export interface News {
   source: string;
   date: string;
   url: string;
+  /**
+   * Shown on the news card. Its alt text is set on the photo.
+   */
+  image?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -788,6 +792,7 @@ export interface NewsSelect<T extends boolean = true> {
   source?: T;
   date?: T;
   url?: T;
+  image?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -996,12 +1001,20 @@ export interface Site {
   thesis: string;
   stage: string;
   cheque: string;
+  /**
+   * Shown when a visitor switches the About page to USD. Leave empty to hide the switch.
+   */
+  chequeUsd?: string | null;
   footerHeadline: string;
   newsletterBlurb: string;
   /**
    * Shown as "General Enquiries" on the Contact page and in the footer.
    */
   email: string;
+  /**
+   * Shown as "Explore careers" under General Enquiries on the Contact page. Leave empty to hide it.
+   */
+  careersEmail?: string | null;
   /**
    * Shown on the Contact page (with a map) and in the footer, in this order.
    */
@@ -1127,6 +1140,8 @@ export interface HomePage {
    * Shown above the headline figures, e.g. "India's first energy-transition venture fund".
    */
   positioning: string;
+  aboutPhoto?: (number | null) | Media;
+  aboutPhotoCaption?: string | null;
   /**
    * Shown as tiers of a spiral staircase on the home page; clicking a heading opens its points. 8 works best.
    */
@@ -1242,7 +1257,7 @@ export interface PortfolioPage {
   createdAt?: string | null;
 }
 /**
- * The About page's headings and closing cards. The intro, approach quote, thesis, stage and cheque size are in Settings → Site settings; people are under Team; funds under Funds.
+ * The About page's headings, group photos and closing cards. The intro, approach quote, stage and cheque size (in rupees and US dollars) are in Settings → Site settings; people are under Team; funds under Funds.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about-page".
@@ -1254,6 +1269,16 @@ export interface AboutPage {
   approachEyebrow?: string | null;
   teamEyebrow?: string | null;
   teamHeading?: string | null;
+  /**
+   * Team photos, drifting slowly across the end of this page and beside "About Transition VC" on the home page. Alt text is set on each photo.
+   */
+  groupPhotos?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * The three link cards at the bottom of the page.
    */
@@ -1288,7 +1313,7 @@ export interface PerspectivesPage {
   createdAt?: string | null;
 }
 /**
- * Every section of the Impact page. Each company's own impact view (measures, evidence, sources) is on the company: Portfolio → company → Impact tab.
+ * Every section of the Impact page. Women in leadership is edited under SDGs → Gender Equality (goal 5).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "impact-page".
@@ -1380,7 +1405,7 @@ export interface ImpactPage {
           title: string;
           summary?: string | null;
           /**
-           * A portfolio company, or a label (e.g. "Transition VC × GreenTech", a team or person).
+           * A portfolio company, or a label (e.g. "Transition VC × GreenTech", a team or person). For Gender Equality (goal 5), each entry is one line of the bar: the label as its heading (e.g. "Women in leadership") and the contribution as the names or figure.
            */
           entries?:
             | {
@@ -1391,6 +1416,34 @@ export interface ImpactPage {
                 id?: string | null;
               }[]
             | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  measurement?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    intro?: string | null;
+    items?:
+      | {
+          title: string;
+          body?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    reports?:
+      | {
+          title: string;
+          status?: string | null;
+          file?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+    processTitle?: string | null;
+    process?:
+      | {
+          step?: string | null;
+          text?: string | null;
           id?: string | null;
         }[]
       | null;
@@ -1452,34 +1505,6 @@ export interface ImpactPage {
     intro?: string | null;
     footnote?: string | null;
   };
-  measurement?: {
-    eyebrow?: string | null;
-    headline?: string | null;
-    intro?: string | null;
-    items?:
-      | {
-          title: string;
-          body?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    reports?:
-      | {
-          title: string;
-          status?: string | null;
-          file?: (number | null) | Media;
-          id?: string | null;
-        }[]
-      | null;
-    processTitle?: string | null;
-    process?:
-      | {
-          step?: string | null;
-          text?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1491,6 +1516,9 @@ export interface GiftCityPage {
   id: number;
   eyebrow: string;
   headline: string;
+  /**
+   * Shown in the "Same team, same thesis" section, below the key facts (not in the hero).
+   */
   intro: string;
   highlights?:
     | {
@@ -1607,9 +1635,11 @@ export interface SiteSelect<T extends boolean = true> {
   thesis?: T;
   stage?: T;
   cheque?: T;
+  chequeUsd?: T;
   footerHeadline?: T;
   newsletterBlurb?: T;
   email?: T;
+  careersEmail?: T;
   offices?:
     | T
     | {
@@ -1727,6 +1757,8 @@ export interface PageSeoSelect<T extends boolean = true> {
  */
 export interface HomePageSelect<T extends boolean = true> {
   positioning?: T;
+  aboutPhoto?: T;
+  aboutPhotoCaption?: T;
   pillars?:
     | T
     | {
@@ -1797,6 +1829,13 @@ export interface AboutPageSelect<T extends boolean = true> {
   approachEyebrow?: T;
   teamEyebrow?: T;
   teamHeading?: T;
+  groupPhotos?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
   nextSteps?:
     | T
     | {
@@ -1927,6 +1966,36 @@ export interface ImpactPageSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  measurement?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        intro?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              id?: T;
+            };
+        reports?:
+          | T
+          | {
+              title?: T;
+              status?: T;
+              file?: T;
+              id?: T;
+            };
+        processTitle?: T;
+        process?:
+          | T
+          | {
+              step?: T;
+              text?: T;
+              id?: T;
+            };
+      };
   carousel?:
     | T
     | {
@@ -1991,36 +2060,6 @@ export interface ImpactPageSelect<T extends boolean = true> {
         headline?: T;
         intro?: T;
         footnote?: T;
-      };
-  measurement?:
-    | T
-    | {
-        eyebrow?: T;
-        headline?: T;
-        intro?: T;
-        items?:
-          | T
-          | {
-              title?: T;
-              body?: T;
-              id?: T;
-            };
-        reports?:
-          | T
-          | {
-              title?: T;
-              status?: T;
-              file?: T;
-              id?: T;
-            };
-        processTitle?: T;
-        process?:
-          | T
-          | {
-              step?: T;
-              text?: T;
-              id?: T;
-            };
       };
   updatedAt?: T;
   createdAt?: T;

@@ -28,6 +28,17 @@ export function ContactDetails({ site }: { site: ContactInfo }) {
               {site.contact.email}
             </a>
           </dd>
+          {site.contact.careersEmail && (
+            <dd className="mt-4 border-t border-line pt-4 text-sm">
+              <span className="block font-bold text-ink">Explore careers &rarr;</span>
+              <a
+                href={`mailto:${site.contact.careersEmail}`}
+                className="mt-1.5 inline-block break-all text-ink underline decoration-ink/20 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
+              >
+                {site.contact.careersEmail}
+              </a>
+            </dd>
+          )}
         </div>
         <div className="rounded-2xl border border-line bg-surface p-5">
           <dt className="flex items-center gap-3 text-sm font-bold text-ink">

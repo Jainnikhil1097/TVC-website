@@ -49,7 +49,7 @@ export const giftCityDisclosures = {
     telephone: "9829999540",
     email: "simran@transitionventurecapital.com",
   },
-  funds: [{ name: "Transition VC Gift Fund I", registrationNumber: "FDM2026FNR1168", category: "Category II" }],
+  funds: [{ name: "Transition VC Gift Fund", registrationNumber: "FDM2026FNR1168", category: "Category II" }],
   serviceProviders: [
     {
       role: "Trustee",

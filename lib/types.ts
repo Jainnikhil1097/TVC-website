@@ -80,31 +80,9 @@ export type Company = {
   callouts?: Callout[];
   /** Headline number for the home page proof band. */
   proof?: { value: string; label: string };
-  deployment?: string;
-  customers?: string;
   marketGap?: string;
   breakthrough?: string;
-  traction?: string[];
-  marketOpportunity?: string;
   whyTheyWin?: string;
-  /** Impact page view (CMS → company → Impact tab), when shown there. */
-  impact?: CompanyImpact;
-};
-
-export type ImpactMetric = { label: string; value?: string; unit?: string; evidence?: string; note?: string };
-
-export type CompanyImpact = {
-  featured: boolean;
-  order: number;
-  sectorLabel?: string;
-  stage?: string;
-  period?: string;
-  tagline?: string;
-  image?: Image;
-  metrics: ImpactMetric[];
-  closer?: { value: string; text?: string };
-  evidence?: string;
-  sources?: string;
 };
 
 /** A label pointing at part of a product image; x/y are percentages of the image. */
@@ -141,6 +119,7 @@ export type NewsItem = {
   title: string;
   source: string;
   url: string;
+  image?: Image;
 };
 
 export type EventItem = {

@@ -199,9 +199,10 @@ export const PortfolioCompanies: CollectionConfig = {
               name: "deployment",
               label: "Deployment",
               type: "text",
-              admin: { placeholder: "e.g. 200,000+ motors across mobility & pumps" },
+              // Not shown since 25 Nov 2026 (too often out of date); hidden, data kept.
+              admin: { hidden: true, placeholder: "e.g. 200,000+ motors across mobility & pumps" },
             },
-            { name: "customers", label: "Customers", type: "text", admin: { description: "Only customers that are cleared to be named publicly." } },
+            { name: "customers", label: "Customers", type: "text", admin: { hidden: true, description: "Only customers that are cleared to be named publicly." } },
             {
               name: "marketGap",
               label: "The gap",
@@ -222,24 +223,27 @@ export const PortfolioCompanies: CollectionConfig = {
               type: "array",
               maxRows: 4,
               labels: { singular: "Point", plural: "Points" },
+              // Not shown since 25 Nov 2026; hidden, data kept.
               admin: {
+                hidden: true,
                 description: "Milestones: deployments, pilots, patents, partners. No revenue, fundraising or return figures.",
                 initCollapsed: true,
               },
               fields: [{ name: "point", label: "Point", type: "text", required: true, maxLength: 200 }],
             },
-            { name: "marketOpportunity", label: "Market opportunity", type: "textarea", maxLength: 500 },
+            { name: "marketOpportunity", label: "Market opportunity", type: "textarea", maxLength: 500, admin: { hidden: true } }, // not shown since 25 Nov 2026
             { name: "whyTheyWin", label: "Why they win", type: "textarea", maxLength: 500 },
           ],
         },
         {
-          label: "Impact",
-          description: "This company's view on the Impact page: up to four measures, each with its evidence label. Leave a value empty for a measure not yet reported (it shows the unit and \"Reporting field\", never zero).",
+          label: "Status",
           fields: [
+            // The company's Impact-page view; the section was removed on 25 Nov 2026. Hidden, data kept.
             {
               name: "impact",
               type: "group",
               label: false,
+              admin: { hidden: true },
               fields: [
                 {
                   type: "row",
@@ -282,11 +286,6 @@ export const PortfolioCompanies: CollectionConfig = {
                 { name: "sources", label: "Sources", type: "textarea" },
               ],
             },
-          ],
-        },
-        {
-          label: "Status",
-          fields: [
             {
               name: "status",
               label: "Status",

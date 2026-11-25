@@ -580,18 +580,25 @@ html.js-motion .hero-cover {
   animation: map-pop 0.22s var(--ease-out-quart) both;
 }
 
-/* Impact page: content that swaps in place (company view, essay ticker) fades in. */
-@keyframes impact-fade {
-  from {
-    opacity: 0;
-    translate: 0 6px;
+/* Team photos drifting slowly sideways (PhotoMarquee). The track holds the row twice
+   (plus one trailing gap), so moving it by half loops seamlessly. */
+@keyframes photo-marquee {
+  to {
+    translate: -50% 0;
   }
 }
-.impact-fade {
-  animation: impact-fade 0.35s var(--ease-out-quart) both;
+.photo-marquee-track {
+  animation: photo-marquee linear infinite;
+}
+.photo-marquee:hover .photo-marquee-track,
+.photo-marquee:focus-within .photo-marquee-track {
+  animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
-  .impact-fade {
+  .photo-marquee {
+    overflow-x: auto;
+  }
+  .photo-marquee-track {
     animation: none;
   }
 }
@@ -665,4 +672,21 @@ html.js-motion .hero-cover {
   .sector-road-traffic {
     display: none;
   }
+}
+/* The car driving down the phone layout's road (its box spans the whole road). */
+@keyframes sector-road-car {
+  from {
+    top: 0;
+  }
+  to {
+    top: calc(100% - 2.5rem);
+  }
+}
+.sector-road-car {
+  pointer-events: none;
+}
+.sector-road-car-body {
+  position: absolute;
+  left: 0;
+  animation: sector-road-car 22s linear infinite;
 }

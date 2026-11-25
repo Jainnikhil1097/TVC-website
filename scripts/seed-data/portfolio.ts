@@ -231,7 +231,7 @@ export const portfolio: Company[] = [
   {
     slug: "ethereal-machines",
     name: "Ethereal Machines",
-    summary: "Five-axis CNC machines and advanced manufacturing systems, designed and built in India.",
+    summary: "5-axis CNC milling and 3D printing in one compact, desktop-sized machine, so complex shapes can be machined efficiently in a single setup, with more design freedom and stronger parts.",
     sector: "industrial",
     stage: "TBD",
     yearInvested: 2021,
@@ -241,7 +241,7 @@ export const portfolio: Company[] = [
   {
     slug: "exponent-energy",
     name: "Exponent Energy",
-    summary: "Battery packs and charging stations built to charge electric commercial vehicles rapidly.",
+    summary: "Battery packs, rapid-charging stations and charging software that charge commercial EVs in 15 minutes, built for fleets of three-wheelers, trucks and buses to cut downtime and battery costs.",
     sector: "mobility",
     stage: "TBD",
     yearInvested: 2021,
@@ -251,21 +251,21 @@ export const portfolio: Company[] = [
   {
     slug: "billione-mobility",
     name: "BillionE Mobility",
-    summary: "Electric commercial-vehicle fleets for logistics, with charging and fleet services.",
+    summary: "Electric Mobility-as-a-Service (e-MaaS) for commercial logistics: electric trucks and buses, with the charging infrastructure and fleet management to run them.",
     sector: "mobility",
     stage: "TBD",
     yearInvested: 2021,
-    website: "https://www.billionemobility.com/",
+    website: "https://www.billione.com/",
     fund: "pre-fund",
   },
   {
     slug: "chargezone",
     name: "ChargeZone",
-    summary: "A network of fast-charging stations for electric vehicles, serving fleets, cities and highways.",
+    summary: "A full-stack charge point operator that builds, owns and runs EV charging networks for cars, buses and trucks, combining fast-charging hardware, cloud software and energy services across cities and highways.",
     sector: "mobility",
     stage: "TBD",
     yearInvested: 2021,
-    website: "https://chargezone.co/",
+    website: "https://www.chargezone.co.in/",
     fund: "pre-fund",
   },
 ];

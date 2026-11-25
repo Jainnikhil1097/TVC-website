@@ -25,6 +25,7 @@ export const site = {
 
   contact: {
     email: "info@transitionventurecapital.com",
+    careersEmail: "hr@transitionventurecapital.com",
     offices: [
       {
         name: "Domlur",
@@ -81,6 +82,8 @@ export const metrics: Metric[] = [
 export const investmentCriteria = {
   stage: "Pre-Seed to Series A",
   cheque: "₹20 Cr – ₹50 Cr",
+  /** The same range in US dollars (≈ ₹88 to the dollar, Nov 2026), for the About page switch. */
+  chequeUsd: "$2.3M – $5.7M",
 };
 
 export const funds: Fund[] = [

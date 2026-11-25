@@ -1,5 +1,7 @@
 // "Why founders choose us" (home page): the team's 8 points, as sent by Aditi on
-// 20 Nov 2026. The headings show on the spiral; the points open in its pop-up.
+// 20 Nov 2026, revised 25 Nov 2026 (due diligence dropped; PR and corporate connections
+// split into two, corporate connections moved to point 2). The headings show on the
+// spiral; the points open in its pop-up.
 import type { PillarIcon } from "@/lib/pillar-icons";
 
 export const founderPillars: { title: string; icon: PillarIcon; points: string[] }[] = [
@@ -12,13 +14,13 @@ export const founderPillars: { title: string; icon: PillarIcon; points: string[]
     ],
   },
   {
-    title: "Rigorous Technical & Commercial Due Diligence",
-    icon: "research",
+    title: "Corporate Connections & Business Development",
+    icon: "network",
     points: [
-      "In-depth technical evaluation of products, technology and intellectual property.",
-      "Commercial due diligence to assess market opportunity, business models, competitive positioning and scalability.",
-      "Ability to validate the technology as well as its commercial potential.",
-      "Thesis-led evaluation and investment approach backed by sector understanding and industry insights.",
+      "Introductions to relevant corporates, industry leaders and potential customers.",
+      "Access to the Transition VC LP and industry network.",
+      "Support in developing strategic partnerships and commercial relationships.",
+      "Helping portfolio companies unlock customer opportunities and enter new markets.",
     ],
   },
   {
@@ -56,17 +58,13 @@ export const founderPillars: { title: string; icon: PillarIcon; points: string[]
     ],
   },
   {
-    title: "PR, Communications & Brand Building and Corporate Connections & Business Development",
+    title: "PR, Communications & Brand Building",
     icon: "communications",
     points: [
       "Strategic communications and public relations support.",
       "Assistance with media visibility, positioning and thought leadership.",
       "Support in communicating technological breakthroughs, milestones and business achievements.",
       "Helping founders build credibility with customers, investors and the wider ecosystem.",
-      "Introductions to relevant corporates, industry leaders and potential customers.",
-      "Access to the Transition VC LP and industry network.",
-      "Support in developing strategic partnerships and commercial relationships.",
-      "Helping portfolio companies unlock customer opportunities and enter new markets.",
     ],
   },
   {

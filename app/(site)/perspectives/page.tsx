@@ -101,8 +101,9 @@ export default async function PerspectivesPage() {
         id: n.url,
         eyebrow: `${n.source} · ${day(n.date)}`,
         title: n.title,
+        image: n.image,
         href: n.url,
-        action: "Read coverage",
+        action: n.url.includes("youtube.com") ? "Watch coverage" : "Read coverage",
       })),
     },
     events.upcoming.length || events.past.length

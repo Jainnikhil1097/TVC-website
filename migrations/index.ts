@@ -21,6 +21,12 @@ import * as migration_20261124_015323_impact_redesign from './20261124_015323_im
 import * as migration_20261124_015451_impact_content_data from './20261124_015451_impact_content_data';
 import * as migration_20261124_093917_pillar_points from './20261124_093917_pillar_points';
 import * as migration_20261124_093958_pillar_points_data from './20261124_093958_pillar_points_data';
+import * as migration_20261125_101456_nov25_feedback from './20261125_101456_nov25_feedback';
+import * as migration_20261125_101520_nov25_feedback_data from './20261125_101520_nov25_feedback_data';
+import * as migration_20261125_113237_news_photos from './20261125_113237_news_photos';
+import * as migration_20261125_113250_press_prefund_data from './20261125_113250_press_prefund_data';
+import * as migration_20261125_114203_careers_email from './20261125_114203_careers_email';
+import * as migration_20261125_114204_careers_gift_data from './20261125_114204_careers_gift_data';
 
 export const migrations = [
   {
@@ -136,6 +142,36 @@ export const migrations = [
   {
     up: migration_20261124_093958_pillar_points_data.up,
     down: migration_20261124_093958_pillar_points_data.down,
-    name: '20261124_093958_pillar_points_data'
+    name: '20261124_093958_pillar_points_data',
+  },
+  {
+    up: migration_20261125_101456_nov25_feedback.up,
+    down: migration_20261125_101456_nov25_feedback.down,
+    name: '20261125_101456_nov25_feedback',
+  },
+  {
+    up: migration_20261125_101520_nov25_feedback_data.up,
+    down: migration_20261125_101520_nov25_feedback_data.down,
+    name: '20261125_101520_nov25_feedback_data',
+  },
+  {
+    up: migration_20261125_113237_news_photos.up,
+    down: migration_20261125_113237_news_photos.down,
+    name: '20261125_113237_news_photos',
+  },
+  {
+    up: migration_20261125_113250_press_prefund_data.up,
+    down: migration_20261125_113250_press_prefund_data.down,
+    name: '20261125_113250_press_prefund_data',
+  },
+  {
+    up: migration_20261125_114203_careers_email.up,
+    down: migration_20261125_114203_careers_email.down,
+    name: '20261125_114203_careers_email',
+  },
+  {
+    up: migration_20261125_114204_careers_gift_data.up,
+    down: migration_20261125_114204_careers_gift_data.down,
+    name: '20261125_114204_careers_gift_data'
   },
 ];

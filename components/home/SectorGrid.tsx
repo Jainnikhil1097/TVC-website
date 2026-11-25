@@ -55,6 +55,25 @@ function roadPath(n: number) {
   return d;
 }
 
+/**
+ * A small electric car seen from above, pointing right (+x), centred on the origin: teal
+ * body, dark glass, wheels and a soft headlight glow. animateMotion turns it with the road.
+ */
+function TopDownCar({ small = false }: { small?: boolean }) {
+  return (
+    <g transform={small ? "scale(0.62)" : undefined}>
+      <ellipse cx={0} cy={2.5} rx={19} ry={9.5} fill="#000" opacity={0.12} />
+      {[-11, 11].map((x) => [-8.6, 8.6].map((y) => <rect key={`${x}${y}`} x={x - 3.6} y={y - 2} width={7.2} height={4} rx={1.6} fill="#111" />))}
+      <rect x={-17} y={-8} width={34} height={16} rx={6} fill="#0ed5c2" />
+      <rect x={-4} y={-6.2} width={11} height={12.4} rx={2.6} fill="#0b3b37" />
+      <rect x={-13} y={-5.6} width={6} height={11.2} rx={2} fill="#0b3b37" opacity={0.85} />
+      <rect x={14} y={-6.5} width={2.4} height={3.4} rx={1} fill="#fffbe6" />
+      <rect x={14} y={3.1} width={2.4} height={3.4} rx={1} fill="#fffbe6" />
+      <path d="M17 -6 L34 -12 L34 0 Z M17 6 L34 12 L34 0 Z" fill="#fffbe6" opacity={0.18} />
+    </g>
+  );
+}
+
 type Stop = InvestmentSector & { count: number; href: string };
 
 function Label({ s, i }: { s: Stop; i: number }) {
@@ -62,10 +81,7 @@ function Label({ s, i }: { s: Stop; i: number }) {
   const colour = STOP_COLOURS[i % STOP_COLOURS.length];
   return (
     <>
-      <p className="hud font-bold" style={{ color: colour }}>
-        Step {String(i + 1).padStart(2, "0")}
-      </p>
-      <p className="mt-2 flex items-center gap-2 font-display text-lg leading-tight font-bold text-ink">
+      <p className="flex items-center gap-2 font-display text-lg leading-tight font-bold text-ink">
         <Icon className="size-5 shrink-0" style={{ color: colour }} aria-hidden />
         {s.name}
       </p>
@@ -110,22 +126,15 @@ export function SectorGrid({ sectors, companies }: { sectors: InvestmentSector[]
             <svg viewBox={`0 0 ${VW} ${VH}`} className="absolute inset-0 size-full overflow-hidden" aria-hidden>
               <path id="sector-road-path" d={d} fill="none" stroke="#e7ecf0" strokeWidth={46} strokeLinecap="round" className="sector-road-band" pathLength={1} />
               <path d={d} fill="none" stroke="#ffffff" strokeWidth={2} strokeDasharray="10 12" className="sector-road-line" />
-              {/* Traffic: two glowing pulses travelling the road (hidden for reduced motion) */}
+              {/* An electric car driving the road, turning with it (hidden for reduced motion) */}
               <g className="sector-road-traffic">
-                {[0, 1].map((k) => (
-                  <g key={k}>
-                    <circle r={14} fill="#0ed5c2" opacity={0.18}>
-                      <animateMotion dur="14s" begin={`${-k * 7}s`} repeatCount="indefinite" rotate="auto">
-                        <mpath href="#sector-road-path" />
-                      </animateMotion>
-                    </circle>
-                    <circle r={5} fill="#0ed5c2">
-                      <animateMotion dur="14s" begin={`${-k * 7}s`} repeatCount="indefinite" rotate="auto">
-                        <mpath href="#sector-road-path" />
-                      </animateMotion>
-                    </circle>
-                  </g>
-                ))}
+                <animateMotion dur="18s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#sector-road-path" />
+                </animateMotion>
+                {/* In its lane, just off the centre line */}
+                <g transform="translate(0 9)">
+                  <TopDownCar />
+                </g>
               </g>
               {stops.map((_, i) => {
                 const x = X0 + i * STEP;
@@ -165,6 +174,14 @@ export function SectorGrid({ sectors, companies }: { sectors: InvestmentSector[]
         <Reveal as="ul" stagger={0.06} className="relative mt-10 space-y-8 pl-14 lg:hidden">
           <span aria-hidden className="absolute top-2 bottom-2 left-[18px] w-[14px] rounded-full bg-[#e7ecf0]" />
           <span aria-hidden className="absolute top-2 bottom-2 left-[24.5px] w-px border-l border-dashed border-white" />
+          {/* Above the stop dots, so the car drives over them */}
+          <span aria-hidden className="sector-road-car absolute top-2 left-[13px] z-10 h-[calc(100%-1rem)] w-6 motion-reduce:hidden">
+            <svg viewBox="-12 -20 24 40" className="sector-road-car-body block w-6">
+              <g transform="rotate(90) scale(1.05)">
+                <TopDownCar small />
+              </g>
+            </svg>
+          </span>
           {stops.map((s, i) => (
             <li key={s.id} data-reveal className="relative">
               <span aria-hidden className="absolute top-0.5 -left-[46px] grid size-[26px] place-items-center rounded-full bg-[#111111]">

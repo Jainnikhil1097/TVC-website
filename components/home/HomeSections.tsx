@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowUpRight, CalendarDays } from "lucide-react";
 import type { Essay, EventItem, NewsItem } from "@/lib/types";
 import { ButtonLink } from "@/components/ui/Button";
@@ -91,6 +92,11 @@ export function PerspectivesTeaser({ essays, news, nextEvent, substackUrl }: Tea
                     rel="noopener noreferrer"
                     className="group flex flex-col gap-1 py-5 sm:flex-row sm:items-center sm:gap-8"
                   >
+                    {n.image && (
+                      <span className="relative hidden aspect-[4/3] w-20 shrink-0 overflow-hidden rounded-lg bg-surface sm:block">
+                        <Image src={n.image.url} alt="" fill sizes="80px" className="object-cover" />
+                      </span>
+                    )}
                     <span className="w-28 shrink-0 text-sm text-muted">{formatDate(n.date.slice(0, 10))}</span>
                     <span className="flex-1 text-[0.95rem] text-ink group-hover:text-teal-ink">{n.title}</span>
                     <span className="text-sm text-muted">{n.source}</span>

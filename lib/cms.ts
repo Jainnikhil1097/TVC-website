@@ -103,34 +103,9 @@ function mapCompany(doc: CmsCompany): Company {
     productImage: image(doc.productImage),
     callouts: doc.callouts?.map((c) => ({ label: c.label, detail: orUndefined(c.detail), x: c.x, y: c.y })),
     proof: doc.proofValue && doc.proofLabel ? { value: doc.proofValue, label: doc.proofLabel } : undefined,
-    deployment: orUndefined(doc.deployment),
-    customers: orUndefined(doc.customers),
     marketGap: orUndefined(doc.marketGap),
     breakthrough: orUndefined(doc.breakthrough),
-    traction: doc.traction?.map((t) => t.point).filter(Boolean),
-    marketOpportunity: orUndefined(doc.marketOpportunity),
     whyTheyWin: orUndefined(doc.whyTheyWin),
-    impact: doc.impact?.show
-      ? {
-          featured: Boolean(doc.impact.featured),
-          order: doc.impact.order ?? 999,
-          sectorLabel: orUndefined(doc.impact.sectorLabel),
-          stage: orUndefined(doc.impact.stage),
-          period: orUndefined(doc.impact.period),
-          tagline: orUndefined(doc.impact.tagline),
-          image: image(doc.impact.image, "card"),
-          metrics: (doc.impact.metrics ?? []).map((m) => ({
-            label: m.label,
-            value: orUndefined(m.value) || undefined,
-            unit: orUndefined(m.unit),
-            evidence: orUndefined(m.evidence),
-            note: orUndefined(m.note),
-          })),
-          closer: doc.impact.closerValue ? { value: doc.impact.closerValue, text: orUndefined(doc.impact.closerText) } : undefined,
-          evidence: orUndefined(doc.impact.evidence),
-          sources: orUndefined(doc.impact.sources),
-        }
-      : undefined,
   };
 }
 
@@ -148,9 +123,10 @@ export const getSite = cache(async () => {
     thesis: doc.thesis ?? "",
     footerHeadline: doc.footerHeadline ?? "",
     newsletterBlurb: doc.newsletterBlurb ?? "",
-    investmentCriteria: { stage: doc.stage ?? "", cheque: doc.cheque ?? "" },
+    investmentCriteria: { stage: doc.stage ?? "", cheque: doc.cheque ?? "", chequeUsd: (doc.chequeUsd ?? "").trim() },
     contact: {
       email: doc.email ?? "",
+      careersEmail: (doc.careersEmail ?? "").trim(),
       offices: (doc.offices ?? [])
         .map((o) => ({
           name: o.name,
@@ -252,8 +228,6 @@ export const getImpact = cache(async () => {
   const o = doc.outcomes;
   const f = doc.footprint;
   const sd = doc.sdgs;
-  const c = doc.contribution;
-  const w = doc.women;
   const m = doc.measurement;
   return {
     hero: {
@@ -272,14 +246,10 @@ export const getImpact = cache(async () => {
       ...heading(o),
       status: str(o?.status),
       measures: (o?.measures ?? []).map((x) => ({ label: x.label, value: str(x.value), unit: str(x.unit), definition: str(x.definition) })),
-      coverageTitle: str(o?.coverageTitle),
-      coverageText: str(o?.coverageText),
-      coverageNote: str(o?.coverageNote),
       footnote: str(o?.footnote),
     },
     footprint: {
       ...heading(f),
-      cardText: str(f?.cardText),
       footnote: str(f?.footnote),
       countries: (f?.countries ?? []).map((x) => ({
         name: x.name,
@@ -303,23 +273,6 @@ export const getImpact = cache(async () => {
         entries: (g.entries ?? []).map((e) => ({ company: slugOf(e.company), label: str(e.label), connection: e.connection, measures: str(e.measures) })),
       })),
     },
-    carousel: { ...heading(doc.carousel), footnote: str(doc.carousel?.footnote) },
-    contribution: {
-      ...heading(c),
-      pillars: (c?.pillars ?? []).map((p) => ({ label: str(p.label), title: str(p.title), text: str(p.text) })),
-      caseLabel: str(c?.caseLabel),
-      caseTitle: str(c?.caseTitle),
-      casePoints: (c?.casePoints ?? []).map((p) => ({ title: str(p.title), text: str(p.text) })),
-      caseSource: str(c?.caseSource),
-      footnote: str(c?.footnote),
-    },
-    women: {
-      ...heading(w),
-      leaders: (w?.leaders ?? []).map((l) => ({ area: str(l.area), name: str(l.name), role: str(l.role) })),
-      functions: (w?.functions ?? []).map((x) => ({ title: str(x.title), text: str(x.text) })),
-      footnote: str(w?.footnote),
-    },
-    perspectives: { ...heading(doc.perspectives), footnote: str(doc.perspectives?.footnote) },
     measurement: {
       ...heading(m),
       items: (m?.items ?? []).map((i) => ({ title: i.title, body: str(i.body) })),
@@ -411,6 +364,9 @@ export const getAboutPage = cache(async () => {
   return {
     ...withDefaults(text, doc as unknown as Record<string, unknown>),
     nextSteps: nextSteps.length ? nextSteps : aboutPageDefaults.nextSteps,
+    groupPhotos: (doc.groupPhotos ?? [])
+      .map((p) => ({ image: image(p.image), caption: (p.caption ?? "").trim() }))
+      .filter((p): p is { image: Image; caption: string } => Boolean(p.image)),
   };
 });
 
@@ -473,8 +429,8 @@ export const getFunds = cache(async (): Promise<Fund[]> => {
 });
 
 export const getNews = cache(async (): Promise<NewsItem[]> => {
-  const { docs } = await (await payload()).find({ collection: "news", sort: "-date", limit: 100 });
-  return docs.map((n) => ({ date: n.date, title: n.title, source: n.source, url: n.url }));
+  const { docs } = await (await payload()).find({ collection: "news", sort: "-date", limit: 100, depth: 1 });
+  return docs.map((n) => ({ date: n.date, title: n.title, source: n.source, url: n.url, image: image(n.image, "card") }));
 });
 
 export const getEvents = cache(async (): Promise<{ upcoming: EventItem[]; past: EventItem[] }> => {

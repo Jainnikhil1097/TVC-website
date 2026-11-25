@@ -62,12 +62,7 @@ export default async function GiftCityPage() {
             <h1 className="display mt-5 max-w-4xl text-[2.3rem] leading-[0.98] tracking-[0.04em] uppercase sm:text-6xl lg:max-w-[58%] lg:text-[3.75rem] lg:leading-[1.2]">
               {giftCity.headline}
             </h1>
-            <p className="mt-8 max-w-xl leading-relaxed text-white/80 lg:hidden">{giftCity.intro}</p>
           </div>
-        </div>
-        {/* Notched intro panel (desktop), echoing the Nilsson reference. */}
-        <div className="absolute right-0 bottom-0 hidden rounded-tl-[1.75rem] bg-paper p-8 pl-10 text-ink/75 lg:block lg:max-w-[22rem] xl:max-w-sm">
-          <p className="text-sm leading-relaxed">{giftCity.intro}</p>
         </div>
       </HeroCard>
 
@@ -141,8 +136,7 @@ export default async function GiftCityPage() {
             <p className="eyebrow text-teal">Investor relations</p>
             <h2 className="display mt-4 text-3xl sm:text-4xl">Speak to our GIFT City team</h2>
             <p className="mt-5 max-w-xl text-white/70">
-              Our investor relations team and Manager – Compliance (GIFT City) can walk you through the structure,
-              eligibility and documentation.
+              Our Investor Relations team can walk you through the structure, eligibility and documentation.
             </p>
           </div>
           <ButtonLink href={giftCity.cta.href} variant="solid">Investor enquiries</ButtonLink>
