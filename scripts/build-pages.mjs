@@ -65,12 +65,18 @@ ErrorDocument 404 /404.html
   RewriteRule ^careers/?$ /contact/ [R=301,L]
   RewriteRule ^funds/?$ /#funds [R=301,L,NE]
 
-  # Addresses from the previous website, so old links land somewhere useful.
+  # Real files and folders are always served as they are (never redirected below).
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Addresses from the previous website, so old links land somewhere useful. Never
+  # "media/": that's where this site's images live.
   RewriteRule ^about-us/?$ /about/ [R=301,L,NC]
   RewriteRule ^contact-us/?$ /contact/ [R=301,L,NC]
   RewriteRule ^(our-)?team/?$ /about/ [R=301,L,NC]
   RewriteRule ^(our-)?portfolio-companies/?$ /portfolio/ [R=301,L,NC]
-  RewriteRule ^(in-the-media|media|news|press)(/.*)?$ /perspectives/ [R=301,L,NC]
+  RewriteRule ^(in-the-media|news|press)(/.*)?$ /perspectives/ [R=301,L,NC]
   RewriteRule ^(blog|blogs|insights)(/.*)?$ /perspectives/ [R=301,L,NC]
 </IfModule>
 

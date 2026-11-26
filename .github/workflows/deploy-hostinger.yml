@@ -139,3 +139,10 @@ jobs:
               echo "::warning::${url} ended with ${code} after ${hops} redirect(s) (a loop if it hit 5; or DNS may still point to the old site)"
             fi
           done
+          # An uploaded image must be served as a file (not redirected).
+          img=$(ls out/media | head -1)
+          if [ -n "$img" ]; then
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "https://www.transitionventurecapital.com/media/$img" || echo 000)
+            echo "/media/$img -> $code"
+            [ "$code" = "200" ] || echo "::warning::images under /media/ returned ${code} (expected 200)"
+          fi
