@@ -9,7 +9,7 @@ import "@fontsource/carlito/700.css";
 import "@fontsource-variable/montserrat/wght.css";
 import "./globals.css";
 import { siteIdentity as site } from "@/lib/site-config";
-import { isStaticPreview } from "@/lib/base-path";
+import { isHiddenPreview } from "@/lib/base-path";
 import { getAnnouncement, getSite } from "@/lib/cms";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Nav } from "@/components/layout/Nav";
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image", title: site.title, description: site.description },
   // Keep the GitHub Pages preview out of search results.
-  ...(isStaticPreview && { robots: { index: false, follow: false } }),
+  ...(isHiddenPreview && { robots: { index: false, follow: false } }),
 };
 
 export const viewport: Viewport = {

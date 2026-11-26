@@ -1,10 +1,11 @@
 // Form constants and the single submission adapter used by every website form.
 // Safe to import from client components (no server-only code here).
-import { isStaticPreview } from "./base-path";
+import { isLiveStatic, isStaticPreview } from "./base-path";
 
 export type FormKind = "startup" | "investor" | "partner";
 
-export type SubmitResult = { ok: true } | { ok: false; error: string };
+/** viaEmail: the live static site handed the form to the visitor's email app instead. */
+export type SubmitResult = { ok: true; viaEmail?: boolean } | { ok: false; error: string };
 
 export const contactIntro =
   "We'd love to hear from you. Choose the option that fits and we'll route it to the right person.";
@@ -80,14 +81,52 @@ async function directUpload(kind: FormKind, file: File, honeypot: string): Promi
   }
 }
 
+/** Where the live static site's forms are addressed (the public enquiries inbox). */
+export const formsEmail = process.env.NEXT_PUBLIC_FORMS_EMAIL || "info@transitionventurecapital.com";
+
+/** "companyName" → "Company name". */
+const fieldLabel = (key: string) => {
+  const words = key.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/[_-]+/g, " ").toLowerCase();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+};
+
+/**
+ * The live static site has no server to receive forms (until NEXT_PUBLIC_FORMS_ENDPOINT
+ * points at one), so it opens the visitor's email app with the details filled in,
+ * addressed to the enquiries inbox. An attachment can't be added this way; the message
+ * asks for it.
+ */
+function handToEmail(kind: FormKind, data: FormData): SubmitResult {
+  const type = enquiryTypes.find((t) => t.id === kind)?.label ?? "Enquiry";
+  const lines: string[] = [];
+  let attachment = "";
+  for (const [key, value] of data.entries()) {
+    if (key === honeypotField || key === "formKind") continue;
+    if (typeof value !== "string") {
+      if (value.size > 0) attachment = value.name;
+      continue;
+    }
+    lines.push(`${fieldLabel(key)}: ${value}`);
+  }
+  const rule = fileRules[kind];
+  if (rule) lines.push("", attachment ? `Please find my ${rule.label} (${attachment}) attached.` : `I'll attach my ${rule.label}.`);
+  const name = String(data.get("companyName") || data.get("organisation") || data.get("fullName") || data.get("name") || "").trim();
+  const subject = `Website enquiry: ${type}${name ? ` — ${name}` : ""}`;
+  const href = `mailto:${formsEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n").slice(0, 1800))}`;
+  window.location.href = href;
+  return { ok: true, viaEmail: true };
+}
+
 /**
  * Sends a form to the CMS intake endpoint (`/api/submissions/intake`), which
  * validates it again, checks any attachment and saves it to the Enquiries
  * inbox. NEXT_PUBLIC_FORMS_ENDPOINT can point elsewhere if needed.
  */
 export async function submitForm(kind: FormKind, data: FormData): Promise<SubmitResult> {
-  // The static preview (GitHub Pages) has no server to receive forms.
-  if (isStaticPreview) return { ok: false, error: PREVIEW_ERROR };
+  // A static build has no server to receive forms, unless an endpoint is configured.
+  if (isStaticPreview && !process.env.NEXT_PUBLIC_FORMS_ENDPOINT) {
+    return isLiveStatic ? handToEmail(kind, data) : { ok: false, error: PREVIEW_ERROR };
+  }
   const endpoint = process.env.NEXT_PUBLIC_FORMS_ENDPOINT || "/api/submissions/intake";
   data.set("formKind", kind);
 

@@ -1,4 +1,4 @@
-import { getGiftCity, getMetrics, getSite } from "@/lib/cms";
+import { getGiftCity, getMetrics, getPortfolio, getSite, isActive } from "@/lib/cms";
 import { pageMetadata } from "@/lib/seo";
 import type { Metric } from "@/lib/types";
 import { Reveal } from "@/components/motion/Reveal";
@@ -35,12 +35,14 @@ const bento: { span: boolean; art?: { variant: LineArtVariant; className: string
 ];
 
 export default async function GiftCityPage() {
-  const [giftCity, site, metrics] = await Promise.all([getGiftCity(), getSite(), getMetrics()]);
+  const [giftCity, site, metrics, portfolio] = await Promise.all([getGiftCity(), getSite(), getMetrics(), getPortfolio()]);
+  const active = portfolio.filter(isActive).length;
 
   // Headline fund figures, shown in the "logo row" position of the reference.
   const facts = [
     pick(metrics.items, /raised|fund size/i, 0),
-    pick(metrics.items, /portfolio|companies/i, 2),
+    // Counted from the portfolio, so it always matches the home and portfolio pages.
+    active ? { value: String(active), label: "Active portfolio companies" } : pick(metrics.items, /portfolio|companies/i, 2),
     { value: site.investmentCriteria.stage, label: "Stage" },
     { value: site.investmentCriteria.cheque, label: "Cheque size" },
   ].filter((f): f is Metric => Boolean(f?.value));

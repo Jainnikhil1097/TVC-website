@@ -20,7 +20,7 @@ export function InvestorForm() {
   } = useForm({ resolver: zodResolver(schema) });
   const { status, send, reset: resetStatus } = useFormSubmit("investor");
 
-  if (status.state === "success") return <FormSuccess onReset={resetStatus} />;
+  if (status.state === "success") return <FormSuccess onReset={resetStatus} viaEmail={status.viaEmail} />;
 
   return (
     <form

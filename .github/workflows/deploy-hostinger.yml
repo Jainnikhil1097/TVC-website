@@ -1,9 +1,11 @@
 name: Deploy static site to Hostinger
 
-# Mirrors the static export (out/) to transitionventurecapital.com over FTPS.
-# This is the same look-only preview the GitHub Pages workflow publishes: every
-# page and animation, but no /admin and forms disabled. The full Next.js +
-# Payload app (Postgres, real forms) runs on the VPS.
+# Builds the live website as static files (out/) and mirrors them to
+# transitionventurecapital.com over FTPS. Unlike the GitHub Pages preview, this build
+# is indexed by search engines, its forms open the visitor's email app addressed to
+# the enquiries inbox, and it ships an .htaccess (https, www, 404 page, old-site
+# redirects). Content comes from scripts/seed-data/ (there's no CMS server yet); the
+# full Next.js + Payload app (Postgres, /admin, stored form submissions) comes later.
 #
 # Required repository secrets:
 #   FTP_HOST     145.79.210.40
@@ -40,13 +42,24 @@ jobs:
       - name: Load the starting content into a temporary database
         run: mkdir -p .data && npm run seed
 
-      - name: Build the static pages
+      - name: Build the live static site
         run: npm run build:pages
+        env:
+          SITE_LIVE: "1"
+          SITE_URL: https://www.transitionventurecapital.com
+
+      - name: Check the build is the live one
+        run: |
+          test -f out/.htaccess
+          ! grep -q 'name="robots" content="noindex' out/index.html
+          grep -q 'Allow: /' out/robots.txt
 
       - uses: actions/upload-artifact@v4
         with:
           name: site
           path: out
+          # .htaccess and .nojekyll start with a dot, which upload-artifact skips by default.
+          include-hidden-files: true
           retention-days: 1
 
   deploy:
@@ -107,14 +120,14 @@ jobs:
           set ssl:check-hostname off
           set cmd:fail-exit yes
           set net:max-retries 3
-          mirror -R --delete --verbose --parallel=4 ./out/ "${TARGET}"
+          mirror -R --delete --verbose --parallel=4 --exclude-glob .well-known/ ./out/ "${TARGET}"
           bye
           EOF
 
       - name: Smoke check
         run: |
-          echo "Deployed to transitionventurecapital.com (static preview)."
-          for url in https://transitionventurecapital.com/ https://www.transitionventurecapital.com/; do
+          echo "Deployed to https://www.transitionventurecapital.com (static site)."
+          for url in https://www.transitionventurecapital.com/; do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$url" || echo 000)
             echo "$url -> $code"
             [ "$code" = "200" ] || echo "::warning::${url} returned ${code} (DNS may still be propagating)"

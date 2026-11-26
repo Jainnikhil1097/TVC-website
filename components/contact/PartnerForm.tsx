@@ -20,7 +20,7 @@ export function PartnerForm() {
   } = useForm({ resolver: zodResolver(schema) });
   const { status, send, reset: resetStatus } = useFormSubmit("partner");
 
-  if (status.state === "success") return <FormSuccess onReset={resetStatus} />;
+  if (status.state === "success") return <FormSuccess onReset={resetStatus} viaEmail={status.viaEmail} />;
 
   return (
     <form

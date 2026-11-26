@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
-import { submitForm, successMessage, type FormKind } from "@/lib/forms";
+import { CheckCircle2, Mail } from "lucide-react";
+import { formsEmail, submitForm, successMessage, type FormKind } from "@/lib/forms";
 import { Button } from "@/components/ui/Button";
 
 type Status =
   | { state: "idle" }
   | { state: "sending" }
-  | { state: "success" }
+  | { state: "success"; viaEmail?: boolean }
   | { state: "error"; message: string };
 
 /** Converts validated values to FormData (files included) and sends them via submitForm. */
@@ -27,18 +27,31 @@ export function useFormSubmit(kind: FormKind) {
       }
     }
     const result = await submitForm(kind, data);
-    setStatus(result.ok ? { state: "success" } : { state: "error", message: result.error });
+    setStatus(result.ok ? { state: "success", viaEmail: result.viaEmail } : { state: "error", message: result.error });
     return result.ok;
   }
 
   return { status, send, reset: () => setStatus({ state: "idle" }) };
 }
 
-export function FormSuccess({ onReset }: { onReset: () => void }) {
+export function FormSuccess({ onReset, viaEmail, attachment }: { onReset: () => void; viaEmail?: boolean; attachment?: string }) {
   return (
     <div role="status" className="rounded-2xl border border-teal-ink/25 bg-teal-ink/[0.05] p-6 sm:p-8">
-      <CheckCircle2 className="size-7 text-teal-ink" aria-hidden />
-      <p className="mt-4 text-lg text-ink">{successMessage}</p>
+      {viaEmail ? <Mail className="size-7 text-teal-ink" aria-hidden /> : <CheckCircle2 className="size-7 text-teal-ink" aria-hidden />}
+      {viaEmail ? (
+        <div className="mt-4 space-y-2 text-ink">
+          <p className="text-lg">Your email app has opened with your details. Press Send to reach us{attachment ? `, and attach your ${attachment}` : ""}.</p>
+          <p className="text-sm text-muted">
+            Nothing opened? Email us at{" "}
+            <a href={`mailto:${formsEmail}`} className="underline underline-offset-4 hover:text-teal-ink">
+              {formsEmail}
+            </a>
+            .
+          </p>
+        </div>
+      ) : (
+        <p className="mt-4 text-lg text-ink">{successMessage}</p>
+      )}
       <Button variant="secondary" className="mt-6" onClick={onReset}>
         Send another
       </Button>

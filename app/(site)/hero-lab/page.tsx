@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getSite } from "@/lib/cms";
-import { isStaticPreview } from "@/lib/base-path";
+import { isHiddenPreview } from "@/lib/base-path";
 import { SketchLab } from "@/components/home/sketch/SketchLab";
 
 // TEMPORARY: the real home hero with each mechanical blueprint sketch behind it, for
@@ -12,7 +12,7 @@ import { SketchLab } from "@/components/home/sketch/SketchLab";
 export const metadata: Metadata = { title: "Hero lab", robots: { index: false, follow: false } };
 
 export default async function HeroLabPage() {
-  if (process.env.NODE_ENV === "production" && !isStaticPreview) notFound();
+  if (process.env.NODE_ENV === "production" && !isHiddenPreview) notFound();
   const site = await getSite();
   // Static (no search params on the server), so the GitHub Pages export can include it;
   // the lab reads ?v= and ?run= in the browser.

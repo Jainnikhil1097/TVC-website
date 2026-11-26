@@ -25,7 +25,7 @@ export function StartupForm() {
   } = useForm({ resolver: zodResolver(schema) });
   const { status, send, reset: resetStatus } = useFormSubmit("startup");
 
-  if (status.state === "success") return <FormSuccess onReset={resetStatus} />;
+  if (status.state === "success") return <FormSuccess onReset={resetStatus} viaEmail={status.viaEmail} attachment="pitch deck" />;
 
   return (
     <form

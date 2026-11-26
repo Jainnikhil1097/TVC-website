@@ -106,6 +106,25 @@ note). It's hidden from search engines.
   local CMS database. While it runs, the CMS routes are set aside, so /admin on a running
   dev server is unavailable for about a minute.
 
+## Live site on Hostinger (static, until the CMS server is set up)
+
+Every push to `main` runs `.github/workflows/deploy-hostinger.yml`. It seeds a temporary
+database from `scripts/seed-data/`, builds the site as static files with
+`SITE_LIVE=1 npm run build:pages`, and uploads `out/` to the Hostinger web root over FTPS.
+Compared with the GitHub Pages preview, the live build:
+
+- is indexed by search engines (robots.txt allows everything; no `noindex` tags),
+- hands the contact forms to the visitor's email app, addressed to
+  `info@transitionventurecapital.com` (pitch decks are attached by hand),
+- ships an `.htaccess` that sends everything to `https://www.transitionventurecapital.com`,
+  serves the 404 page, and redirects old addresses (`/careers`, `/funds`, `/about-us`, …).
+
+Content changes therefore go into `scripts/seed-data/` (or wait for the CMS server). Needs
+the repository secrets `FTP_HOST`, `FTP_USERNAME` and `FTP_PASSWORD` (optionally `FTP_BASE`).
+Once the full app runs on a server with Postgres, point `NEXT_PUBLIC_FORMS_ENDPOINT` at its
+`/api/submissions/intake` (allowing this domain in its CORS settings) to store form
+submissions again, or move the domain to that server.
+
 ## Before launch — outstanding content (all editable in the CMS now)
 
 - [ ] Official logo SVG → replace `components/ui/Logo.tsx` and `cms/components/Branding.tsx`
