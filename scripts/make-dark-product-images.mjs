@@ -8,15 +8,26 @@ import path from "node:path";
 const [src, cuts, out, ...only] = process.argv.slice(2);
 mkdirSync(out, { recursive: true });
 // Areas kept exactly as they are (fractions of the image), for parts Vision doesn't see as
-// an object: Helionis's spec card with its print-size swatches.
-const KEEP = { "helionis-labs": [{ x: 0.688, y: 0.048, w: 0.235, h: 0.745 }] };
+// an object: Helionis's spec card, Fitsol's dashboard screenshots.
+const KEEP = {
+  "helionis-labs": [{ x: 0.688, y: 0.048, w: 0.235, h: 0.745 }],
+  // Fitsol's two dashboard screenshots.
+  fitsol: [
+    { x: 0.068, y: 0.078, w: 0.441, h: 0.437 },
+    { x: 0.526, y: 0.513, w: 0.413, h: 0.446 },
+  ],
+};
 const files = readdirSync(src).filter((f) => f.endsWith("-product.jpg") && (!only.length || only.some((s) => f.startsWith(s))));
 for (const f of files) {
   const cut = path.join(cuts, f.replace(/\.jpg$/, ".png"));
-  if (!existsSync(cut)) { console.log("skip (no cut-out)", f); continue; }
+  const keepOnly = !existsSync(cut) && KEEP[f.replace(/-product\.jpg$/, "")];
+  if (!existsSync(cut) && !keepOnly) { console.log("skip (no cut-out)", f); continue; }
   const { data: o, info } = await sharp(path.join(src, f)).flatten({ background: "#fff" }).raw().toBuffer({ resolveWithObject: true });
   const W = info.width, H = info.height;
-  const { data: c } = await sharp(cut).resize(W, H).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  // Product coverage from the Vision cut-out, or none (only the KEEP areas) without one.
+  const c = keepOnly
+    ? Buffer.alloc(W * H * 4)
+    : (await sharp(cut).resize(W, H).ensureAlpha().raw().toBuffer({ resolveWithObject: true })).data;
   const outBuf = Buffer.alloc(W * H * 4);
   const slug = f.replace(/-product\.jpg$/, "");
   for (const k of KEEP[slug] ?? []) {

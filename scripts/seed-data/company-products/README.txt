@@ -19,5 +19,5 @@ section: the product lifted out by Apple Vision on a transparent background, wit
 labels and leader lines turned light. To remake one after replacing an image:
   swift scripts/cutout-team-photos.swift <folder with the -product.jpg> /tmp/cut
   node scripts/make-dark-product-images.mjs <same folder> /tmp/cut <out folder> <slug>
-then copy it here and run  npm run company:products. Fitsol has none (its dashboards
-aren't an object Vision can lift), so it shows on a light panel there.
+then copy it here and run  npm run company:products. Areas Vision can't lift (Fitsol's
+dashboards, Helionis's spec card) are kept as they are via KEEP in that script.
