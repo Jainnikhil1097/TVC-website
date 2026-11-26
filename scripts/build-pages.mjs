@@ -50,7 +50,14 @@ ErrorDocument 404 /404.html
   RewriteRule ^\\.well-known/ - [L]
 
   # One address, over https: ${url.origin}
-  RewriteCond %{HTTPS} !=on [OR]
+  # Plain http → https. Behind Hostinger's CDN or proxy the server itself sees http, so
+  # a visit counts as https if either the server or the forwarding proxy says so
+  # (otherwise every https visit would redirect to itself, forever).
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+  RewriteCond %{HTTP:X-Forwarded-SSL} !on [NC]
+  RewriteRule ^ ${url.origin}%{REQUEST_URI} [R=301,L,NE]
+  # transitionventurecapital.com (or any other name for this site) → ${url.host}
   RewriteCond %{HTTP_HOST} !^${host}$ [NC]
   RewriteRule ^ ${url.origin}%{REQUEST_URI} [R=301,L,NE]
 

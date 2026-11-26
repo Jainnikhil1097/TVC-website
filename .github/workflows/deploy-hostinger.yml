@@ -127,8 +127,15 @@ jobs:
       - name: Smoke check
         run: |
           echo "Deployed to https://www.transitionventurecapital.com (static site)."
-          for url in https://www.transitionventurecapital.com/; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$url" || echo 000)
-            echo "$url -> $code"
-            [ "$code" = "200" ] || echo "::warning::${url} returned ${code} (DNS may still be propagating)"
+          # Follows redirects (at most 5) and reports where each address ends up, so a
+          # redirect loop or the old host still answering (DNS not switched yet) shows clearly.
+          for url in https://www.transitionventurecapital.com/ https://transitionventurecapital.com/ http://www.transitionventurecapital.com/; do
+            out=$(curl -sIL --max-redirs 5 -o /dev/null -w '%{http_code} %{num_redirects} %{url_effective}' --max-time 30 "$url" || echo "000 0 -")
+            read -r code hops final <<< "$out"
+            echo "$url -> $code after $hops redirect(s), ends at $final"
+            server=$(curl -sI --max-time 20 "$final" | grep -i '^server:' | tr -d '\r' || true)
+            [ -n "$server" ] && echo "   $server"
+            if [ "$code" != "200" ]; then
+              echo "::warning::${url} ended with ${code} after ${hops} redirect(s) (a loop if it hit 5; or DNS may still point to the old site)"
+            fi
           done
