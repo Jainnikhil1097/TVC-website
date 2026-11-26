@@ -1,5 +1,5 @@
-// PLACEHOLDER COPY — the current site has no GIFT City page.
-// Replace with approved text from Transition VC before launch.
+// GIFT City page copy (the old site had no GIFT City page). Draft wording, "[Placeholder]"
+// tags removed 26 Nov 2026; the team's compliance function should confirm it.
 
 export const giftCity = {
   eyebrow: "GIFT City · IFSC",
@@ -9,11 +9,11 @@ export const giftCity = {
   highlights: [
     {
       title: "Structure",
-      body: "An IFSC-domiciled fund regulated by the International Financial Services Centres Authority (IFSCA). [Placeholder]",
+      body: "An IFSC-domiciled fund regulated by the International Financial Services Centres Authority (IFSCA).",
     },
     {
       title: "Who can invest",
-      body: "Accredited international investors, family offices, institutions and NRIs. [Placeholder]",
+      body: "Accredited international investors, family offices, institutions and NRIs.",
     },
     {
       title: "Strategy",
@@ -21,7 +21,7 @@ export const giftCity = {
     },
     {
       title: "Governance",
-      body: "Dedicated GIFT City compliance function and independent administration. [Placeholder]",
+      body: "A dedicated GIFT City compliance function and an independent trustee, Orbis Trusteeship Services.",
     },
   ],
   cta: { label: "Investor enquiries", href: "/contact?type=investor" },

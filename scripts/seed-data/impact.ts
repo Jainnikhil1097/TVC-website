@@ -20,13 +20,13 @@ export const impact = {
       title: "Use less energy",
       subtitle: "Industrial efficiency",
       body: "Less energy for the same useful output, from industrial heat and cooling to motors and computing.",
-      companies: ["promethean-energy", "albatross-energetics", "matel-motion"],
+      companies: ["promethean-energy", "albatross-energetics", "matel-motion", "earthen"],
     },
     {
       title: "Enable cleaner energy",
       subtitle: "Electrification and renewables",
       body: "Keep renewable assets productive and build the systems that support electrification.",
-      companies: ["greentech-mw", "emo-energy", "earthen"],
+      companies: ["greentech-mw"],
     },
     {
       title: "Use resources better",
@@ -76,13 +76,12 @@ export const impact = {
         detail: "EarthEn reports Heat Battery pilots underway in the US.",
         source: "EarthEn official website; dates not stated.",
       },
-      { name: "Netherlands", lat: 52.2, lon: 5.3, presence: ["deployments"], companies: [], value: "", valueLabel: "", detail: "", source: "" },
-      { name: "Switzerland", lat: 46.8, lon: 8.2, presence: ["deployments"], companies: [], value: "", valueLabel: "", detail: "", source: "" },
       {
-        name: "Sri Lanka", lat: 7.9, lon: 80.8, presence: ["deployments"], companies: ["greentech-mw"],
-        value: "~40 MW", valueLabel: "Wind capacity under O&M",
+        // GreenTech's Sri Lanka operations were discontinued; it operates in Vietnam (the team, 26 Nov 2026).
+        name: "Vietnam", lat: 14.06, lon: 108.28, presence: ["deployments"], companies: ["greentech-mw"],
+        value: "", valueLabel: "",
         detail: "Wind-turbine maintenance and SCADA operations.",
-        source: "GreenTech investment memo, p. 8. Historical snapshot; the country figure is not separately dated.",
+        source: "The team, Nov 2026.",
       },
       {
         name: "Oman", lat: 21.5, lon: 56, presence: ["deployments"], companies: ["workongrid"],
@@ -90,7 +89,6 @@ export const impact = {
         detail: "Water-utility analytics deployment.",
         source: "Fund I one-pager, p. 18; source period not stated.",
       },
-      { name: "Australia", lat: -25.3, lon: 133.8, presence: ["deployments"], companies: [], value: "", valueLabel: "", detail: "", source: "" },
     ],
   },
   sdgs: {
