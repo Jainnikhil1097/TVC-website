@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, type LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { Image as CmsImage } from "@/lib/types";
 import { Reveal } from "@/components/motion/Reveal";
 import { WordReveal } from "@/components/motion/WordReveal";
@@ -10,8 +11,12 @@ type Props = {
   about: string;
   /** The team's group photos (CMS → About page → Group photos), drifting slowly. */
   photos: { image: CmsImage; caption?: string }[];
-  facts: { label: string; value: string }[];
+  /** Stage, cheque size, portfolio: value first, label under it. */
+  facts: { label: string; value: string; icon?: LucideIcon }[];
 };
+
+/** Keeps "₹20 Cr" or "$2.3M" in one piece, so a range only breaks at its dash. */
+const keepAmounts = (v: string) => v.replace(/([₹$]\s?[\d.,]+)\s(Cr|Mn|M|L|Lakh)\b/g, "$1\u00a0$2").replace(/ – /g, "\u00a0– ");
 
 /**
  * Straight after the hero: the claim (revealed word by word), a short paragraph and a link
@@ -48,17 +53,35 @@ export function PositioningBand({ positioning, about, photos, facts }: Props) {
         </div>
 
         {facts.length > 0 && (
-          <Reveal as="ul" stagger={0.06} className="mt-12 grid border-y border-line sm:mt-16 sm:grid-cols-3">
-            {facts.map((f, i) => (
-              <li
-                key={f.label}
-                data-reveal
-                className={i > 0 ? "border-t border-line py-5 sm:border-t-0 sm:border-l sm:py-6 sm:pl-8" : "py-5 sm:py-6 sm:pr-8"}
-              >
-                <p className="hud text-muted">{f.label}</p>
-                <p className="mt-2 font-display text-2xl font-bold text-ink">{f.value}</p>
-              </li>
-            ))}
+          <Reveal
+            as="ul"
+            stagger={0.06}
+            className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-ink-600 sm:mt-16 lg:grid-cols-3"
+          >
+            {facts.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <li
+                  key={f.label}
+                  data-reveal
+                  className={cn(
+                    "flex gap-4 bg-ink p-5 text-white sm:p-7",
+                    // Phones: the first fact spans the card; the two below stack icon over text.
+                    i === 0 ? "col-span-2 items-start lg:col-span-1" : "flex-col gap-3 sm:flex-row sm:items-start sm:gap-4"
+                  )}
+                >
+                  {Icon && (
+                    <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-full bg-white/10 text-teal">
+                      <Icon className="size-5" />
+                    </span>
+                  )}
+                  <div className="min-w-0">
+                    <p className="font-display text-xl leading-tight font-bold text-balance sm:text-2xl lg:text-[1.75rem]">{keepAmounts(f.value)}</p>
+                    <p className="hud mt-1.5 text-white/60">{f.label}</p>
+                  </div>
+                </li>
+              );
+            })}
           </Reveal>
         )}
       </div>

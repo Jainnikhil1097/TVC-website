@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import { useState, type CSSProperties } from "react";
+import { ArrowUpRight } from "lucide-react";
 import type { Callout, Company } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-// Annotated product renders for the company profile.
+// Product images for the company profile: an annotated image as it is, or a clean render
+// with numbered hotspots from the CMS.
 // The render sits on a light "datasheet" plate (white backgrounds disappear into it via
 // multiply), with numbered hotspots. The active hotspot shows a label on a leader line
 // (sm and up); the numbered legend below is the accessible control on every screen size.
@@ -77,6 +79,14 @@ export function ProductStage({ company, active, onActive, sizes, priority, class
   }
 
   const ratio = image.width && image.height ? image.width / image.height : 4 / 3;
+  // An annotated image (labels built in): shown whole, on white, at its own shape.
+  if (!callouts.length) {
+    return (
+      <div className={cn("relative overflow-hidden rounded-2xl border border-line bg-white", className)} style={{ aspectRatio: String(ratio) }}>
+        <Image src={image.url} alt={image.alt || `${company.name} product`} fill priority={priority} sizes={sizes} className="object-contain" />
+      </div>
+    );
+  }
   return (
     <Plate className={cn("aspect-[4/3]", className)}>
       {/* Inner box sized to the render's own aspect ratio, so callout x/y map exactly. */}
@@ -202,6 +212,17 @@ export function ProductCallouts({ company, sizes, tone = "light" }: { company: C
     <div>
       <ProductStage company={company} active={active} onActive={setActive} sizes={sizes} />
       <CalloutLegend callouts={company.callouts ?? []} active={active} onActive={setActive} tone={tone} className="mt-4" />
+      {!company.callouts?.length && (
+        <a
+          href={company.productImage.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn("mt-3 inline-flex min-h-9 items-center gap-1.5 text-sm font-bold", tone === "dark" ? "text-ink-200 hover:text-white" : "text-ink hover:text-teal-ink")}
+        >
+          Open full size <ArrowUpRight className="size-4" aria-hidden />
+          <span className="sr-only">(opens in a new tab)</span>
+        </a>
+      )}
     </div>
   );
 }

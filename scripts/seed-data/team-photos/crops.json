@@ -50,9 +50,9 @@
     "centre": 0.5
   },
   "leelesh-gholkar": {
-    "top": 0.0819,
-    "width": 0.396,
-    "centre": 0.5072
+    "top": -0.022,
+    "width": 0.64,
+    "centre": 0.499
   },
   "mohammed-shoeb-ali": {
     "top": 0.0569,
@@ -148,5 +148,15 @@
     "top": 0.1,
     "width": 0.72,
     "centre": 0.51
+  },
+  "riddhim-sehgal": {
+    "top": 0.03,
+    "width": 0.82,
+    "centre": 0.467
+  },
+  "richa-tewari": {
+    "top": 0.01,
+    "width": 0.54,
+    "centre": 0.515
   }
 }

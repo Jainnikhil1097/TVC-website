@@ -27,6 +27,7 @@ import * as migration_20261125_113237_news_photos from './20261125_113237_news_p
 import * as migration_20261125_113250_press_prefund_data from './20261125_113250_press_prefund_data';
 import * as migration_20261125_114203_careers_email from './20261125_114203_careers_email';
 import * as migration_20261125_114204_careers_gift_data from './20261125_114204_careers_gift_data';
+import * as migration_20261125_164348_site_videos from './20261125_164348_site_videos';
 
 export const migrations = [
   {
@@ -172,6 +173,11 @@ export const migrations = [
   {
     up: migration_20261125_114204_careers_gift_data.up,
     down: migration_20261125_114204_careers_gift_data.down,
-    name: '20261125_114204_careers_gift_data'
+    name: '20261125_114204_careers_gift_data',
+  },
+  {
+    up: migration_20261125_164348_site_videos.up,
+    down: migration_20261125_164348_site_videos.down,
+    name: '20261125_164348_site_videos'
   },
 ];

@@ -11,6 +11,8 @@ export type PerspectiveCard = {
   tag?: string;
   /** Optional cover image (reports, events, essays with artwork). */
   image?: { url: string; alt: string };
+  /** A video: a play badge sits on the image. */
+  video?: boolean;
 };
 
 export type PerspectiveTab = {

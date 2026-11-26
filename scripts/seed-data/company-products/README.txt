@@ -1,15 +1,15 @@
-The current files are interim crops from the Fund I one-pager page images (low
-resolution, with the one-pager's labels baked in). Replace them with clean renders when
-available, either here or directly in the CMS (Portfolio → company → One-pager tab →
-Product image).
+Product images for the company profiles, named <slug>-product.<ext>, e.g.
+matel-motion-product.jpg (the slug is the last part of the company's web address).
 
-Clean product renders for the home page product spotlight and company profiles,
-named <slug>-product.<ext>, e.g. matel-motion-product.png, emo-energy-product.png,
-suind-product.webp (the slug is the last part of the company's web address).
+Most are the team's annotated product images (25 Nov 2026), with their labels built in,
+so those companies have no "Product callouts" in the CMS. Only the edge grid lines of the
+screenshots were whitened, and a stray mark on EMO's removed. GreenFi, Perovskia Solar,
+Prithu, Two Point O and WorkOnGrid still use the earlier crops from the Fund I one-pager,
+with numbered callouts added in the CMS (Portfolio → company → One-pager tab).
 
-- White or transparent background, no text labels baked in (labels are added as
-  "Product callouts" in the CMS, under the company's One-pager tab).
-- Landscape, around 4:3, at least 1600 px wide. PNG or WebP with transparency is best.
+To change an image:
+  - In the CMS: open the company → One-pager tab → Product image (best), or
+  - Here: replace the file (same name) and run  npm run company:products
 
-Then run  npm run company:onepagers  (the seed also picks them up). Callout positions
-are pre-filled from the one-pager PDF; check and nudge them in the CMS after upload.
+The import replaces an image only if the current one came from this folder; an image
+uploaded by an editor in the CMS is never overwritten.

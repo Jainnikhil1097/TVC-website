@@ -580,6 +580,21 @@ html.js-motion .hero-cover {
   animation: map-pop 0.22s var(--ease-out-quart) both;
 }
 
+/* Impact, SDG 5: the share ring draws in once. */
+@keyframes gender-ring {
+  from {
+    stroke-dasharray: 0 999;
+  }
+}
+.gender-ring {
+  animation: gender-ring 1.4s var(--ease-out-quart) 0.2s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gender-ring {
+    animation: none;
+  }
+}
+
 /* Team photos drifting slowly sideways (PhotoMarquee). The track holds the row twice
    (plus one trailing gap), so moving it by half loops seamlessly. */
 @keyframes photo-marquee {

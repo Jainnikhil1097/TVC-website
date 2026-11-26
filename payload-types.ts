@@ -1054,6 +1054,17 @@ export interface Site {
    * Starts with "UC". Find it in YouTube Studio → Settings → Channel → Advanced settings. New videos then appear automatically.
    */
   youtubeChannelId?: string | null;
+  /**
+   * YouTube videos to show on Perspectives → YouTube, with their thumbnails (taken from the link). Shown before the channel's own latest videos.
+   */
+  videos?:
+    | {
+        url: string;
+        title: string;
+        date?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   policies?:
     | {
         label: string;
@@ -1666,6 +1677,14 @@ export interface SiteSelect<T extends boolean = true> {
   substackUrl?: T;
   youtubeUrl?: T;
   youtubeChannelId?: T;
+  videos?:
+    | T
+    | {
+        url?: T;
+        title?: T;
+        date?: T;
+        id?: T;
+      };
   policies?:
     | T
     | {

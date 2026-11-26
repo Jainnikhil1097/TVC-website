@@ -140,6 +140,7 @@ export const getSite = cache(async () => {
     substackUrl: doc.substackUrl ?? "https://transitionventurecapital.substack.com",
     youtubeUrl: doc.youtubeUrl ?? "",
     youtubeChannelId: doc.youtubeChannelId ?? "",
+    videos: (doc.videos ?? []).map((v) => ({ title: v.title, url: v.url, date: orUndefined(v.date) })),
     policies: (doc.policies ?? [])
       .map((p) => ({ label: p.label, href: image(p.file)?.url ?? "" }))
       .filter((p) => p.href),
@@ -478,9 +479,24 @@ export const getEssays = cache(async (): Promise<Essay[]> => {
   return essays.map((e) => ({ ...e, company: companies.find((c) => sameUrl(c.essayUrl, e.url))?.slug }));
 });
 
+/** A YouTube link's video id (watch, youtu.be, shorts, embed or live links). */
+export function youtubeId(url: string) {
+  const m = url.match(/(?:youtu\.be\/|[?&]v=|\/(?:shorts|embed|live)\/)([\w-]{11})/);
+  return m?.[1];
+}
+
+/** The videos listed in Site settings (newest first), then the channel feed's, without repeats. */
 export const getVideos = cache(async (): Promise<Video[]> => {
   const site = await getSite();
-  return getYouTubeVideos(site.youtubeChannelId);
+  const listed: Video[] = site.videos
+    .map((v) => {
+      const id = youtubeId(v.url);
+      return { ...v, thumbnail: id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : undefined };
+    })
+    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+  const seen = new Set(listed.map((v) => youtubeId(v.url) ?? v.url));
+  const feed = (await getYouTubeVideos(site.youtubeChannelId)).filter((v) => !seen.has(youtubeId(v.url) ?? v.url));
+  return [...listed, ...feed];
 });
 
 // ─── Derived helpers ─────────────────────────────────────────────────────────

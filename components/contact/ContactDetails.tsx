@@ -1,4 +1,4 @@
-import { ArrowUpRight, Mail, MapPin } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, Mail, MapPin } from "lucide-react";
 import type { Site } from "@/lib/cms";
 import { OfficeMap } from "./OfficeMap";
 
@@ -29,11 +29,16 @@ export function ContactDetails({ site }: { site: ContactInfo }) {
             </a>
           </dd>
           {site.contact.careersEmail && (
-            <dd className="mt-4 border-t border-line pt-4 text-sm">
-              <span className="block font-bold text-ink">Explore careers &rarr;</span>
+            <dd className="mt-5 border-t border-line pt-5 text-sm">
+              <span className="flex items-center gap-3 font-bold text-ink">
+                <span aria-hidden className="grid size-9 place-items-center rounded-full border border-line bg-white text-teal-ink">
+                  <BriefcaseBusiness className="size-4" />
+                </span>
+                Explore Careers
+              </span>
               <a
                 href={`mailto:${site.contact.careersEmail}`}
-                className="mt-1.5 inline-block break-all text-ink underline decoration-ink/20 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
+                className="mt-3 inline-block break-all text-ink underline decoration-ink/20 underline-offset-4 hover:text-teal-ink hover:decoration-teal-ink"
               >
                 {site.contact.careersEmail}
               </a>

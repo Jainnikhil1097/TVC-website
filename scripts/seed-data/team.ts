@@ -76,6 +76,8 @@ const finance: Person[] = [
   { name: "Harsh Bihani", title: "VP Finance & Operations", linkedin: li("harsh-bihani-672b27113") },
   { name: "Simran Panwar", title: "Manager - Compliance (GIFT City)", linkedin: li("cs-simran-panwar") },
   { name: "Usman Pasha", title: "Senior Accountant", linkedin: li("usman-pasha-k-3818b1151") },
+  // Joined Nov 2026.
+  { name: "Richa Tewari", title: "Fund Operations Associate", linkedin: li("richa-tewari-889139279") },
 ];
 const hr: Person[] = [
   { name: "Anchit Donthi", title: "Managing Partner - House of Talent", linkedin: li("anchit-anil-14243364") },

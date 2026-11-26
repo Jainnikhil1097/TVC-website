@@ -21,7 +21,7 @@ await payload.updateGlobal({ slug: "home-page", data: { positioning: "Edited by 
 await payload.updateGlobal({ slug: "site", data: { tagline: "Edited tagline" }, context });
 const before = await payload.count({ collection: "companies" });
 const matel = (await payload.find({ collection: "companies", where: { slug: { equals: "matel-motion" } }, limit: 1 })).docs[0];
-assert.ok(matel.breakthrough && matel.traction?.length && matel.callouts?.length, "one-pager content is seeded");
+assert.ok(matel.breakthrough && matel.traction?.length && matel.productImage, "one-pager content and product image are seeded");
 await payload.update({ collection: "companies", id: matel.id, data: { breakthrough: "Edited breakthrough", traction: [] }, context });
 
 // …then someone re-runs the seed.

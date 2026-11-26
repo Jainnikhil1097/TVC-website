@@ -19,6 +19,7 @@ import {
   sameUrl,
 } from "@/lib/cms";
 import { pageMetadata } from "@/lib/seo";
+import { Banknote, LayoutGrid, Sprout } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -65,9 +66,9 @@ export default async function HomePage() {
           about={site.about}
           photos={about.groupPhotos}
           facts={[
-            { label: "Stage", value: site.investmentCriteria.stage },
-            { label: "Cheque size", value: site.investmentCriteria.cheque },
-            { label: "Portfolio", value: active.length ? `${active.length} active companies` : "" },
+            { label: "Stage", value: site.investmentCriteria.stage, icon: Sprout },
+            { label: "Cheque size", value: site.investmentCriteria.cheque, icon: Banknote },
+            { label: "Active portfolio companies", value: active.length ? String(active.length) : "", icon: LayoutGrid },
           ].filter((f) => f.value)}
         />
         <SectorGrid sectors={sectors} companies={companies} />

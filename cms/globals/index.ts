@@ -138,6 +138,21 @@ export const SiteSettings: GlobalConfig = {
                   'Starts with "UC". Find it in YouTube Studio → Settings → Channel → Advanced settings. New videos then appear automatically.',
               },
             },
+            {
+              name: "videos",
+              label: "Videos",
+              type: "array",
+              labels: { singular: "Video", plural: "Videos" },
+              admin: {
+                description:
+                  "YouTube videos to show on Perspectives → YouTube, with their thumbnails (taken from the link). Shown before the channel's own latest videos.",
+                initCollapsed: true,
+              },
+              fields: [
+                urlField({ name: "url", label: "YouTube link", required: true }),
+                { type: "row", fields: [{ name: "title", label: "Title", type: "text", required: true }, { name: "date", label: "Date", type: "date", admin: { date: { pickerAppearance: "dayOnly" } } }] },
+              ],
+            },
           ],
         },
         {

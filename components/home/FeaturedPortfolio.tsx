@@ -16,8 +16,8 @@ type Props = {
 };
 
 /**
- * Fills the panel: the cover photo if there is one, else the company's logo, large, on a
- * white panel edge to edge (logos are made for white), else the company name.
+ * Fills the panel: the cover photo if there is one, else the product image on white, else
+ * the company's logo, large, on white (logos are made for white), else the company name.
  */
 function Cover({ company, priority }: { company: Company; priority?: boolean }) {
   if (company.coverImage) {
@@ -30,6 +30,21 @@ function Cover({ company, priority }: { company: Company; priority?: boolean }) 
         sizes="(min-width: 1024px) 50vw, 100vw"
         className="object-cover"
       />
+    );
+  }
+  if (company.productImage) {
+    // The product image, whole, on its own white background (its labels are part of it).
+    return (
+      <div className="absolute inset-0 bg-white">
+        <Image
+          src={company.productImage.url}
+          alt={company.productImage.alt || `${company.name} product`}
+          fill
+          priority={priority}
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          className="object-contain p-[3%]"
+        />
+      </div>
     );
   }
   if (company.logo) {

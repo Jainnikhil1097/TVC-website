@@ -42,13 +42,102 @@ function SdgIcon({ number, className }: { number: number; className: string }) {
   );
 }
 
+export type TeamFace = { title?: string; photo?: string; colour?: string };
+
+/** A share as a ring, drawn in once (static for reduced motion). */
+function Ring({ value }: { value: number }) {
+  const r = 42;
+  const c = 2 * Math.PI * r;
+  return (
+    <span className="relative grid size-28 shrink-0 place-items-center">
+      <svg viewBox="0 0 100 100" className="absolute inset-0 size-full -rotate-90" aria-hidden>
+        <circle cx={50} cy={50} r={r} fill="none" stroke="#e7ecf0" strokeWidth={10} />
+        <circle
+          cx={50}
+          cy={50}
+          r={r}
+          fill="none"
+          stroke={SDG_COLOURS[5]}
+          strokeWidth={10}
+          strokeLinecap="round"
+          strokeDasharray={`${(c * value) / 100} ${c}`}
+          className="gender-ring"
+          style={{ "--ring": `${(c * value) / 100}` } as React.CSSProperties}
+        />
+      </svg>
+      <span className="font-display text-3xl font-bold text-ink">{value}%</span>
+    </span>
+  );
+}
+
+/**
+ * One line of the goal 5 card: a share ("44% of employees are women.") as a ring with
+ * its words beside it; otherwise names (split on "·", ";" or ","), each with their team
+ * photo and title when they're on the team page.
+ */
+function GenderLine({ text, people }: { text: string; people: Record<string, TeamFace> }) {
+  const share = text.match(/(\d{1,3})\s?%/);
+  if (share) {
+    const rest = text.replace(share[0], "").trim();
+    return (
+      <div className="mt-5 flex items-center gap-5">
+        <Ring value={Math.min(100, Number(share[1]))} />
+        <p className="text-lg leading-snug font-bold text-ink">
+          <span className="sr-only">{share[1]}% </span>
+          {rest}
+        </p>
+      </div>
+    );
+  }
+  const names = text.split(/\s*[·;,]\s*/).filter(Boolean);
+  return (
+    <ul className="mt-5 space-y-4">
+      {names.map((name) => {
+        const p = people[name] ?? people[Object.keys(people).find((k) => k.startsWith(`${name} `)) ?? ""];
+        const initials = name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("");
+        return (
+          <li key={name} className="flex items-center gap-4">
+            <span
+              aria-hidden
+              className="relative grid size-14 shrink-0 place-items-center overflow-hidden rounded-full font-bold text-ink"
+              style={{ backgroundColor: p?.colour && p.colour !== "#ffffff" ? p.colour : "#bfe7e2" }}
+            >
+              {p?.photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={p.photo} alt="" loading="lazy" className="absolute inset-0 size-full object-cover object-top" />
+              ) : (
+                initials
+              )}
+            </span>
+            <span className="min-w-0">
+              <span className="block font-display text-lg leading-tight font-bold text-ink">{name}</span>
+              {p?.title && <span className="mt-0.5 block text-sm leading-snug text-muted">{p.title}</span>}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 /**
  * The goals we align with, as a grid. Selecting one opens its panel below that row:
  * every company (or Transition VC itself) that contributes, how, and the measures behind
  * it. Goal 5 (Gender Equality) sits apart, as a bar: women in leadership, the women
  * heading departments, and women's share of the team (one entry per line).
  */
-export function SdgExplorer({ goals, companyNames, note }: { goals: SdgGoal[]; companyNames: Record<string, string>; note: string }) {
+export function SdgExplorer({
+  goals,
+  companyNames,
+  note,
+  people = {},
+}: {
+  goals: SdgGoal[];
+  companyNames: Record<string, string>;
+  note: string;
+  /** Team members by name (photo, title, team colour), for the people named under goal 5. */
+  people?: Record<string, TeamFace>;
+}) {
   const grid = goals.filter((g) => g.number !== 5);
   const gender = goals.find((g) => g.number === 5);
   const [open, setOpen] = useState<number | null>(null);
@@ -145,11 +234,11 @@ export function SdgExplorer({ goals, companyNames, note }: { goals: SdgGoal[]; c
             {gender.summary && <p className="text-sm leading-relaxed text-muted">{gender.summary}</p>}
           </div>
           {gender.entries.length > 0 && (
-            <ul className="mt-6 grid gap-x-8 gap-y-6 border-t border-line pt-6 md:grid-cols-3">
+            <ul className="mt-6 grid gap-3 md:grid-cols-3">
               {gender.entries.map((e, i) => (
-                <li key={i} className="md:border-l md:border-line md:pl-6 md:first:border-l-0 md:first:pl-0">
+                <li key={i} className="flex flex-col rounded-2xl bg-white p-5 sm:p-6">
                   <p className="eyebrow text-teal-ink">{e.company ? companyNames[e.company] ?? e.label : e.label}</p>
-                  <p className="mt-2 font-display text-xl leading-snug font-bold text-ink">{e.connection}</p>
+                  <GenderLine text={e.connection} people={people} />
                 </li>
               ))}
             </ul>

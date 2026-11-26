@@ -21,6 +21,7 @@
     "company:photos": "node --import tsx scripts/import-company-photos.ts",
     "company:onepagers": "node --import tsx scripts/import-one-pagers.ts",
     "company:logos": "node --import tsx scripts/import-company-logos.ts",
+    "company:products": "node --import tsx scripts/import-company-products.ts",
     "impact:import": "node --import tsx scripts/import-impact.ts",
     "about:photos": "node --import tsx scripts/import-group-photos.ts",
     "news:photos": "node --import tsx scripts/import-news-photos.ts",

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Play } from "lucide-react";
 import type { PerspectiveCard } from "./types";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +31,13 @@ export function Card({ item, interactive = true, className }: CardProps) {
             // Substack/YouTube artwork comes from third-party CDNs; serve it as-is.
             unoptimized={/^https?:/.test(item.image.url) && !item.image.url.includes(".blob.vercel-storage.com")}
           />
+          {item.video && (
+            <span aria-hidden className="absolute inset-0 grid place-items-center bg-black/10 transition-colors group-hover:bg-black/25">
+              <span className="grid size-14 place-items-center rounded-full bg-white/95 text-ink shadow-[0_8px_24px_rgb(0_0_0/0.25)] transition-transform duration-300 group-hover:scale-110">
+                <Play className="ml-0.5 size-6 fill-current" />
+              </span>
+            </span>
+          )}
         </div>
       )}
 

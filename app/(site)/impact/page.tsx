@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ArrowUpRight, Plus } from "lucide-react";
-import { getImpact, getPortfolio } from "@/lib/cms";
+import { getImpact, getPortfolio, getTeamGroups } from "@/lib/cms";
+import { teamColours } from "@/lib/taxonomy";
 import { pageMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/layout/PageHero";
 import { Reveal } from "@/components/motion/Reveal";
@@ -34,7 +35,9 @@ function Heading({ eyebrow, headline, intro, id }: { eyebrow: string; headline: 
 const sectionY = "py-20 sm:py-28";
 
 export default async function ImpactPage() {
-  const [impact, portfolio] = await Promise.all([getImpact(), getPortfolio()]);
+  const [impact, portfolio, team] = await Promise.all([getImpact(), getPortfolio(), getTeamGroups()]);
+  // Team members by name, so the people named under SDG 5 show with their photo and title.
+  const people = Object.fromEntries(team.flatMap((g) => g.people.map((p) => [p.name, { title: p.title, photo: p.photo, colour: teamColours[g.id] }])));
   const names: Record<string, string> = Object.fromEntries(portfolio.map((c) => [c.slug, c.name]));
   const { hero, outcomes, footprint, sdgs, measurement } = impact;
   const list = (slugs: string[]) => slugs.map((s) => names[s]).filter(Boolean).join(" · ");
@@ -125,7 +128,7 @@ export default async function ImpactPage() {
             ))}
           </Reveal>
           <div className="mt-14">
-            <SdgExplorer goals={sdgs.goals} companyNames={names} note={sdgs.note} />
+            <SdgExplorer goals={sdgs.goals} companyNames={names} note={sdgs.note} people={people} />
           </div>
         </div>
       </section>

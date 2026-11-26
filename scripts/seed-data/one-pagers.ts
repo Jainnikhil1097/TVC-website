@@ -21,12 +21,7 @@ export type OnePager = {
 
 export const onePagers: Record<string, OnePager> = {
   "emo-energy": {
-    callouts: [
-      { label: "In-house BMS", detail: "Real-time monitoring, protection and balancing", x: 55, y: 18 },
-      { label: "Dielectric coolant", detail: "Non-flammable fluid for uniform thermal control", x: 22, y: 34 },
-      { label: "AI health platform", detail: "State-of-health prediction and anomaly detection", x: 82, y: 55 },
-      { label: "Rugged design", detail: "IP67-rated enclosure for harsh conditions", x: 58, y: 86 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     proofValue: "20,000+",
     proofLabel: "battery packs deployed",
     deployment: "20,000+ battery packs",
@@ -46,11 +41,7 @@ export const onePagers: Record<string, OnePager> = {
       "One of few Indian battery companies owning the full stack — pack, BMS, thermal management and software. Its immersion-cooled architecture is built for Indian duty cycles, with AIS-156 compliance and deep OEM and fleet integration.",
   },
   "matel-motion": {
-    callouts: [
-      { label: "Motor controller unit", detail: "Advanced algorithms and functional safety", x: 30, y: 30 },
-      { label: "4W LCV motor", detail: "Compact, power-dense motors for 4-wheelers and industry", x: 78, y: 52 },
-      { label: "2W in-wheel drive", detail: "Motor, controller and gear reduction in one unit", x: 52, y: 80 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     proofValue: "200,000+",
     proofLabel: "motors deployed",
     deployment: "200,000+ motors across mobility and pumps",
@@ -69,7 +60,7 @@ export const onePagers: Record<string, OnePager> = {
       "Competitors build either the motor or the controller. Matel integrates the full drivetrain plus data and telemetry, delivering higher efficiency, faster iteration and OEM-grade serviceability — while reducing rare-earth dependence.",
   },
   protonas: {
-    callouts: [{ label: "Hydrogen fuel cell stack", detail: "Affordable fuel cells for backup and mobility", x: 50, y: 45 }],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "500 W prototype, scaling to 2 kW systems and drones",
     marketGap:
       "PEM fuel cells under 15 kW remain expensive and complex, blocking adoption for power and telecom backup and light hydrogen mobility. Imported stacks cost $1–2/W, keeping system costs high.",
@@ -86,11 +77,7 @@ export const onePagers: Record<string, OnePager> = {
       "Proprietary processes for low-cost bipolar plate coatings and catalyst ink, combined with the founder's domain depth, let Protonas build fuel cells at competitive cost.",
   },
   dynolt: {
-    callouts: [
-      { label: "1200 W swapping station", detail: "Fast battery swapping for EVs", x: 22, y: 30 },
-      { label: "3300 W charger", detail: "Higher-power, faster EV charging", x: 78, y: 22 },
-      { label: "1350 W charger", detail: "Efficient charging for electric vehicles", x: 60, y: 80 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     proofValue: "100,000+",
     proofLabel: "EV chargers deployed",
     deployment: "100,000+ chargers",
@@ -110,10 +97,7 @@ export const onePagers: Record<string, OnePager> = {
       "Proprietary control software makes products clone-resistant and modular, with asset-light scaling, and eases the move to next-generation GaN and SiC semiconductors.",
   },
   "promethean-energy": {
-    callouts: [
-      { label: "FlowTherm", detail: "Recovers exhaust heat for industrial process heating", x: 22, y: 70 },
-      { label: "CompMate", detail: "Recovers compressor waste heat for hot water", x: 78, y: 25 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "50+ heat pumps and 20 MW+ of heat recovered",
     customers: "Honda, Suzuki, Daimler, Unilever, Godrej, Raymond",
     marketGap:
@@ -130,10 +114,7 @@ export const onePagers: Record<string, OnePager> = {
       "Fast design-to-deployment, IoT-backed performance and ESCO alignment make the solutions bankable, with payback typically under 24 months.",
   },
   fitsol: {
-    callouts: [
-      { label: "Real-time asset dashboard", detail: "Tracks assets and updates counts instantly", x: 24, y: 70 },
-      { label: "ESG assessment", detail: "Evaluates sustainability performance", x: 78, y: 25 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "80+ customers across green logistics and carbon SaaS",
     customers: "Amazon, TVS, JK Tyres, Exide, Lumax, Penguin, JBM, Moonlight",
     marketGap:
@@ -150,7 +131,7 @@ export const onePagers: Record<string, OnePager> = {
       "While most ESG SaaS players stop at monitoring, Fitsol's vertical integration of logistics operations and software delivers verifiable emission cuts and cost savings.",
   },
   cimware: {
-    callouts: [{ label: "CIMware ToR switch", detail: "Connects compute, storage and networking in data centres", x: 30, y: 30 }],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "Pilot stage",
     marketGap:
       "Data centres waste compute, memory and storage because Ethernet-based racks can't easily share resources across servers. The missing piece is a rack-level fabric that pools them.",
@@ -166,10 +147,7 @@ export const onePagers: Record<string, OnePager> = {
       "Hardware-path composability at the top of rack pools resources with lower latency and fewer moving parts than network-layer disaggregation, and more convergence than PCIe-only peers.",
   },
   comminent: {
-    callouts: [
-      { label: "Comms module", detail: "Reliable communication between devices", x: 25, y: 30 },
-      { label: "NIC card", detail: "Connects meters and equipment seamlessly", x: 75, y: 40 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     proofValue: "1.5M+",
     proofLabel: "smart-meter radio cards shipped",
     deployment: "1.5M+ NIC cards",
@@ -189,7 +167,7 @@ export const onePagers: Record<string, OnePager> = {
       "Unlike SIM-only or protocol-only offers, Comminent owns the stack — hardware, firmware and head-end — giving utilities performance, cost control and vendor neutrality across mixed meter fleets.",
   },
   hydgen: {
-    callouts: [{ label: "On-site electrolyser", detail: "High-purity hydrogen on site, on demand", x: 30, y: 25 }],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "90 kW live; 200 kW+ in pipeline",
     customers: "Mudas Diamonds, Kira Diamonds, AVP Star, C6 Diamonds",
     marketGap:
@@ -223,7 +201,7 @@ export const onePagers: Record<string, OnePager> = {
       "30% cheaper and 2x faster than named peers, with \"load-once, comply-many\" templates and domain-tuned AI that embed into BFSI risk workflows.",
   },
   "greentech-mw": {
-    callouts: [{ label: "Wind asset management", detail: "Optimises wind assets through advanced monitoring", x: 70, y: 50 }],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     proofValue: "350+ MW",
     proofLabel: "wind capacity under management",
     deployment: "350+ MW under management across India and Vietnam",
@@ -243,7 +221,7 @@ export const onePagers: Record<string, OnePager> = {
       "Craneless repair techniques cut major repair costs by up to 80%, and blade imaging plus predictive analytics raise uptime — as global OEMs leave India, owners need a reliable multi-brand operator.",
   },
   "intrinsic-foundries": {
-    callouts: [{ label: "Carbon biofoundry platform", detail: "Converts industrial CO₂ into valuable biochemicals", x: 22, y: 25 }],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "3 clients, 10 in pipeline",
     customers: "Pilots with Adani Power, ICGEB Delhi, Tata Steel",
     marketGap:
@@ -261,9 +239,7 @@ export const onePagers: Record<string, OnePager> = {
       "Photobioreactor-based carbon capture outperforms amine and fermentation approaches with a ~4-year payback, overcoming the contamination and capex problems of legacy algae systems.",
   },
   earthen: {
-    callouts: [
-      { label: "Heat battery", detail: "CO₂-based long-duration energy storage", x: 78, y: 40 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "2 clients, 25 active in pipeline",
     customers: "Gatsby Power; US pilot with Hindustan Copper",
     marketGap:
@@ -321,11 +297,7 @@ export const onePagers: Record<string, OnePager> = {
       "It builds credible carbon supply rather than trading credits — its digital MRV lowers cost and improves issuance certainty, while FPO-anchored aggregation turns smallholders into long-term contracted assets.",
   },
   zerodrag: {
-    callouts: [
-      { label: "Flight controller", detail: "Controls flight, stability and navigation", x: 15, y: 30 },
-      { label: "GNSS", detail: "Precise positioning and navigation", x: 75, y: 15 },
-      { label: "Drone motors", detail: "Propulsion and power for flight", x: 60, y: 82 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "2,000+ units sold",
     customers: "Vega Drones, TF Vector, Sky Light Shows",
     marketGap:
@@ -341,7 +313,7 @@ export const onePagers: Record<string, OnePager> = {
       "Cost-effective, robust components fill the gap between expensive global and non-secure imports — plug-and-play solderless integration, better size-weight-power, and 5-year lifecycle support.",
   },
   "albatross-energetics": {
-    callouts: [{ label: "Liquid desiccant HVAC system", detail: "Controls humidity while reducing cooling energy", x: 78, y: 70 }],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "2 pilots, 6 in pipeline",
     customers: "Epic Group, Promethean Energy",
     marketGap:
@@ -359,10 +331,7 @@ export const onePagers: Record<string, OnePager> = {
       "It resolves a trade-off that has stalled industrial dehumidification for decades — high performance at far lower energy intensity, with non-corrosive chemistry that cuts material cost and risk.",
   },
   "helionis-labs": {
-    callouts: [
-      { label: "Insulated metal substrate", detail: "Improves thermal performance in high-power electronics", x: 20, y: 25 },
-      { label: "Sizes of prints", detail: "Multiple print sizes for thermal management", x: 78, y: 80 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "Pilot",
     marketGap:
       "High-power LEDs convert only 30–45% of input power into light; the rest becomes heat. The dielectric layer is the thermal bottleneck, and ceramic alternatives are costly, brittle and hard to scale.",
@@ -424,10 +393,7 @@ export const onePagers: Record<string, OnePager> = {
       "No direct competitor in wholesale, asset-neutral financing of long-life energy-efficient equipment for investment-grade C&I customers. Multi-OEM neutrality, demand aggregation and in-house technology-risk underwriting, with single-point accountability for performance.",
   },
   suind: {
-    callouts: [
-      { label: "WASP", detail: "Monitors crops, detects disease, guides interventions", x: 40, y: 28 },
-      { label: "Bumblebee", detail: "Autonomously sprays crops with precision", x: 62, y: 80 },
-    ],
+    // Labels are part of the product image (25 Nov 2026), so no callouts.
     deployment: "3,000+ acres across 25+ crop types",
     customers: "Alan Scott Bluverge, Harrisons Malayalam, Sunroto Tech",
     marketGap:

@@ -170,6 +170,7 @@ export default async function PerspectivesPage() {
             href: v.url,
             action: "Watch",
             image: v.thumbnail ? { url: v.thumbnail, alt: "" } : undefined,
+            video: true,
           })),
         }
       : {
