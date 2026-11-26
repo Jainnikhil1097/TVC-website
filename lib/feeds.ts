@@ -1,6 +1,6 @@
 import "server-only";
 import type { Essay, Video } from "./types";
-import { parseSubstack, parseYouTube } from "./feed-parse";
+import { parseSubstack, parseYouTube, youtubeChannelId } from "./feed-parse";
 
 const HOUR = 3600;
 const isBuild = () => process.env.NEXT_PHASE === "phase-production-build";
@@ -30,7 +30,20 @@ export async function getSubstackEssays(substackUrl: string): Promise<Essay[]> {
   return xml ? parseSubstack(xml) : [];
 }
 
-export async function getYouTubeVideos(channelId?: string | null): Promise<Video[]> {
+/**
+ * The channel's latest videos. Uses the channel ID when it's set; otherwise works it out
+ * from the channel's address (e.g. youtube.com/@TransitionVentureCapital) by reading the
+ * channel page. Both are fetched at build time (and hourly on a server).
+ */
+export async function getYouTubeVideos(channelId?: string | null, channelUrl?: string | null): Promise<Video[]> {
+  if (!channelId && channelUrl) {
+    channelId = youtubeChannelId(channelUrl);
+    if (!channelId && /youtube\.com\/(@|c\/|user\/)/.test(channelUrl)) {
+      const html = await fetchFeed(channelUrl);
+      channelId = html ? youtubeChannelId(html) : undefined;
+      if (!channelId) console.warn(`[feeds] couldn't find the YouTube channel ID on ${channelUrl}.`);
+    }
+  }
   if (!channelId) return [];
   const xml = await fetchFeed(`https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`);
   return xml ? parseYouTube(xml) : [];

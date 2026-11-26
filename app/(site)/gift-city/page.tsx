@@ -1,6 +1,5 @@
-import { getGiftCity, getMetrics, getPortfolio, getSite, isActive } from "@/lib/cms";
+import { getGiftCity, getSite } from "@/lib/cms";
 import { pageMetadata } from "@/lib/seo";
-import type { Metric } from "@/lib/types";
 import { Reveal } from "@/components/motion/Reveal";
 import { AccentRule } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
@@ -21,11 +20,6 @@ export function generateMetadata() {
   });
 }
 
-/** Finds a fund metric by label keyword, falling back to a position in the list. */
-function pick(items: Metric[], keyword: RegExp, fallback: number) {
-  return items.find((m) => keyword.test(m.label)) ?? items[fallback];
-}
-
 // Bento layout: wide cards carry placeholder art (replace with photography when available).
 const bento: { span: boolean; art?: { variant: LineArtVariant; className: string } }[] = [
   { span: true, art: { variant: "skyline", className: "bg-[linear-gradient(180deg,#1c1c1c,#6b6b6b)] text-white/40" } },
@@ -35,17 +29,7 @@ const bento: { span: boolean; art?: { variant: LineArtVariant; className: string
 ];
 
 export default async function GiftCityPage() {
-  const [giftCity, site, metrics, portfolio] = await Promise.all([getGiftCity(), getSite(), getMetrics(), getPortfolio()]);
-  const active = portfolio.filter(isActive).length;
-
-  // Headline fund figures, shown in the "logo row" position of the reference.
-  const facts = [
-    pick(metrics.items, /raised|fund size/i, 0),
-    // Counted from the portfolio, so it always matches the home and portfolio pages.
-    active ? { value: String(active), label: "Active portfolio companies" } : pick(metrics.items, /portfolio|companies/i, 2),
-    { value: site.investmentCriteria.stage, label: "Stage" },
-    { value: site.investmentCriteria.cheque, label: "Cheque size" },
-  ].filter((f): f is Metric => Boolean(f?.value));
+  const [giftCity, site] = await Promise.all([getGiftCity(), getSite()]);
 
   return (
     <div data-theme="light" className="pb-24">
@@ -67,18 +51,6 @@ export default async function GiftCityPage() {
           </div>
         </div>
       </HeroCard>
-
-      {/* Key facts */}
-      <section className="container-site border-b border-ink/10 py-12" aria-label="Transition VC at a glance">
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
-          {facts.map((f) => (
-            <li key={f.label}>
-              <p className="display text-2xl text-stone sm:text-3xl">{f.value}</p>
-              <p className="eyebrow mt-2 text-ink/55">{f.label}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
 
       {/* Intro */}
       <section className="container-site grid gap-10 py-20 sm:py-24 lg:grid-cols-2 lg:gap-16">

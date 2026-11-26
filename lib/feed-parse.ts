@@ -68,3 +68,29 @@ export function parseYouTube(xml: string): Video[] {
     }))
     .filter((v) => v.title && v.url);
 }
+
+/**
+ * The channel ID ("UC…") from a YouTube channel address or its page's HTML, so the feed
+ * works from the channel's @handle alone. Prefers the page's own canonical link and
+ * external ID over other channel IDs on the page (recommendations, etc.).
+ */
+export function youtubeChannelId(urlOrHtml: string): string | undefined {
+  const id = "(UC[\\w-]{22})";
+  const patterns = [
+    new RegExp(`youtube\\.com/channel/${id}(?:[/?"#]|$)`),
+    new RegExp(`"externalId"\\s*:\\s*"${id}"`),
+    new RegExp(`itemprop="(?:identifier|channelId)"\\s+content="${id}"`),
+    new RegExp(`"browseId"\\s*:\\s*"${id}"`),
+    new RegExp(`"channelId"\\s*:\\s*"${id}"`),
+  ];
+  // The canonical link names the page's own channel; check it before anything else.
+  const canonical = urlOrHtml.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+  for (const source of [canonical, urlOrHtml]) {
+    if (!source) continue;
+    for (const p of patterns) {
+      const m = source.match(p);
+      if (m) return m[1];
+    }
+  }
+  return undefined;
+}

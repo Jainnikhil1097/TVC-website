@@ -1,7 +1,7 @@
 // Tests for lib/feed-parse.ts against representative Substack RSS and YouTube Atom.
 //   npx tsx scripts/test-feed-parse.ts
 import assert from "node:assert/strict";
-import { parseSubstack, parseYouTube } from "../lib/feed-parse";
+import { parseSubstack, parseYouTube, youtubeChannelId } from "../lib/feed-parse";
 
 const substack = `<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
@@ -66,5 +66,16 @@ assert.equal(videos[0].thumbnail, "https://i2.ytimg.com/vi/abc123/hqdefault.jpg"
 
 assert.deepEqual(parseSubstack("<html>not a feed</html>"), []);
 assert.deepEqual(parseYouTube(""), []);
+
+// The channel ID, from an address or from the channel page (made-up IDs).
+const OWN = "UCabcdefghijklmnopqrstuv";
+const OTHER = "UCzyxwvutsrqponmlkjihgfe";
+assert.equal(youtubeChannelId(`https://www.youtube.com/channel/${OWN}`), OWN, "ID from a /channel/ address");
+assert.equal(youtubeChannelId("https://www.youtube.com/@TransitionVentureCapital"), undefined, "a handle alone has no ID");
+const page = `<html><head><link rel="canonical" href="https://www.youtube.com/channel/${OWN}"></head>
+<body><script>var d = {"channelId":"${OTHER}","externalId":"${OWN}"};</script></body></html>`;
+assert.equal(youtubeChannelId(page), OWN, "the page's own channel wins over others on the page");
+const noCanonical = `<script>{"metadata":{"channelMetadataRenderer":{"externalId":"${OWN}"}},"x":{"channelId":"${OTHER}"}}</script>`;
+assert.equal(youtubeChannelId(noCanonical), OWN, "externalId is preferred over other channelIds");
 
 console.log("feed-parse: all assertions passed");

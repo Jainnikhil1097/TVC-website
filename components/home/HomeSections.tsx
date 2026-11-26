@@ -40,13 +40,27 @@ export function PerspectivesTeaser({ essays, news, nextEvent, substackUrl }: Tea
                 href={e.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col rounded-2xl border border-line bg-white p-7 transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white transition-[border-color,box-shadow] hover:border-teal-ink/40 hover:shadow-[0_8px_30px_rgb(0_0_0/0.06)]"
               >
-                <span className="hud text-teal-ink">Substack{e.date && ` · ${formatDate(e.date.slice(0, 10))}`}</span>
-                <h3 className="mt-5 font-display font-bold text-xl leading-snug text-ink">{e.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-muted">{e.teaser}</p>
-                <span className="mt-auto inline-flex items-center gap-1.5 pt-8 text-sm font-bold text-ink group-hover:text-teal-ink">
-                  Read the essay <ArrowUpRight className="size-3.5" aria-hidden />
+                {e.image && (
+                  <span className="relative block aspect-[16/9] overflow-hidden bg-surface">
+                    {/* Substack artwork is remote; a plain img keeps it out of the image optimiser. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={e.image}
+                      alt=""
+                      loading="lazy"
+                      className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  </span>
+                )}
+                <span className="flex flex-1 flex-col p-7">
+                  <span className="hud text-teal-ink">Substack{e.date && ` · ${formatDate(e.date.slice(0, 10))}`}</span>
+                  <h3 className="mt-5 font-display font-bold text-xl leading-snug text-ink">{e.title}</h3>
+                  <p className="mt-4 text-sm leading-relaxed text-muted">{e.teaser}</p>
+                  <span className="mt-auto inline-flex items-center gap-1.5 pt-8 text-sm font-bold text-ink group-hover:text-teal-ink">
+                    Read the essay <ArrowUpRight className="size-3.5" aria-hidden />
+                  </span>
                 </span>
               </a>
             ))}

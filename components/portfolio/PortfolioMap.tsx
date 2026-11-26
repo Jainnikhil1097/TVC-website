@@ -482,17 +482,19 @@ export function PortfolioMap({
                 aria-label={`${company.name} — ${portfolioSectorName(company.sector)}, ${company.stage}, ${portfolioFundName(company.fund)}${status ? `, ${status}` : ""}. Show details`}
                 data-active={active || undefined}
                 className={cn(
-                  "group absolute -translate-y-full origin-bottom-left rounded-lg border px-2.5 py-1.5 text-left whitespace-nowrap",
+                  "group absolute -translate-y-full origin-bottom-left rounded-md border px-2 py-1 text-left whitespace-nowrap",
                   "transition-[opacity,border-color,background-color,box-shadow,scale] duration-300 ease-out-quart motion-reduce:transition-none",
-                  "border-white/15 bg-[#161616]/90 shadow-[0_2px_12px_rgb(0_0_0/0.25)] backdrop-blur-sm hover:border-teal/60",
+                  // At rest: as small as the name, and see-through, so the towers behind stay visible.
+                  "border-white/10 bg-black/45 hover:border-teal/60 data-[active]:px-2.5 data-[active]:py-1.5",
                   "data-[active]:scale-[1.06] data-[active]:border-teal data-[active]:bg-[#161616] data-[active]:shadow-[0_14px_36px_rgb(0_0_0/0.4),0_0_0_1px_rgb(14_213_194/0.25)] motion-reduce:data-[active]:scale-100",
                   recede && "opacity-60",
                   dim && "pointer-events-none opacity-25"
                 )}
                 style={{ left: pos.left, top: pos.top, zIndex: active ? 150 : 10 + depth, marginLeft: -3 }}
               >
-                {/* Logo (or large name until a logo is uploaded) — revealed on hover/focus */}
-                <span className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out-quart group-data-[active]:grid-rows-[1fr] motion-reduce:transition-none">
+                {/* Logo (or large name until a logo is uploaded) — shown on hover/focus only, and
+                    taking no room until then, so a resting chip is just its name. */}
+                <span className="hidden group-data-[active]:grid">
                   <span className="overflow-hidden">
                     <span className="block pt-1 pb-2">
                       {company.logo ? (
@@ -507,7 +509,7 @@ export function PortfolioMap({
                   </span>
                 </span>
                 <span className="flex items-baseline gap-2">
-                  <span className={cn("text-[0.75rem] font-bold text-white", !company.logo && "group-data-[active]:hidden")}>
+                  <span className={cn("text-[0.7rem] font-bold text-white/90 group-data-[active]:text-[0.75rem] group-data-[active]:text-white", !company.logo && "group-data-[active]:hidden")}>
                     {company.name}
                   </span>
                   {status && <span className="hud text-ink-300">· {status}</span>}

@@ -50,11 +50,12 @@ export default async function AboutPage() {
         </dl>
       </PageHero>
 
-      {/* Approach: the quote alone, in two or three lines */}
+      {/* Approach: the quote alone, in two lines on desktop */}
       <section className="py-20 sm:py-28">
         <Reveal className="container-site">
           <p className="eyebrow text-teal-ink">{page.approachEyebrow}</p>
-          <blockquote className="display mt-6 max-w-5xl text-3xl leading-tight text-balance text-ink sm:text-4xl lg:text-[2.75rem]">
+          {/* Two lines on desktop: full width, a little smaller than other headings. */}
+          <blockquote className="display mt-6 text-3xl leading-tight text-balance text-ink sm:text-4xl lg:text-[2.3rem] xl:text-[2.55rem]">
             &ldquo;{site.approach}&rdquo;
           </blockquote>
         </Reveal>

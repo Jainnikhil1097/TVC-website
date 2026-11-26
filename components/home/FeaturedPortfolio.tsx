@@ -33,16 +33,18 @@ function Cover({ company, priority }: { company: Company; priority?: boolean }) 
     );
   }
   if (company.productImage) {
-    // The product image, whole, on its own white background (its labels are part of it).
+    // The product image, whole, on a soft studio surface: multiply drops the image's own
+    // white background into it, so there's no hard white box; its dark labels stay legible
+    // (on the black section itself they'd disappear).
     return (
-      <div className="absolute inset-0 bg-white">
+      <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_35%,#ffffff_0%,#eef2f5_55%,#dfe5ea_100%)]">
         <Image
           src={company.productImage.url}
           alt={company.productImage.alt || `${company.name} product`}
           fill
           priority={priority}
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className="object-contain p-[3%]"
+          className="object-contain p-[4%] mix-blend-multiply"
         />
       </div>
     );

@@ -485,7 +485,10 @@ export function youtubeId(url: string) {
   return m?.[1];
 }
 
-/** The videos listed in Site settings (newest first), then the channel feed's, without repeats. */
+/** How many of the channel's own latest videos to show after the listed ones. */
+const LATEST_FROM_CHANNEL = 3;
+
+/** The videos listed in Site settings (newest first), then the channel's latest three, without repeats. */
 export const getVideos = cache(async (): Promise<Video[]> => {
   const site = await getSite();
   const listed: Video[] = site.videos
@@ -495,7 +498,10 @@ export const getVideos = cache(async (): Promise<Video[]> => {
     })
     .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
   const seen = new Set(listed.map((v) => youtubeId(v.url) ?? v.url));
-  const feed = (await getYouTubeVideos(site.youtubeChannelId)).filter((v) => !seen.has(youtubeId(v.url) ?? v.url));
+  const feed = (await getYouTubeVideos(site.youtubeChannelId, site.youtubeUrl))
+    .filter((v) => !seen.has(youtubeId(v.url) ?? v.url))
+    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""))
+    .slice(0, LATEST_FROM_CHANNEL);
   return [...listed, ...feed];
 });
 

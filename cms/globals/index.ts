@@ -371,7 +371,7 @@ export const ImpactPage: GlobalConfig = {
               type: "array",
               maxRows: 3,
               fields: [
-                { type: "row", fields: [t("title", "Title", { required: true }), t("subtitle", "Short line")] },
+                { type: "row", fields: [t("title", "Title", { required: true }), t("subtitle", "Short line (not shown at the moment)")] },
                 ta("body", "Text"),
                 companies("companies", "Example companies"),
               ],

@@ -58,8 +58,8 @@ export default async function ImpactPage() {
         </div>
       </PageHero>
 
-      {/* 1. Photos and the three pathways */}
-      <section aria-label="Impact pathways" className="container-site pt-10 pb-20 sm:pb-28">
+      {/* 1. Photos (the three pathways are explained in the SDG section) */}
+      <section aria-label="Impact in pictures" className="container-site pt-10 pb-20 sm:pb-28">
         {hero.tiles.length > 0 && (
           <Reveal stagger={0.08} className="grid gap-3 md:grid-cols-[2fr_1fr_1fr]">
             {hero.tiles.map((t) => (
@@ -72,14 +72,6 @@ export default async function ImpactPage() {
             ))}
           </Reveal>
         )}
-        <Reveal as="ul" stagger={0.08} className="mt-10 grid gap-8 md:grid-cols-3 md:gap-0 md:divide-x md:divide-line">
-          {impact.pathways.map((p, i) => (
-            <li key={p.title} data-reveal className={i > 0 ? "md:pl-8" : "md:pr-8"}>
-              <p className="font-display text-2xl font-bold text-ink">{p.title}</p>
-              {p.subtitle && <p className="mt-2 text-muted">{p.subtitle}</p>}
-            </li>
-          ))}
-        </Reveal>
       </section>
 
       {/* 2. Fund I outcomes */}
