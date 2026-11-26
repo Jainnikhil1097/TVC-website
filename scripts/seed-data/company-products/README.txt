@@ -13,3 +13,11 @@ To change an image:
 
 The import replaces an image only if the current one came from this folder; an image
 uploaded by an editor in the CMS is never overwritten.
+
+On-dark versions (<slug>-product-dark.webp) are for the home page's black portfolio
+section: the product lifted out by Apple Vision on a transparent background, with the
+labels and leader lines turned light. To remake one after replacing an image:
+  swift scripts/cutout-team-photos.swift <folder with the -product.jpg> /tmp/cut
+  node scripts/make-dark-product-images.mjs <same folder> /tmp/cut <out folder> <slug>
+then copy it here and run  npm run company:products. Fitsol has none (its dashboards
+aren't an object Vision can lift), so it shows on a light panel there.

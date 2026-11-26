@@ -16,7 +16,8 @@ type Props = {
 };
 
 /**
- * Fills the panel: the cover photo if there is one, else the product image on white, else
+ * Fills the panel: the cover photo if there is one, else the product image made for dark
+ * backgrounds, else the product image on a light surface, else
  * the company's logo, large, on white (logos are made for white), else the company name.
  */
 function Cover({ company, priority }: { company: Company; priority?: boolean }) {
@@ -29,6 +30,19 @@ function Cover({ company, priority }: { company: Company; priority?: boolean }) 
         priority={priority}
         sizes="(min-width: 1024px) 50vw, 100vw"
         className="object-cover"
+      />
+    );
+  }
+  if (company.productImageDark) {
+    // The product on the black section itself: transparent background, light labels.
+    return (
+      <Image
+        src={company.productImageDark.url}
+        alt={company.productImageDark.alt || `${company.name} product`}
+        fill
+        priority={priority}
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        className="object-contain p-[2%]"
       />
     );
   }

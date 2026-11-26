@@ -208,6 +208,10 @@ export interface Company {
    */
   productImage?: (number | null) | Media;
   /**
+   * The same image for the home page's black portfolio section: transparent background, labels in a light colour (PNG or WebP). Without it, the product image is shown on a light panel there.
+   */
+  productImageDark?: (number | null) | Media;
+  /**
    * Labels pointing at parts of the product image. Position is a percentage of the image: 0/0 is the top-left corner, 50/50 the centre.
    */
   callouts?:
@@ -692,6 +696,7 @@ export interface CompaniesSelect<T extends boolean = true> {
   essayUrl?: T;
   videoUrl?: T;
   productImage?: T;
+  productImageDark?: T;
   callouts?:
     | T
     | {

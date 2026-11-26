@@ -16,6 +16,8 @@ export type Company = {
   yearInvested: number; website: string; founders?: Person[]; essay?: string;
   /** Defaults to Fund I. */
   fund?: "pre-fund" | "fund-1" | "fund-2";
+  /** false: kept in the CMS but not shown anywhere on the site (e.g. a deal not yet final). */
+  showOnSite?: boolean;
 };
 export type Fund = { name: string; category: string; sebiRegistration: string; manager: string };
 export type Essay = { slug: string; title: string; teaser: string; url?: string; company?: string };

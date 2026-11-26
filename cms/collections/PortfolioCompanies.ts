@@ -151,6 +151,16 @@ export const PortfolioCompanies: CollectionConfig = {
               },
             },
             {
+              name: "productImageDark",
+              label: "Product image on dark (home page)",
+              type: "upload",
+              relationTo: "media",
+              admin: {
+                description:
+                  "The same image for the home page's black portfolio section: transparent background, labels in a light colour (PNG or WebP). Without it, the product image is shown on a light panel there.",
+              },
+            },
+            {
               name: "callouts",
               label: "Product callouts",
               type: "array",

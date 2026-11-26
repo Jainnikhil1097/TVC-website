@@ -28,6 +28,8 @@ import * as migration_20261125_113250_press_prefund_data from './20261125_113250
 import * as migration_20261125_114203_careers_email from './20261125_114203_careers_email';
 import * as migration_20261125_114204_careers_gift_data from './20261125_114204_careers_gift_data';
 import * as migration_20261125_164348_site_videos from './20261125_164348_site_videos';
+import * as migration_20261126_123821_hide_unfinalised from './20261126_123821_hide_unfinalised';
+import * as migration_20261126_124601_product_image_dark from './20261126_124601_product_image_dark';
 
 export const migrations = [
   {
@@ -178,6 +180,16 @@ export const migrations = [
   {
     up: migration_20261125_164348_site_videos.up,
     down: migration_20261125_164348_site_videos.down,
-    name: '20261125_164348_site_videos'
+    name: '20261125_164348_site_videos',
+  },
+  {
+    up: migration_20261126_123821_hide_unfinalised.up,
+    down: migration_20261126_123821_hide_unfinalised.down,
+    name: '20261126_123821_hide_unfinalised',
+  },
+  {
+    up: migration_20261126_124601_product_image_dark.up,
+    down: migration_20261126_124601_product_image_dark.down,
+    name: '20261126_124601_product_image_dark'
   },
 ];

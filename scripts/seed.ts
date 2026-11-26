@@ -18,6 +18,7 @@ const { importCompanyLogos } = await import("./company-logos");
 const { importOnePagers } = await import("./one-pagers");
 const { importImpact } = await import("./impact-import");
 const { importGroupPhotos } = await import("./group-photos");
+const { importCompanyProducts } = await import("./company-products");
 const { importNewsPhotos } = await import("./news-photos");
 const { founderPillars } = await import("./seed-data/founder-pillars");
 const { news, substackUrl, youtubeUrl } = await import("./seed-data/perspectives");
@@ -61,6 +62,7 @@ if (await isEmpty("companies")) {
         fund: c.fund ?? "fund-1",
         website: c.website,
         status: "active",
+        showOnSite: c.showOnSite ?? true,
         featured: FEATURED.includes(c.slug),
         homeOrder: FEATURED.includes(c.slug) ? FEATURED.indexOf(c.slug) + 1 : undefined,
         founders: c.founders?.map((f) => ({ name: f.name, title: f.title })),
@@ -84,6 +86,8 @@ await importCompanyPhotos(payload, log);
 await importCompanyLogos(payload, log);
 // One-pager content and product renders (scripts/seed-data/one-pagers.ts); fills empty fields only.
 await importOnePagers(payload, log);
+// Product images on dark backgrounds (<slug>-product-dark.webp) for the home page.
+await importCompanyProducts(payload, log);
 
 // ─── News, funds ─────────────────────────────────────────────────────────────
 if (await isEmpty("news")) {

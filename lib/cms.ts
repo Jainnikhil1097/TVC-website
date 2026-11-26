@@ -101,6 +101,7 @@ function mapCompany(doc: CmsCompany): Company {
     essayUrl: orUndefined(doc.essayUrl),
     videoUrl: orUndefined(doc.videoUrl),
     productImage: image(doc.productImage),
+    productImageDark: image(doc.productImageDark),
     callouts: doc.callouts?.map((c) => ({ label: c.label, detail: orUndefined(c.detail), x: c.x, y: c.y })),
     proof: doc.proofValue && doc.proofLabel ? { value: doc.proofValue, label: doc.proofLabel } : undefined,
     marketGap: orUndefined(doc.marketGap),
@@ -220,6 +221,8 @@ export const getImpact = cache(async () => {
   const slugs = (list?: (number | CmsCompany)[] | null) =>
     (list ?? []).filter((c): c is CmsCompany => typeof c !== "number" && c.showOnSite !== false).map((c) => c.slug ?? String(c.id));
   const slugOf = (c?: number | CmsCompany | null) => (c && typeof c !== "number" ? c.slug ?? String(c.id) : undefined);
+  /** A company hidden from the site (Show on site off), e.g. a deal not yet final. */
+  const hidden = (c?: number | CmsCompany | null) => Boolean(c && typeof c !== "number" && c.showOnSite === false);
   const heading = (g?: { eyebrow?: string | null; headline?: string | null; intro?: string | null } | null) => ({
     eyebrow: str(g?.eyebrow),
     headline: str(g?.headline),
@@ -252,7 +255,10 @@ export const getImpact = cache(async () => {
     footprint: {
       ...heading(f),
       footnote: str(f?.footnote),
-      countries: (f?.countries ?? []).map((x) => ({
+      // A country shown only for companies that are now hidden is left out (its text is about them).
+      countries: (f?.countries ?? [])
+        .filter((x) => !(x.companies?.length && x.companies.every((c) => hidden(c))))
+        .map((x) => ({
         name: x.name,
         lat: x.lat,
         lon: x.lon,
@@ -271,7 +277,9 @@ export const getImpact = cache(async () => {
         number: g.number,
         title: g.title,
         summary: str(g.summary),
-        entries: (g.entries ?? []).map((e) => ({ company: slugOf(e.company), label: str(e.label), connection: e.connection, measures: str(e.measures) })),
+        entries: (g.entries ?? [])
+          .filter((e) => !hidden(e.company))
+          .map((e) => ({ company: slugOf(e.company), label: str(e.label), connection: e.connection, measures: str(e.measures) })),
       })),
     },
     measurement: {

@@ -77,6 +77,8 @@ export type Company = {
   // One-pager (public-safe subset: no revenue, fundraising or return figures).
   /** Clean product render, annotated with callouts. */
   productImage?: Image;
+  /** The product image for dark backgrounds (transparent, light labels). */
+  productImageDark?: Image;
   callouts?: Callout[];
   /** Headline number for the home page proof band. */
   proof?: { value: string; label: string };

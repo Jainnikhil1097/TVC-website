@@ -15,6 +15,8 @@ export const portfolio: Company[] = [
     website: "https://www.earthen.energy/",
     founders: [{ name: "Manas Pathak" }],
     fund: "fund-1",
+    // Hidden until the investment is final (the team, 26 Nov 2026).
+    showOnSite: false,
   },
   {
     slug: "perovskia-solar",
@@ -27,6 +29,8 @@ export const portfolio: Company[] = [
     website: "https://perovskia.solar/",
     founders: [{ name: "Toby Meyer" }, { name: "Anand Verma" }],
     fund: "fund-1",
+    // Hidden until the investment is final (the team, 26 Nov 2026).
+    showOnSite: false,
   },
   {
     slug: "two-point-o",
