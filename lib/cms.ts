@@ -22,7 +22,7 @@ import { aboutPageDefaults, perspectivesPageDefaults, portfolioPageDefaults } fr
 import { sectorIconFor } from "./sector-icons";
 import { basePath, isStaticPreview } from "./base-path";
 import { siteIdentity } from "./site-config";
-import { getSubstackEssays, getYouTubeVideos } from "./feeds";
+import { getShareImage, getSubstackEssays, getYouTubeVideos } from "./feeds";
 
 // Typed read access to CMS content for server components. Every getter maps CMS
 // documents onto the site's own types (lib/types.ts). React's cache() dedupes
@@ -439,7 +439,15 @@ export const getFunds = cache(async (): Promise<Fund[]> => {
 
 export const getNews = cache(async (): Promise<NewsItem[]> => {
   const { docs } = await (await payload()).find({ collection: "news", sort: "-date", limit: 100, depth: 1 });
-  return docs.map((n) => ({ date: n.date, title: n.title, source: n.source, url: n.url, image: image(n.image, "card") }));
+  const items = docs.map((n) => ({ date: n.date, title: n.title, source: n.source, url: n.url, image: image(n.image, "card") }));
+  // News without an uploaded photo uses the article's own preview image, when it has one.
+  return Promise.all(
+    items.map(async (n) => {
+      if (n.image) return n;
+      const shared = await getShareImage(n.url);
+      return shared ? { ...n, image: { url: shared, alt: "" } } : n;
+    })
+  );
 });
 
 export const getEvents = cache(async (): Promise<{ upcoming: EventItem[]; past: EventItem[] }> => {

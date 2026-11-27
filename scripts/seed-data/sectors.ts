@@ -20,7 +20,7 @@ export const investmentSectors: InvestmentSector[] = [
   {
     id: "industrial",
     name: "Industrial",
-    line: "Decarbonising heat, cooling and process — the hardest emissions in Indian industry.",
+    line: "Decarbonising heat, cooling and process: the hardest emissions in Indian industry.",
     portfolioSector: "industrial",
   },
   {

@@ -31,6 +31,7 @@ import * as migration_20261125_164348_site_videos from './20261125_164348_site_v
 import * as migration_20261126_123821_hide_unfinalised from './20261126_123821_hide_unfinalised';
 import * as migration_20261126_124601_product_image_dark from './20261126_124601_product_image_dark';
 import * as migration_20261126_144608_footprint_pathways_gift from './20261126_144608_footprint_pathways_gift';
+import * as migration_20261126_153256_founders_text_edits from './20261126_153256_founders_text_edits';
 
 export const migrations = [
   {
@@ -196,6 +197,11 @@ export const migrations = [
   {
     up: migration_20261126_144608_footprint_pathways_gift.up,
     down: migration_20261126_144608_footprint_pathways_gift.down,
-    name: '20261126_144608_footprint_pathways_gift'
+    name: '20261126_144608_footprint_pathways_gift',
+  },
+  {
+    up: migration_20261126_153256_founders_text_edits.up,
+    down: migration_20261126_153256_founders_text_edits.down,
+    name: '20261126_153256_founders_text_edits'
   },
 ];

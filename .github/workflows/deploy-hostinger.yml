@@ -42,6 +42,11 @@ jobs:
       - name: Load the starting content into a temporary database
         run: mkdir -p .data && npm run seed
 
+      # The news photos from the previous website's image host (reachable from GitHub):
+      # downloaded and attached to their news items. Best effort; never fails the build.
+      - name: Add the news photos
+        run: npm run news:photos || true
+
       - name: Build the live static site
         run: npm run build:pages
         env:

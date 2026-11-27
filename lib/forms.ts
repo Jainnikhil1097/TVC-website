@@ -11,7 +11,7 @@ export const contactIntro =
   "We'd love to hear from you. Choose the option that fits and we'll route it to the right person.";
 
 export const enquiryTypes = [
-  { id: "startup", label: "Startups & Founders", blurb: "Building in energy? Share your deck — we read every one." },
+  { id: "startup", label: "Startups & Founders", blurb: "Building in energy? Share your deck. We read every one." },
   { id: "investor", label: "Investors", blurb: "Interested in our funds? Our investor relations team will reach out." },
   { id: "partner", label: "Ecosystem Partners", blurb: "Corporates, research labs, governments and fellow investors." },
 ] as const;
@@ -52,7 +52,7 @@ export const extensionOf = (name: string) => "." + (name.split(".").pop() ?? "")
 /** Name of the hidden anti-spam field. Real visitors never fill it in. */
 export const honeypotField = "website";
 
-export const successMessage = "Thank you — your submission has been received. We'll be in touch.";
+export const successMessage = "Thank you. Your submission has been received, and we'll be in touch.";
 
 const GENERIC_ERROR = "Something went wrong. Please try again, or email us directly.";
 const PREVIEW_ERROR =
@@ -111,7 +111,7 @@ function handToEmail(kind: FormKind, data: FormData): SubmitResult {
   const rule = fileRules[kind];
   if (rule) lines.push("", attachment ? `Please find my ${rule.label} (${attachment}) attached.` : `I'll attach my ${rule.label}.`);
   const name = String(data.get("companyName") || data.get("organisation") || data.get("fullName") || data.get("name") || "").trim();
-  const subject = `Website enquiry: ${type}${name ? ` — ${name}` : ""}`;
+  const subject = `Website enquiry: ${type}${name ? ` (${name})` : ""}`;
   const href = `mailto:${formsEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n").slice(0, 1800))}`;
   window.location.href = href;
   return { ok: true, viaEmail: true };

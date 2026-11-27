@@ -1,6 +1,7 @@
 import type { Company } from "./types";
 
-// Ordered newest investment first, as on the current site.
+// Ordered newest investment first, as on the current site. Founders from the team's
+// company list ("Website Ideas and Link", Nov 2026).
 export const portfolio: Company[] = [
   // Added 21 Nov 2026 from the team's company list ("Website Ideas and Link" PDF). All Fund I
   // (the team, 23 Nov 2026: "everything we have now is Fund 1"; Fund II is still being finalised).
@@ -48,7 +49,7 @@ export const portfolio: Company[] = [
     slug: "suind",
     name: "SUIND",
     summary:
-      "Vision-based autonomous drones for agriculture, inspection and security — Bumblebee for crop spraying, WASP for inspection.",
+      "Vision-based autonomous drones for agriculture, inspection and security: Bumblebee for crop spraying, WASP for inspection.",
     sector: "drone",
     stage: "Seed",
     yearInvested: 2026,
@@ -69,6 +70,7 @@ export const portfolio: Company[] = [
     yearInvested: 2026,
     website: "https://www.albatross-energetics.in/",
     essay: "cooling-as-infrastructure",
+    founders: [{ name: "Shrihari B" }, { name: "Sudharsan M S" }],
   },
   {
     slug: "helionis-labs",
@@ -80,17 +82,19 @@ export const portfolio: Company[] = [
     yearInvested: 2026,
     website: "https://helionislabs.in/",
     essay: "helionis-hottest-layer",
+    founders: [{ name: "Tarun Jha" }, { name: "Ramkumar Balakrishna" }],
   },
   {
     slug: "zerodrag",
     name: "ZeroDrag",
     summary:
-      "Full-stack UAV avionics — speed controllers, flight controllers and comms — with a size, weight and power advantage.",
+      "Full-stack UAV avionics (speed controllers, flight controllers and comms) with a size, weight and power advantage.",
     sector: "drone",
     stage: "Seed",
     yearInvested: 2026,
     website: "https://zerodrag.in/",
     essay: "drone-huawei-moment",
+    founders: [{ name: "Amit R Namje" }, { name: "Shantanu Bhede" }],
   },
   {
     slug: "prithu",
@@ -102,6 +106,7 @@ export const portfolio: Company[] = [
     yearInvested: 2026,
     website: "https://prithu.earth/",
     essay: "why-we-backed-prithu",
+    founders: [{ name: "Sunny Vaish" }, { name: "Prabal Tomar" }, { name: "Abhinav G Pandey" }],
   },
   {
     slug: "workongrid",
@@ -113,6 +118,7 @@ export const portfolio: Company[] = [
     yearInvested: 2026,
     website: "https://www.workongrid.com/",
     essay: "rewiring-the-grid",
+    founders: [{ name: "Udit Poddar" }, { name: "Shaurya Poddar" }, { name: "Shreyansh Jain" }, { name: "Aayush Agrawal" }],
   },
   {
     slug: "intrinsic-foundries",
@@ -124,6 +130,7 @@ export const portfolio: Company[] = [
     yearInvested: 2026,
     website: "https://www.i-foundries.com/",
     essay: "engineering-carbon-economy",
+    founders: [{ name: "Sanjay Jain" }, { name: "Umang Jain" }, { name: "Shreyansh Jain" }],
   },
   {
     slug: "greentech-mw",
@@ -133,6 +140,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2025,
     website: "https://greentechmw.com/",
+    founders: [{ name: "Daniel Raj" }, { name: "Mohan Raj" }, { name: "Capt. Kishore" }, { name: "Girish" }],
   },
   {
     slug: "hydgen",
@@ -142,6 +150,7 @@ export const portfolio: Company[] = [
     stage: "Pre-Series A",
     yearInvested: 2025,
     website: "https://www.hyd-gen.com/",
+    founders: [{ name: "Michael Gryseels" }, { name: "Kumar Bayar" }, { name: "Arjun Mehta" }, { name: "Goutam Dalapati" }],
   },
   {
     slug: "greenfi",
@@ -151,6 +160,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2025,
     website: "https://greenfi.ai/",
+    founders: [{ name: "Barun" }],
   },
   {
     slug: "dynolt",
@@ -161,6 +171,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2025,
     website: "https://www.dynolt.com/",
+    founders: [{ name: "Teja Kumar Balivada" }, { name: "Rajesh Sura" }],
   },
   {
     slug: "promethean-energy",
@@ -170,6 +181,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2025,
     website: "https://www.prometheanenergy.com/",
+    founders: [{ name: "Ashwin KP" }, { name: "Rajat Agarwal" }],
   },
   {
     slug: "cimware",
@@ -180,6 +192,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2025,
     website: "https://cimware.in/",
+    founders: [{ name: "Rajiv Ganth" }],
   },
   {
     slug: "comminent",
@@ -189,6 +202,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2025,
     website: "https://comminent.com/",
+    founders: [{ name: "Vikas Kashyap" }, { name: "Amarjeet Kumar" }],
   },
   {
     slug: "matel-motion",
@@ -199,6 +213,7 @@ export const portfolio: Company[] = [
     stage: "Pre-Series A",
     yearInvested: 2024,
     website: "https://www.matel.co.in/",
+    founders: [{ name: "Sunil Patel" }, { name: "Netaji Patro" }],
   },
   {
     slug: "protonas",
@@ -208,6 +223,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2024,
     website: "https://protonas.tech/",
+    founders: [{ name: "David DeVries" }],
   },
   {
     slug: "fitsol",
@@ -218,6 +234,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2024,
     website: "https://fitsol.green/",
+    founders: [{ name: "Anand Pathak" }, { name: "Sunil Bansal" }, { name: "Akshay Tandon" }, { name: "Vikas Kalra" }],
   },
   {
     slug: "emo-energy",
@@ -228,6 +245,7 @@ export const portfolio: Company[] = [
     stage: "Seed",
     yearInvested: 2023,
     website: "https://www.emoenergy.in/",
+    founders: [{ name: "Sheetanshu Tyagi" }, { name: "Rahul Patel" }],
   },
   // Pre Fund: the partners' investments from before Fund I (2021), on the map's Pre Fund board.
   // Draft descriptions from public information, for the team to check in the CMS. Their

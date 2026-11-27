@@ -253,6 +253,13 @@ html.js-motion .flip-in[data-reveal][data-revealed] {
   }
 }
 
+/* Header/footer logo symbol: a slow, continuous turn (reduced motion stops it via the rule above). */
+.logo-spin {
+  animation: la-spin 24s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 /* Crossfade for keyed panels (team spotlight, featured portfolio). Keyed remount replays these. */
 @keyframes spot-portrait {
   from {

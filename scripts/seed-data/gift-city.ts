@@ -5,7 +5,7 @@ export const giftCity = {
   eyebrow: "GIFT City · IFSC",
   headline: "Global capital for India's energy transition",
   intro:
-    "Our GIFT City platform gives international and NRI investors a regulated, tax-efficient route to back India's most promising energy-transition companies — alongside the same team and thesis behind Fund I.",
+    "Our GIFT City platform gives international and NRI investors a regulated, tax-efficient route to back India's most promising energy-transition companies, alongside the same team and thesis behind Fund I.",
   highlights: [
     {
       title: "Structure",

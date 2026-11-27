@@ -57,7 +57,7 @@ export default async function GiftCityPage() {
         <Reveal>
           <span className="eyebrow inline-flex rounded-full bg-stone px-3 py-1.5 text-white">GIFT City</span>
           <h2 className="display mt-6 text-3xl sm:text-4xl lg:text-[2.75rem]">
-            Same team, same thesis — built for global investors
+            Same team, same thesis, built for global investors
           </h2>
           <AccentRule className="mt-6" />
         </Reveal>

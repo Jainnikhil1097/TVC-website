@@ -12,7 +12,7 @@ export const site = {
   tagline: "Engineering the Future of Energy",
   hero: "Investing early, catalytic capital in the future of energy for India.",
   about:
-    "India's first energy-transition focused venture capital fund. We back engineering-led startups building across storage, mobility, industrial decarbonisation and alternate fuels — because climate-aligned companies win, on impact and returns.",
+    "We back engineering-led startups building across storage, mobility, industrial decarbonisation and alternate fuels, because climate-aligned companies win on impact and on returns.",
   approach:
     "We underwrite the engineering, choose the outliers, and back the ones building what India actually needs.",
   thesis:

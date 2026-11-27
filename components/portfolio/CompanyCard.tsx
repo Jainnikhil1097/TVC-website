@@ -41,7 +41,7 @@ export function CompanyCard({ company, onOpen }: CompanyCardProps) {
           className="text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-teal-ink"
         >
           {company.name}
-          <span className="sr-only"> — view company profile</span>
+          <span className="sr-only">, view company profile</span>
         </button>
       </h3>
 

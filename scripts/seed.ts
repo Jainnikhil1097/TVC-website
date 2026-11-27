@@ -200,7 +200,7 @@ await fillGlobal("home-page", emptyText("positioning"), {
     {
       question: "What do you look for?",
       answer:
-        "Engineering-led teams solving hard physical bottlenecks — companies that own a specific layer of the stack, with India-first cost structures and economics that don't depend on subsidies or regulatory timing.",
+        "Engineering-led teams solving hard physical bottlenecks: companies that own a specific layer of the stack, with India-first cost structures and economics that don't depend on subsidies or regulatory timing.",
     },
     {
       question: "Do you lead rounds?",

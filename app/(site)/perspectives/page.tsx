@@ -26,7 +26,7 @@ export function generateMetadata() {
   return pageMetadata("perspectives", {
     title: "Perspectives",
     description:
-      "Essays, investment notes and news from Transition VC — perspectives on India's energy transition, straight from our newsletter.",
+      "Essays, investment notes and news from Transition VC: perspectives on India's energy transition, straight from our newsletter.",
   });
 }
 

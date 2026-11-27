@@ -9,7 +9,7 @@ export function ContactDetails({ site }: { site: ContactInfo }) {
     <div className="space-y-8">
       <p className="leading-relaxed text-muted">
         Whether you&rsquo;re a founder building in energy, an investor exploring our funds, or a partner in the
-        ecosystem — write to us and the right person on our team will respond.
+        ecosystem, write to us and the right person on our team will respond.
       </p>
 
       <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">

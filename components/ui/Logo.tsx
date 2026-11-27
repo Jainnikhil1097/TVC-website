@@ -9,7 +9,7 @@ import { BrandSymbol } from "@/components/ui/BrandSymbol";
 export function Logo({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2 leading-none", className)} aria-label="Transition VC">
-      <BrandSymbol className="size-[1.35rem] shrink-0 text-aqua" />
+      <BrandSymbol className="logo-spin size-[1.35rem] shrink-0 text-aqua" />
       <span aria-hidden className="font-display text-[1.15rem] font-bold tracking-[0.02em] uppercase">
         Transition
       </span>

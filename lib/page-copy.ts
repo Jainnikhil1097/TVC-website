@@ -20,9 +20,9 @@ export const aboutPageDefaults = {
   teamEyebrow: "The team",
   teamHeading: "The people behind the fund",
   nextSteps: [
-    { eyebrow: "Founders", title: "Pitch to us", body: "Building in energy? Share your deck — we read every one.", href: "/contact?type=startup" },
+    { eyebrow: "Founders", title: "Pitch to us", body: "Building in energy? Share your deck. We read every one.", href: "/contact?type=startup" },
     { eyebrow: "Impact", title: "Our impact", body: "How our portfolio is decarbonising industry, mobility and the grid.", href: "/impact" },
-    { eyebrow: "Contact", title: "Get in touch", body: "Investors, partners and press — we'd like to hear from you.", href: "/contact" },
+    { eyebrow: "Contact", title: "Get in touch", body: "Investors, partners and press: we'd like to hear from you.", href: "/contact" },
   ],
 };
 

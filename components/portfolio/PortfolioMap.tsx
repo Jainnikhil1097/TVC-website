@@ -479,7 +479,7 @@ export function PortfolioMap({
                 aria-hidden={dim || undefined}
                 aria-expanded={popover === slug}
                 aria-controls={popover === slug ? MAP_POPOVER_ID : undefined}
-                aria-label={`${company.name} — ${portfolioSectorName(company.sector)}, ${company.stage}, ${portfolioFundName(company.fund)}${status ? `, ${status}` : ""}. Show details`}
+                aria-label={`${company.name}: ${portfolioSectorName(company.sector)}, ${company.stage}, ${portfolioFundName(company.fund)}${status ? `, ${status}` : ""}. Show details`}
                 data-active={active || undefined}
                 className={cn(
                   "group absolute -translate-y-full origin-bottom-left rounded-md border px-2 py-1 text-left whitespace-nowrap",

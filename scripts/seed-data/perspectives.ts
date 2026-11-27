@@ -9,7 +9,7 @@ export const essays: Essay[] = [
   {
     slug: "drone-without-pilot",
     title: "What Happens When a Drone Stops Needing a Pilot?",
-    teaser: "Why vision-based autonomy changes the economics of drones — and why we backed SUIND.",
+    teaser: "Why vision-based autonomy changes the economics of drones, and why we backed SUIND.",
     company: "suind",
   },
   {
@@ -31,12 +31,12 @@ export const essays: Essay[] = [
   {
     slug: "thermal-bottleneck-lighting",
     title: "The Thermal Bottleneck Inside Modern Lighting",
-    teaser: "LEDs solved the energy-efficiency problem in lighting — and intensified the heat problem.",
+    teaser: "LEDs solved the energy-efficiency problem in lighting, and intensified the heat problem.",
   },
   {
     slug: "drone-huawei-moment",
     title: "The Drone Industry Just Hit Its Huawei Moment",
-    teaser: "The case for full-stack, non-Chinese UAV avionics — and ZeroDrag.",
+    teaser: "The case for full-stack, non-Chinese UAV avionics, and for ZeroDrag.",
     company: "zerodrag",
   },
   {
@@ -53,17 +53,17 @@ export const essays: Essay[] = [
   {
     slug: "carbon-verifiable-supply",
     title: "The Missing Layer in Carbon Markets: Verifiable Supply",
-    teaser: "Part 2 of 2 — what it takes to make carbon credits underwriteable.",
+    teaser: "Part 2 of 2: what it takes to make carbon credits underwriteable.",
   },
   {
     slug: "carbon-data-crisis",
     title: "Carbon Credits' Data Crisis: Why Trust Broke and Demand Didn't",
-    teaser: "Part 1 of 2 — measurement, baselines and the collapse of trust.",
+    teaser: "Part 1 of 2: measurement, baselines and the collapse of trust.",
   },
   {
     slug: "rewiring-the-grid",
     title: "Rewiring the Grid: The System Behind the Energy Transition",
-    teaser: "Utility software as the orchestration layer of the grid — and WorkOnGrid.",
+    teaser: "Utility software as the orchestration layer of the grid, and WorkOnGrid.",
     company: "workongrid",
   },
   {

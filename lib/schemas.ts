@@ -23,7 +23,7 @@ export const textFields = {
       .string()
       .check(
         z.trim(),
-        z.minLength(20, "Please tell us a little more — at least 20 characters."),
+        z.minLength(20, "Please tell us a little more (at least 20 characters)."),
         z.maxLength(2000, "Please keep this under 2,000 characters.")
       ),
     sector: z.string().check(z.minLength(1, "Please choose a sector.")),
@@ -37,7 +37,7 @@ export const textFields = {
       .string()
       .check(
         z.trim(),
-        z.minLength(10, "Please add a short message — at least 10 characters."),
+        z.minLength(10, "Please add a short message (at least 10 characters)."),
         z.maxLength(2000, "Please keep this under 2,000 characters.")
       ),
   },

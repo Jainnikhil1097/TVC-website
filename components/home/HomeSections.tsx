@@ -108,7 +108,7 @@ export function PerspectivesTeaser({ essays, news, nextEvent, substackUrl }: Tea
                   >
                     {n.image && (
                       <span className="relative hidden aspect-[4/3] w-20 shrink-0 overflow-hidden rounded-lg bg-surface sm:block">
-                        <Image src={n.image.url} alt="" fill sizes="80px" className="object-cover" />
+                        <Image src={n.image.url} alt="" fill sizes="80px" className="object-cover" unoptimized={/^https?:/.test(n.image.url)} />
                       </span>
                     )}
                     <span className="w-28 shrink-0 text-sm text-muted">{formatDate(n.date.slice(0, 10))}</span>

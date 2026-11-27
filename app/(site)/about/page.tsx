@@ -15,7 +15,7 @@ export function generateMetadata() {
   return pageMetadata("about", {
     title: "About",
     description:
-      "Meet the team behind Transition VC — India's first energy-transition venture fund, backing engineering-led startups from Pre-Seed to Series A.",
+      "Meet the team behind Transition VC, India's first energy-transition venture fund, backing engineering-led startups from Pre-Seed to Series A.",
   });
 }
 

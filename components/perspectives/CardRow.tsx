@@ -74,7 +74,7 @@ export function CardRow({ label, items }: CardRowProps) {
             onClick={() => step(-1)}
             disabled={atStart}
             className="grid size-11 place-items-center rounded-full border border-ink/20 bg-white text-ink transition-colors hover:border-teal-ink hover:text-teal-ink disabled:opacity-35 disabled:hover:border-ink/20 disabled:hover:text-ink"
-            aria-label={`Previous — ${label}`}
+            aria-label={`Previous: ${label}`}
           >
             <ChevronLeft className="size-4" aria-hidden />
           </button>
@@ -83,7 +83,7 @@ export function CardRow({ label, items }: CardRowProps) {
             onClick={() => step(1)}
             disabled={atEnd}
             className="grid size-11 place-items-center rounded-full border border-ink/20 bg-white text-ink transition-colors hover:border-teal-ink hover:text-teal-ink disabled:opacity-35 disabled:hover:border-ink/20 disabled:hover:text-ink"
-            aria-label={`Next — ${label}`}
+            aria-label={`Next: ${label}`}
           >
             <ChevronRight className="size-4" aria-hidden />
           </button>
