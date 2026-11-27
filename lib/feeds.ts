@@ -1,4 +1,6 @@
 import "server-only";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import type { Essay, Video } from "./types";
 import { parseSubstack, parseYouTube, youtubeChannelId } from "./feed-parse";
 
@@ -60,9 +62,29 @@ export async function getShareImage(pageUrl: string): Promise<string | undefined
   }
 }
 
+/** Saved copy of the Substack feed, refreshed with `npm run substack:save`. */
+const SAVED_SUBSTACK_FEED = path.join(process.cwd(), "data", "substack-feed.xml");
+
+/**
+ * The newsletter's essays. Substack often refuses requests from build servers (GitHub
+ * Actions), so if the live feed can't be read, or comes back with no posts, the saved
+ * copy in data/substack-feed.xml is used instead.
+ */
 export async function getSubstackEssays(substackUrl: string): Promise<Essay[]> {
   const xml = await fetchFeed(new URL("/feed", substackUrl).toString());
-  return xml ? parseSubstack(xml) : [];
+  const live = xml ? parseSubstack(xml) : [];
+  if (live.length) return live;
+  try {
+    const saved = parseSubstack(await readFile(SAVED_SUBSTACK_FEED, "utf8"));
+    if (saved.length) {
+      console.warn(`[feeds] Substack feed unavailable; using the saved copy (${saved.length} essays).`);
+      return saved;
+    }
+  } catch {
+    // No saved copy yet.
+  }
+  console.warn("[feeds] Substack feed unavailable and no saved copy; showing the fallback card. Run `npm run substack:save`.");
+  return [];
 }
 
 /**

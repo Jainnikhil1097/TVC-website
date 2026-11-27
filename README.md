@@ -52,7 +52,7 @@ sandboxes and CI.
 | `cms/globals/` | Site settings, Announcement bar, SEO, Home page (positioning, pillars, FAQ), Home sectors, Impact page, GIFT City page, Fund metrics |
 | `cms/access.ts` | Roles: Editors edit content; Admins also edit fund figures/SEBI details, read enquiries, manage users |
 | `lib/cms.ts` | Typed getters used by pages; maps CMS documents to the site's own types (`lib/types.ts`) |
-| `lib/feeds.ts` | Substack + YouTube RSS, refreshed hourly; falls back gracefully if a feed is unreachable |
+| `lib/feeds.ts` | Substack + YouTube RSS, refreshed hourly; falls back gracefully if a feed is unreachable. Substack often blocks build servers, so the build falls back to `data/substack-feed.xml`: refresh it with `npm run substack:save` after a new essay and commit it |
 | `cms/endpoints/submissions.ts` | Website form intake (validation, spam trap, rate limit, private file storage) and admin-only downloads |
 | `lib/taxonomy.ts` | Fixed lists (the 8 portfolio sectors, stages, statuses) — developer-managed |
 
